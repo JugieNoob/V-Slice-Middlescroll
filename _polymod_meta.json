@@ -1,0 +1,8 @@
+{
+    "title": "V-Slice Middlescroll",
+    "description": "Reimplements middlescroll into the V-Slice version of the game",
+    "author": "JugieNoob",
+    "api_version": "0.6.4",
+    "mod_version": "1.2.0",
+    "license": "CC BY 4.0,MIT"
+}
