@@ -12,5 +12,5 @@ A mod that adds a middlescroll feature from "Blazin'" to all of the songs and ad
 
 ## How to Install:
 
-    Press the download button below.
-    Place the .zip file into the Friday Night Funkin' mods folder.
+1. Press the download button below.
+2. Place the .zip file into the Friday Night Funkin' mods folder.
