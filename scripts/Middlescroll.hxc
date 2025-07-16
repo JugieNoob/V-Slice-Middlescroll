@@ -4,18 +4,15 @@ import flixel.FlxG;
 import funkin.play.notes.Strumline;
 import funkin.util.Constants;
 import funkin.play.notes.NoteSprite;
-import flixel.util.FlxSave;
 
 class Middlescroll extends Module {
   var opponentStrumline:FlxSprite;
   var pixeloffset:Int = 0;
   var ispixel:Int = false;
-  var save:FlxSave;
   var forcedmove:Bool = false;
   function new() {
     super("Middlescroll");
-    save = new FlxSave();
-    save.bind("MiddlescrollMod", "JugieNoob");
+    FlxG.save.bind("MiddlescrollMod", "JugieNoob");
   }
 
   override function onCountdownStart(event)
@@ -23,7 +20,7 @@ class Middlescroll extends Module {
 
 
 
-        if (save.data.middlescroll)
+        if (FlxG.save.data.middlescroll)
         {
           //Taken from Blazin'
           var playerStrumline:FlxSprite = PlayState.instance.playerStrumline;
@@ -32,7 +29,7 @@ class Middlescroll extends Module {
 		      	playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
 		      }
 
-          switch (save.data.oppnotes)
+          switch (FlxG.save.data.oppnotes)
           {
             default:
               moveOpponentStrumline();
@@ -43,7 +40,7 @@ class Middlescroll extends Module {
           }
 
 
-          if (save.data.movepopups)
+          if (FlxG.save.data.movepopups)
             {
               // Taken from Blazin'
               PlayState.instance.comboPopUps.offsets = [480, -50];
@@ -97,12 +94,12 @@ class Middlescroll extends Module {
           if (opponentStrumline.notes.members[i] != null)
           {
 
-            if(save.data.oppnotes == "Translucent")
+            if(FlxG.save.data.oppnotes == "Translucent")
               {
                 opponentStrumline.notes.members[i].alpha = 0.5;
               }
             
-            if (save.data.middlescroll)
+            if (FlxG.save.data.middlescroll)
               {
                 opponentStrumline.notes.members[i].x = (opponentStrumline.strumlineNotes.members[opponentStrumline.notes.members[i].noteData.getDirection()].x) + (opponentStrumline.notes.members[i].width / 4);
                 if (ispixel)
@@ -121,11 +118,11 @@ class Middlescroll extends Module {
           {
             if (opponentStrumline.holdNotes.members[i] != null)
             {
-              if(save.data.oppnotes == "Translucent")
+              if(FlxG.save.data.oppnotes == "Translucent")
               {
                 opponentStrumline.holdNotes.members[i].alpha = 0.5;
               }
-            if (save.data.middlescroll)
+            if (FlxG.save.data.middlescroll)
             {
                     opponentStrumline.holdNotes.members[i].x = opponentStrumline.strumlineNotes.members[opponentStrumline.holdNotes.members[i].noteDirection].x + (opponentStrumline.holdNotes.members[i].width * 1.75);
                     if (ispixel)
@@ -148,13 +145,13 @@ class Middlescroll extends Module {
       if (PlayState.instance != null)
       {
 
-        if (save.data.middlescroll)
+        if (FlxG.save.data.middlescroll)
         {
           opponentStrumline = PlayState.instance.opponentStrumline;
           noteHoldCoversthing();
         }
 
-        if (save.data.oppnotes == "Translucent")
+        if (FlxG.save.data.oppnotes == "Translucent")
         {
           opponentStrumline.alpha = 0.5;
           if (opponentStrumline.strumlineNotes != null)

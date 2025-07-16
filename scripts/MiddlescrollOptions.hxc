@@ -2,30 +2,27 @@ import funkin.modding.module.Module;
 import funkin.ui.options.PreferencesMenu;
 import funkin.ui.options.OptionsState;
 import flixel.FlxG;
-import flixel.util.FlxSave;
 import Std;
 
 
 class MiddlescrollOptions extends Module {
 
     var temp = false;
-    var save:FlxSave = new FlxSave();
     function new (){
         super("Middlescroll Options", 21);
-        save = new FlxSave();
-        save.bind("MiddlescrollMod", "JugieNoob");
+        FlxG.save.bind("MiddlescrollMod", "JugieNoob");
 
-        if (save.data.middlescroll == null)
+        if (FlxG.save.data.middlescroll == null)
         {
-            save.data.middlescroll = true;
+            FlxG.save.data.middlescroll = true;
         }
-        if (save.data.movepopups == null)
+        if (FlxG.save.data.movepopups == null)
         {
-            save.data.movepopups = true;
+            FlxG.save.data.movepopups = true;
         }
-        if (save.data.oppnotes == null)
+        if (FlxG.save.data.oppnotes == null)
         {
-            save.data.oppnotes = "Visible";
+            FlxG.save.data.oppnotes = "Visible";
         }
     }
 
@@ -37,17 +34,17 @@ class MiddlescrollOptions extends Module {
             var preferences = event.targetState.optionsCodex.pages.get("preferences");
 
             preferences.createPrefItemCheckbox('Middlescroll', 'Toggles Middlescroll.', function(value:Bool):Void {
-            save.data.middlescroll = value; }, save.data.middlescroll);
+            FlxG.save.data.middlescroll = value; }, FlxG.save.data.middlescroll);
 
             preferences.createPrefItemCheckbox('Move Popups', 'Moves the rating and combo popups.', function(value:Bool):Void {
-            save.data.movepopups = value; }, save.data.movepopups);
+            FlxG.save.data.movepopups = value; }, FlxG.save.data.movepopups);
 
             preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
-                save.data.oppnotes = value;
-            }, save.data.oppnotes);      
+                FlxG.save.data.oppnotes = value;
+            }, FlxG.save.data.oppnotes);      
 
 
-            save.flush();
+            FlxG.save.flush();
         }
     }
 
