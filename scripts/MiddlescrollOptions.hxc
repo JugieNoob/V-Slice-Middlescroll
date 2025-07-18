@@ -7,7 +7,8 @@ import Std;
 
 class MiddlescrollOptions extends Module {
 
-    var temp = false;
+    var ismobile:Bool = false;
+
     function new (){
         super("Middlescroll Options", 21);
         FlxG.save.bind("MiddlescrollMod", "JugieNoob");
@@ -24,11 +25,17 @@ class MiddlescrollOptions extends Module {
         {
             FlxG.save.data.oppnotes = "Visible";
         }
+
     }
 
     function onStateChangeEnd(event)
     {
         super.onStateChangeEnd(event);
+
+        if (FlxG.width > 1280)
+		{
+			ismobile = true;
+		}
         if (Std.isOfType(event.targetState, OptionsState))
         {
             var preferences = event.targetState.optionsCodex.pages.get("preferences");
@@ -39,9 +46,13 @@ class MiddlescrollOptions extends Module {
             preferences.createPrefItemCheckbox('Move Popups', 'Moves the rating and combo popups.', function(value:Bool):Void {
             FlxG.save.data.movepopups = value; }, FlxG.save.data.movepopups);
 
-            preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
-                FlxG.save.data.oppnotes = value;
-            }, FlxG.save.data.oppnotes);      
+            if (!ismobile)
+            {
+                preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
+                    FlxG.save.data.oppnotes = value;
+                }, FlxG.save.data.oppnotes);      
+            }
+       
 
 
             FlxG.save.flush();

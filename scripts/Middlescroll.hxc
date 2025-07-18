@@ -4,213 +4,197 @@ import flixel.FlxG;
 import funkin.play.notes.Strumline;
 import funkin.util.Constants;
 import funkin.play.notes.NoteSprite;
+import flixel.text.FlxText;
 
 class Middlescroll extends Module {
-  var opponentStrumline:FlxSprite;
-  var pixeloffset:Int = 0;
-  var ispixel:Int = false;
-  var forcedmove:Bool = false;
-  function new() {
-    super("Middlescroll");
-    FlxG.save.bind("MiddlescrollMod", "JugieNoob");
-  }
-
-  override function onCountdownStart(event)
-    {
+	var pixeloffset:Int = 0;
+	var ispixel:Int = false;
+	var forcedmove:Bool = false;
 
 
+	var ismobile:Bool = false;
 
-        if (FlxG.save.data.middlescroll)
-        {
-          //Taken from Blazin'
-          var playerStrumline:FlxSprite = PlayState.instance.playerStrumline;
-		      if (playerStrumline != null)
-		      {
-		      	playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
-		      }
+	var playerStrumline:FlxSprite;
+	var opponentStrumline:FlxSprite;
 
-          switch (FlxG.save.data.oppnotes)
-          {
-            default:
-              moveOpponentStrumline();
-            case "Hidden":
-              hideOpponentStrumline();
-          
-
-          }
+	var debugtext:FlxText;
 
 
-          if (FlxG.save.data.movepopups)
-            {
-              // Taken from Blazin'
-              PlayState.instance.comboPopUps.offsets = [480, -50];
-            }
+	function new() {
+		super("Middlescroll");
+		FlxG.save.bind("MiddlescrollMod", "JugieNoob");
 
-        }
-   
+	
+	}
 
+	override function onCountdownStart(event) {
+	
+		super.onCountdownStart(event);
 
+		if (FlxG.width > 1280)
+		{
+			ismobile = true;
+		}
+		
+		if (FlxG.save.data.middlescroll) {
+			setPlayerStrumline();
 
-        super.onCountdownStart(event);
+			switch (FlxG.save.data.oppnotes) {
+				default:
+					moveOpponentStrumline();
+				case "Hidden":
+					hideOpponentStrumline();
+			}
 
-    }
+			if (FlxG.save.data.movepopups) {
+				// Taken from Blazin'
+				PlayState.instance.comboPopUps.offsets = [480, -50];
+			}
+		}
 
-    function moveOpponentStrumline()
-    {
-      opponentStrumline = PlayState.instance.opponentStrumline;
-      opponentStrumline.remove(opponentStrumline.background);
-      trace(opponentStrumline.noteStyle.id);
-      if (opponentStrumline.noteStyle.id == 'pixel')
-      {
-        ispixel = true;
-        pixeloffset = 55;
-      }
-      else
-      {
-        ispixel = false;
-        pixeloffset = 0;
-      }
+		debugtext = new FlxText();
+        debugtext.text = "ismobile: " + ismobile;
+        debugtext.cameras = [PlayState.instance.camHUD];
+        debugtext.size = 18;
+        debugtext.updateHitbox();
+        debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
+        debugtext.zIndex = 1000;
+        PlayState.instance.add(debugtext);
+	}
+		
+	function setPlayerStrumline()
+	{
+		playerStrumline = PlayState.instance.playerStrumline;
 
+		if (!ismobile)
+		{
+			// Taken from Blazin'
+			if (playerStrumline != null) {
+				playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
+			}
+		}
+		else
+		{
+			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
+			for (i in 0...playerStrumline.strumlineNotes.length) {
+				var note = playerStrumline.strumlineNotes.members[i];
 
-      if (opponentStrumline != null)
-      {
-        for (i in 2...opponentStrumline.strumlineNotes.members.length)
-        {
-            opponentStrumline.strumlineNotes.members[i].x = (FlxG.width + ((Constants.STRUMLINE_X_OFFSET - opponentStrumline.strumlineNotes.members[i].width - pixeloffset) * (opponentStrumline.strumlineNotes.members.length - i)) - (Constants.STRUMLINE_X_OFFSET* 1.5)) + (pixeloffset /2);
-        }
-        }
+				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * note.width);
+			}
+		}
+	}
 
+	function moveOpponentStrumline() {
+		// opponentStrumline = PlayState.instance.opponentStrumline;
+		// opponentStrumline.remove(opponentStrumline.background);
+		// trace(opponentStrumline.noteStyle.id);
+		// if (opponentStrumline.noteStyle.id == 'pixel') {
+		// 	ispixel = true;
+		// 	pixeloffset = 55;
+		// } else {
+		// 	ispixel = false;
+		// 	pixeloffset = 0;
+		// }
 
-    }
+		// if (opponentStrumline != null) {
+		// 	for (i in 2...opponentStrumline.strumlineNotes.members.length) {
+		// 		opponentStrumline.strumlineNotes.members[i].x = (FlxG.width
+		// 			+ ((Constants.STRUMLINE_X_OFFSET
+		// 				- opponentStrumline.strumlineNotes.members[i].width - pixeloffset) * (opponentStrumline.strumlineNotes.members.length - i))
+		// 			- (Constants.STRUMLINE_X_OFFSET * 1.5))
+		// 			+ (pixeloffset / 2);
+		// 	}
+		// }
+	}
 
-    function onNoteIncoming(event)
-    {
+	function onNoteIncoming(event) {
+		// opponentStrumline = PlayState.instance.opponentStrumline;
 
-      opponentStrumline = PlayState.instance.opponentStrumline;
+		// // Move incoming notes
+		// for (i in 0...opponentStrumline.notes.length) {
+		// 	if (opponentStrumline.notes.members[i] != null) {
+		// 		if (FlxG.save.data.oppnotes == "Translucent") {
+		// 			opponentStrumline.notes.members[i].alpha = 0.5;
+		// 		}
 
-      // Move incoming notes
-      for (i in 0...opponentStrumline.notes.length)
-        {
-          if (opponentStrumline.notes.members[i] != null)
-          {
+		// 		if (FlxG.save.data.middlescroll) {
+		// 			opponentStrumline.notes.members[i].x = (opponentStrumline.strumlineNotes.members[opponentStrumline.notes.members[i].noteData.getDirection()].x)
+		// 				+ (opponentStrumline.notes.members[i].width / 4);
+		// 			if (ispixel) {
+		// 				opponentStrumline.notes.members[i].x = (opponentStrumline.strumlineNotes.members[opponentStrumline.notes.members[i].noteData.getDirection()].x);
+		// 			}
+		// 		}
+		// 	}
+		// }
 
-            if(FlxG.save.data.oppnotes == "Translucent")
-              {
-                opponentStrumline.notes.members[i].alpha = 0.5;
-              }
-            
-            if (FlxG.save.data.middlescroll)
-              {
-                opponentStrumline.notes.members[i].x = (opponentStrumline.strumlineNotes.members[opponentStrumline.notes.members[i].noteData.getDirection()].x) + (opponentStrumline.notes.members[i].width / 4);
-                if (ispixel)
-                {
-                  opponentStrumline.notes.members[i].x = (opponentStrumline.strumlineNotes.members[opponentStrumline.notes.members[i].noteData.getDirection()].x);
-                }
-              }
+		// for (i in 0...opponentStrumline.holdNotes.length) {
+		// 	if (opponentStrumline.holdNotes.members[i] != null) {
+		// 		if (FlxG.save.data.oppnotes == "Translucent") {
+		// 			opponentStrumline.holdNotes.members[i].alpha = 0.5;
+		// 		}
+		// 		if (FlxG.save.data.middlescroll) {
+		// 			opponentStrumline.holdNotes.members[i].x = opponentStrumline.strumlineNotes.members[opponentStrumline.holdNotes.members[i].noteDirection].x
+		// 				+ (opponentStrumline.holdNotes.members[i].width * 1.75);
+		// 			if (ispixel) {
+		// 				opponentStrumline.holdNotes.members[i].x = opponentStrumline.strumlineNotes.members[opponentStrumline.holdNotes.members[i].noteDirection].x
+		// 					+ (opponentStrumline.holdNotes.members[i].width / 2);
+		// 			}
+		// 		}
+		// 	}
+		// }
+		super.onNoteIncoming(event);
+	}
 
-          }
-          
+	override function onUpdate() {
+		super.onUpdate();
+		// if (PlayState.instance != null) {
+		// 	if (FlxG.save.data.middlescroll) {
+		// 		opponentStrumline = PlayState.instance.opponentStrumline;
+		// 		noteHoldCoversthing();
+		// 	}
 
-        }
+		// 	if (FlxG.save.data.oppnotes == "Translucent") {
+		// 		opponentStrumline.alpha = 0.5;
+		// 		if (opponentStrumline.strumlineNotes != null) {
+		// 			for (i in 0...opponentStrumline.strumlineNotes.members.length) {
+		// 				opponentStrumline.strumlineNotes.members[i].alpha = 0.5;
+		// 			}
+		// 		}
+		// 	}
+		// }
+	}
 
-        
-        for (i in 0...opponentStrumline.holdNotes.length)
-          {
-            if (opponentStrumline.holdNotes.members[i] != null)
-            {
-              if(FlxG.save.data.oppnotes == "Translucent")
-              {
-                opponentStrumline.holdNotes.members[i].alpha = 0.5;
-              }
-            if (FlxG.save.data.middlescroll)
-            {
-                    opponentStrumline.holdNotes.members[i].x = opponentStrumline.strumlineNotes.members[opponentStrumline.holdNotes.members[i].noteDirection].x + (opponentStrumline.holdNotes.members[i].width * 1.75);
-                    if (ispixel)
-                    {
-                      opponentStrumline.holdNotes.members[i].x = opponentStrumline.strumlineNotes.members[opponentStrumline.holdNotes.members[i].noteDirection].x + (opponentStrumline.holdNotes.members[i].width / 2);
-                    }
-            }
-            }
+	function noteHoldCoversthing() {
+		var opponentStrumline = PlayState.instance.opponentStrumline;
 
-          }
-      super.onNoteIncoming(event);
+		if (opponentStrumline.noteHoldCovers != null) {
+			for (i in 0...opponentStrumline.noteHoldCovers.members.length) {
+				var pos = opponentStrumline.noteHoldCovers.members[i].x;
+				switch (pos) {
+					case -62:
+						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[0].x
+							- (opponentStrumline.strumlineNotes.members[i].width / 2);
+					case 50:
+						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[1].x
+							- (opponentStrumline.strumlineNotes.members[i].width / 2);
+					case 162:
+						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[2].x
+							- (opponentStrumline.strumlineNotes.members[i].width / 2);
+					case 274:
+						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[3].x
+							- (opponentStrumline.strumlineNotes.members[i].width / 2);
+				}
+			}
+		}
+	}
 
-
-    }
-
-    override function onUpdate()
-    {
-
-      super.onUpdate();
-      if (PlayState.instance != null)
-      {
-
-        if (FlxG.save.data.middlescroll)
-        {
-          opponentStrumline = PlayState.instance.opponentStrumline;
-          noteHoldCoversthing();
-        }
-
-        if (FlxG.save.data.oppnotes == "Translucent")
-        {
-          opponentStrumline.alpha = 0.5;
-          if (opponentStrumline.strumlineNotes != null)
-          {
-            for (i in 0...opponentStrumline.strumlineNotes.members.length)
-            {
-              opponentStrumline.strumlineNotes.members[i].alpha = 0.5;
-
-            }
-          }
-        }
-
-      }
-
-    }
-
-
-
-    function noteHoldCoversthing()
-    {
-      var opponentStrumline = PlayState.instance.opponentStrumline;
-
-      if (opponentStrumline.noteHoldCovers != null)
-      {
-        for (i in 0...opponentStrumline.noteHoldCovers.members.length)
-          {
-            var pos = opponentStrumline.noteHoldCovers.members[i].x;
-              switch (pos)
-              {
-                case -62:
-                  opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[0].x - (opponentStrumline.strumlineNotes.members[i].width / 2);
-                case 50:
-                  opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[1].x - (opponentStrumline.strumlineNotes.members[i].width / 2);
-                case 162:
-                  opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[2].x - (opponentStrumline.strumlineNotes.members[i].width / 2);
-                case 274:
-                  opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[3].x - (opponentStrumline.strumlineNotes.members[i].width / 2);
-              }
-
-          }
-      }
-      }
-
-
-
-
-
-    // Taken from Blazin'
-    function hideOpponentStrumline()
-	  {
-	  	var opponentStrumline:FlxSprite = PlayState.instance.opponentStrumline;
-	  	if (opponentStrumline != null)
-	  	{
-	  		for (arrow in opponentStrumline.members)
-	  		{
-	  			arrow.visible = false;
-	  		}
-	  	}
-	  }
-
-
+	// Taken from Blazin'
+	function hideOpponentStrumline() {
+		var opponentStrumline:FlxSprite = PlayState.instance.opponentStrumline;
+		if (opponentStrumline != null) {
+			for (arrow in opponentStrumline.members) {
+				arrow.visible = false;
+			}
+		}
+	}
 }
