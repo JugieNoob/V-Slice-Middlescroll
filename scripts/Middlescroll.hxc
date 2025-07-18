@@ -31,7 +31,7 @@ class Middlescroll extends Module {
 	
 		super.onCountdownStart(event);
 
-		if (FlxG.width > 1280)
+		if (FlxG.width == 1280)
 		{
 			ismobile = true;
 		}
@@ -61,7 +61,7 @@ class Middlescroll extends Module {
         debugtext.zIndex = 1000;
         PlayState.instance.add(debugtext);
 	}
-		
+
 	function setPlayerStrumline()
 	{
 		playerStrumline = PlayState.instance.playerStrumline;
@@ -108,6 +108,21 @@ class Middlescroll extends Module {
 	}
 
 	function onNoteIncoming(event) {
+
+		if (ismobile)
+		{
+			for (note in playerStrumline.notes)
+			{
+				note.x = playerStrumline.strumlineNotes.members[note.direction].x + (ispixel ? 0 : note.width / 4);			
+			}
+
+			for (hold in playerStrumline.holdNotes)
+			{
+				var strumNote = playerStrumline.strumlineNotes.members[hold.noteDirection];
+				hold.x = strumNote.x + (strumNote.width / 2) - (ispixel ? 0 : hold.width / 2);
+
+			}
+		}
 		// opponentStrumline = PlayState.instance.opponentStrumline;
 
 		// // Move incoming notes
