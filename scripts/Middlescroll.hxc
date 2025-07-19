@@ -16,10 +16,6 @@ class Middlescroll extends Module {
 	var playerStrumline:FlxSprite;
 	var opponentStrumline:FlxSprite;
 
-	var debugtext:FlxText;
-
-
-
 	function new() {
 		super("Middlescroll");
 	}
@@ -45,7 +41,7 @@ class Middlescroll extends Module {
 		if (FlxG.width > 1280)
 		{
 			isMobile = true;
-			hideOpponentStrumline();
+			hideOpponentStrumline();			
 		}
 	
 
@@ -69,14 +65,6 @@ class Middlescroll extends Module {
 				PlayState.instance.comboPopUps.offsets = [480, -50];
 			}
 
-		debugtext = new FlxText();
-        debugtext.text = "a";
-        debugtext.cameras = [PlayState.instance.camHUD];
-        debugtext.size = 18;
-        debugtext.updateHitbox();
-        debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
-        debugtext.zIndex = 1000;
-        // PlayState.instance.add(debugtext);
 
 		super.onCountdownStart(event);
 
@@ -121,6 +109,7 @@ class Middlescroll extends Module {
 				playerStrumline.noteHoldCovers.visible = true;
 				playerStrumline.noteSplashes.visible = true;
 		}
+	
 
 	}
 
@@ -241,6 +230,10 @@ class Middlescroll extends Module {
 				if (isMobile)
 				{
 					updateNoteCovers(playerStrumline);
+					playerStrumline.background.scale.x = playerStrumline.strumlineNotes.width / 2;
+					playerStrumline.background.updateHitbox();
+					playerStrumline.background.x = playerStrumline.strumlineNotes.members[0].x;
+
 				}
 				else
 				{
@@ -257,10 +250,12 @@ class Middlescroll extends Module {
 					}
 				}
 			}
+
+
 		}
 		super.onUpdate();
 
-
+	
 	}
 
 	function updateNoteCovers(strumline)
