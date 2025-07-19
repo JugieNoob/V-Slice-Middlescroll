@@ -37,7 +37,7 @@ class Middlescroll extends Module {
 
 		if (playerStrumline.noteStyle.id == 'pixel') {
 			ispixel = true;
-			pixeloffset = 55;
+			pixeloffset = 56;
 		} 
 		else 
 		{
@@ -317,22 +317,35 @@ class Middlescroll extends Module {
 		{
 			if (StringTools.contains(cover.glow.animation.name, "Purple"))
 			{
-				cover.glow.x = playerStrumline.strumlineNotes.members[0].x - (ispixel ? 0 : playerStrumline.strumlineNotes.members[0].width/ 2);
+				cover.glow.x = playerStrumline.strumlineNotes.members[0].x - (playerStrumline.strumlineNotes.members[0].width / 2);
+				if (ispixel)
+				{
+					cover.glow.x = -pixeloffset + (playerStrumline.strumlineNotes.members[0].width / 5);
+				}
 			}
 			else if (StringTools.contains(cover.glow.animation.name, "Blue"))
 			{
-				cover.glow.x = playerStrumline.strumlineNotes.members[1].x - (ispixel ? 0 : playerStrumline.strumlineNotes.members[1].width/ 2);
-
+				cover.glow.x = playerStrumline.strumlineNotes.members[1].x - (playerStrumline.strumlineNotes.members[1].width/ 2);
+				if (ispixel)
+				{
+					cover.glow.x = -pixeloffset + (playerStrumline.strumlineNotes.members[1].width * 1.75);
+				}
 			}
 			else if (StringTools.contains(cover.glow.animation.name, "Green"))
 			{
-				cover.glow.x = playerStrumline.strumlineNotes.members[2].x - (ispixel ? 0 : playerStrumline.strumlineNotes.members[2].width/ 2);
-
+				cover.glow.x = playerStrumline.strumlineNotes.members[2].x - (playerStrumline.strumlineNotes.members[2].width / 2);
+				if (ispixel)
+				{
+					cover.glow.x = -pixeloffset + (playerStrumline.strumlineNotes.members[1].width * 3.3);
+				}
 			}
 			else if (StringTools.contains(cover.glow.animation.name, "Red"))
 			{
-				cover.glow.x = playerStrumline.strumlineNotes.members[3].x - (ispixel ? 0 : playerStrumline.strumlineNotes.members[3].width / 2);
-
+				cover.glow.x = playerStrumline.strumlineNotes.members[3].x - (playerStrumline.strumlineNotes.members[3].width / 2);
+				if (ispixel)
+				{
+					cover.glow.x = -pixeloffset + (playerStrumline.strumlineNotes.members[1].width * 4.8);
+				}
 			}
 		}
 		
