@@ -61,11 +61,13 @@ class Middlescroll extends Module {
 					hideOpponentStrumline();
 			}
 
-			if (FlxG.save.data.movepopups) {
+	
+		}
+
+		if (FlxG.save.data.movepopups) {
 				// Taken from Blazin'
 				PlayState.instance.comboPopUps.offsets = [480, -50];
 			}
-		}
 
 		debugtext = new FlxText();
         debugtext.text = "a";
