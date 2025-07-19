@@ -45,11 +45,11 @@ class Middlescroll extends Module {
 			pixeloffset = 0;
 		}
 
-		// if (FlxG.width > 1280)
-		// {
+		if (FlxG.width > 1280)
+		{
 			isMobile = true;
 			hideOpponentStrumline();
-		// }
+		}
 	
 
 		
@@ -262,10 +262,14 @@ class Middlescroll extends Module {
 
 			if (FlxG.save.data.middlescroll) {
 				// noteHoldCoversthing();
-				updateOpponentNoteCovers();
+				// updateOpponentNoteCovers();
 				if (isMobile)
 				{
-					updatePlayerNoteCovers();
+					updateNoteCovers(playerStrumline);
+				}
+				else
+				{
+					updateNoteCovers(opponentStrumline);
 				}
 			}
 
@@ -284,37 +288,13 @@ class Middlescroll extends Module {
 
 
 	}
-	
-	function updateOpponentNoteCovers()
-	{
-		for (cover in opponentStrumline.noteHoldCovers)
-		{
-			if (StringTools.contains(cover.glow.animation.name, "Purple"))
-			{
-				cover.x = opponentStrumline.strumlineNotes.members[0].x - (opponentStrumline.strumlineNotes.members[0].width / 2);
-			}
-			else if (StringTools.contains(cover.glow.animation.name, "Blue"))
-			{
-				cover.x = opponentStrumline.strumlineNotes.members[1].x - (opponentStrumline.strumlineNotes.members[1].width / 2);
-			}
-			else if (StringTools.contains(cover.glow.animation.name, "Green"))
-			{
-				
-				cover.x = opponentStrumline.strumlineNotes.members[2].x - (opponentStrumline.strumlineNotes.members[2].width / 2);
-				
-			}
-			else if (StringTools.contains(cover.glow.animation.name, "Red"))
-			{
-				cover.x = opponentStrumline.strumlineNotes.members[3].x - (opponentStrumline.strumlineNotes.members[3].width / 2);	
-			}
-		}
-	}
-	function updatePlayerNoteCovers()
+
+	function updateNoteCovers(strumline)
 	{
 		var direction = 0;
-		if (playerStrumline.noteHoldCovers != null)
+		if (strumline.noteHoldCovers != null)
 		{
-			for (cover in playerStrumline.noteHoldCovers)
+			for (cover in strumline.noteHoldCovers)
 			{
 			
 				if (StringTools.contains(cover.glow.animation.name, "Blue"))
@@ -334,7 +314,7 @@ class Middlescroll extends Module {
 					direction = 0;
 				}
 
-				var note = playerStrumline.strumlineNotes.members[direction];
+				var note = strumline.strumlineNotes.members[direction];
 				cover.glow.x = note.x - note.width / 2 - (pixeloffset * 6);
 			}
 		}
