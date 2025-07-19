@@ -4,10 +4,9 @@ import funkin.ui.options.OptionsState;
 import flixel.FlxG;
 import Std;
 
-
 class MiddlescrollOptions extends Module {
-
-    var ismobile:Bool = false;
+    
+    var isMobile:Bool = false;
 
     function new (){
         super("Middlescroll Options", 21);
@@ -24,6 +23,10 @@ class MiddlescrollOptions extends Module {
         {
             FlxG.save.data.oppnotes = "Visible";
         }
+        if (FlxG.save.data.noteEffects == null)
+        {
+            FlxG.save.data.noteEffects = "All";
+        }
 
     }
 
@@ -33,7 +36,7 @@ class MiddlescrollOptions extends Module {
 
         if (FlxG.width > 1280)
 		{
-			ismobile = true;
+			isMobile = true;
 		}
         if (Std.isOfType(event.targetState, OptionsState))
         {
@@ -45,7 +48,7 @@ class MiddlescrollOptions extends Module {
             preferences.createPrefItemCheckbox('Move Popups', 'Moves the rating and combo popups.', function(value:Bool):Void {
             FlxG.save.data.movepopups = value; }, FlxG.save.data.movepopups);
 
-            if (!ismobile)
+            if (!isMobile)
             {
                 preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
                     FlxG.save.data.oppnotes = value;
@@ -53,6 +56,9 @@ class MiddlescrollOptions extends Module {
             }
        
 
+            preferences.createPrefItemEnum('Note Effects', 'Toggles Note Splashes and Note Hold Covers', ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
+                    FlxG.save.data.noteEffects = value;
+                }, FlxG.save.data.noteEffects);      
 
             FlxG.save.flush();
         }

@@ -12,7 +12,7 @@ class Middlescroll extends Module {
 	var forcedmove:Bool = false;
 
 
-	var ismobile:Bool = false;
+	var isMobile:Bool = false;
 
 	var playerStrumline:FlxSprite;
 	var opponentStrumline:FlxSprite;
@@ -45,12 +45,16 @@ class Middlescroll extends Module {
 			pixeloffset = 0;
 		}
 
-		if (FlxG.width >= 1280)
+		if (FlxG.width > 1280)
 		{
-			ismobile = true;
-			hideOpponentStrumline();
+			isMobile = true;
 		}
 		
+		if (isMobile)
+		{
+			hideOpponentStrumline();
+		}
+
 		if (FlxG.save.data.middlescroll) {
 			setPlayerStrumline();
 
@@ -68,7 +72,7 @@ class Middlescroll extends Module {
 		}
 
 		debugtext = new FlxText();
-        debugtext.text = "ismobile: " + ismobile + "ispixel: " + ispixel + "notestyle: " + playerStrumline.noteStyle.id;
+        debugtext.text = FlxG.save.data.noteEffects;
         debugtext.cameras = [PlayState.instance.camHUD];
         debugtext.size = 18;
         debugtext.updateHitbox();
@@ -80,7 +84,7 @@ class Middlescroll extends Module {
 	function setPlayerStrumline()
 	{
 
-		if (!ismobile)
+		if (!isMobile)
 		{
 			// Taken from Blazin'
 			if (playerStrumline != null) {
@@ -94,11 +98,30 @@ class Middlescroll extends Module {
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
 
-				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * note.width);
+				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + pixeloffset)) - pixeloffset * 1.5;
 			}
+			playerStrumline.noteHoldCovers.visible = false;
+			playerStrumline.noteSplashes.visible = false;
 
-			// playerStrumline.noteHoldCovers.visible = false;
 
+		
+			
+		}
+		
+		switch (FlxG.save.data.noteEffects)
+		{
+			case "None":
+				playerStrumline.noteHoldCovers.visible = false;
+				playerStrumline.noteSplashes.visible = false;
+			case "Splashes Only":
+				playerStrumline.noteHoldCovers.visible = false;
+				playerStrumline.noteSplashes.visible = true;
+			case "Hold Covers Only":
+				playerStrumline.noteHoldCovers.visible = true;
+				playerStrumline.noteSplashes.visible = false;
+			case "All":
+				playerStrumline.noteHoldCovers.visible = true;
+				playerStrumline.noteSplashes.visible = true;
 		}
 	}
 
@@ -123,7 +146,7 @@ class Middlescroll extends Module {
 	function onNoteIncoming(event) {
 		super.onNoteIncoming(event);
 
-		if (ismobile)
+		if (isMobile)
 		{
 			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
@@ -135,7 +158,7 @@ class Middlescroll extends Module {
 			for (hold in playerStrumline.holdNotes)
 			{
 				var strumNote = playerStrumline.strumlineNotes.members[hold.noteDirection];
-				hold.x = strumNote.x + (strumNote.width / 2) - (ispixel ? 0 : hold.width / 2) + pixeloffset;
+				hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);
 			}
 
 		
@@ -182,19 +205,20 @@ class Middlescroll extends Module {
 
 	override function onNoteHit(event)
 	{
-		// debugtext.text = event.doesNotesplash;
 		super.onNoteHit(event);
 
-
-		if (event.doesNotesplash)
+		
+	
+		if (event.doesNotesplash && isMobile)
 		{
 			event.doesNotesplash = false;
 			playerStrumline.playNoteSplash(event.note.direction);
 
 			for (splash in playerStrumline.noteSplashes)
 			{
-				splash.x = event.note.x;
+				splash.x = event.note.x + pixeloffset;
 			}
+			
 		}
 		if (!event.note.noteData.getMustHitNote() && event.note.holdNoteSprite != null)
 		{
@@ -204,7 +228,6 @@ class Middlescroll extends Module {
 		if (event.note.noteData.getMustHitNote() && event.note.holdNoteSprite != null)
 		{
 			lastNoteHit = event.note;
-
 		}
 	}
 
@@ -217,7 +240,7 @@ class Middlescroll extends Module {
 				opponentStrumline = PlayState.instance.opponentStrumline;
 				// noteHoldCoversthing();
 				updateOpponentNoteCovers();
-				if (ismobile)
+				if (isMobile)
 				{
 					updatePlayerNoteCovers();
 				}
@@ -238,16 +261,25 @@ class Middlescroll extends Module {
 	
 	function updateOpponentNoteCovers()
 	{
-		if (lastOppNoteHit != null)
-		{
-			var hold = lastOppNoteHit.holdNoteSprite;
-			if (hold.cover != null)
-			{
-				hold.cover.x = lastOppNoteHit.x - (lastOppNoteHit.width / 2);
+		if (opponentStrumline.noteHoldCovers != null) {
+			for (i in 0...opponentStrumline.noteHoldCovers.members.length) {
+				var pos = opponentStrumline.noteHoldCovers.members[i].x;
+				switch (pos) {
+					case -62:
+						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[0].x
+							- (opponentStrumline.strumlineNotes.members[i].width / 2);
+					case 50:
+						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[1].x
+							- (opponentStrumline.strumlineNotes.members[i].width / 2);
+					case 162:
+						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[2].x
+							- (opponentStrumline.strumlineNotes.members[i].width / 2);
+					case 274:
+						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[3].x
+							- (opponentStrumline.strumlineNotes.members[i].width / 2);
+				}
 			}
 		}
-	
-	}
 
 	function updatePlayerNoteCovers()
 	{
@@ -256,9 +288,10 @@ class Middlescroll extends Module {
 			var hold = lastNoteHit.holdNoteSprite;
 			if (hold.cover != null)
 			{
-				hold.cover.x = playerStrumline.x + (lastNoteHit.x - lastNoteHit.width);
+				hold.cover.x = playerStrumline.x + (ispixel ? 0 : lastNoteHit.x - lastNoteHit.width);
 			}
 		}
+		
 	
 	}
 	// Taken from Blazin'
@@ -266,8 +299,13 @@ class Middlescroll extends Module {
 		var opponentStrumline:FlxSprite = PlayState.instance.opponentStrumline;
 		if (opponentStrumline != null) {
 			for (arrow in opponentStrumline.members) {
-				arrow.visible = false;
+				if (arrow != null)
+				{
+					arrow.visible = false;
+				}
 			}
 		}
 	}
+}
+
 }
