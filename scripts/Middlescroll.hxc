@@ -31,6 +31,19 @@ class Middlescroll extends Module {
 	
 		super.onCountdownStart(event);
 
+		playerStrumline = PlayState.instance.playerStrumline;
+
+
+		if (playerStrumline.noteStyle.id == 'pixel') {
+			ispixel = true;
+			pixeloffset = 55;
+		} 
+		else 
+		{
+			ispixel = false;
+			pixeloffset = 0;
+		}
+
 		if (FlxG.width == 1280)
 		{
 			ismobile = true;
@@ -53,7 +66,7 @@ class Middlescroll extends Module {
 		}
 
 		debugtext = new FlxText();
-        debugtext.text = "ismobile: " + ismobile;
+        debugtext.text = "ismobile: " + ismobile + "ispixel: " + ispixel + "notestyle: " + playerStrumline.noteStyle.id;
         debugtext.cameras = [PlayState.instance.camHUD];
         debugtext.size = 18;
         debugtext.updateHitbox();
@@ -64,7 +77,6 @@ class Middlescroll extends Module {
 
 	function setPlayerStrumline()
 	{
-		playerStrumline = PlayState.instance.playerStrumline;
 
 		if (!ismobile)
 		{
@@ -81,6 +93,7 @@ class Middlescroll extends Module {
 
 				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * note.width);
 			}
+
 		}
 	}
 
@@ -88,13 +101,7 @@ class Middlescroll extends Module {
 		// opponentStrumline = PlayState.instance.opponentStrumline;
 		// opponentStrumline.remove(opponentStrumline.background);
 		// trace(opponentStrumline.noteStyle.id);
-		// if (opponentStrumline.noteStyle.id == 'pixel') {
-		// 	ispixel = true;
-		// 	pixeloffset = 55;
-		// } else {
-		// 	ispixel = false;
-		// 	pixeloffset = 0;
-		// }
+
 
 		// if (opponentStrumline != null) {
 		// 	for (i in 2...opponentStrumline.strumlineNotes.members.length) {
@@ -107,10 +114,14 @@ class Middlescroll extends Module {
 		// }
 	}
 
+
 	function onNoteIncoming(event) {
+		super.onNoteIncoming(event);
 
 		if (ismobile)
 		{
+			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
+
 			for (note in playerStrumline.notes)
 			{
 				note.x = playerStrumline.strumlineNotes.members[note.direction].x + (ispixel ? 0 : note.width / 4);			
@@ -119,9 +130,14 @@ class Middlescroll extends Module {
 			for (hold in playerStrumline.holdNotes)
 			{
 				var strumNote = playerStrumline.strumlineNotes.members[hold.noteDirection];
-				hold.x = strumNote.x + (strumNote.width / 2) - (ispixel ? 0 : hold.width / 2);
+				hold.x = strumNote.x + (strumNote.width / 2) - (ispixel ? 0 : hold.width / 2) + pixeloffset;
 
 			}
+
+		
+
+			// playerStrumline.noteSplashes.x = playerStrumline.strumlineNotes.x;
+
 		}
 		// opponentStrumline = PlayState.instance.opponentStrumline;
 
@@ -157,11 +173,50 @@ class Middlescroll extends Module {
 		// 		}
 		// 	}
 		// }
-		super.onNoteIncoming(event);
+	}
+
+	override function onNoteHit(event)
+	{
+		// debugtext.text = event.doesNotesplash;
+
+		if (event.doesNotesplash)
+		{
+			event.doesNotesplash = false;
+			playerStrumline.playNoteSplash(event.note.direction);
+
+			for (splash in playerStrumline.noteSplashes)
+			{
+				splash.x = event.note.x;
+			}
+		}
+
+
+		super.onNoteHit(event);
+
+		if (event.note.noteData.getMustHitNote() && event.note.noteData.isHoldNote)
+		{
+			playerStrumline.noteHoldCovers[playerStrumline.noteHoldCovers.length - 1].x = playerStrumline.strumlineNotes.members[hold.noteDirection].x;
+		
+		}
+		
+
 	}
 
 	override function onUpdate() {
 		super.onUpdate();
+
+		// if (PlayState.instance != null)
+		// {
+		
+		// 	if (playerStrumline.noteHoldCovers != null) {
+		// 		for (cover in playerStrumline.noteHoldCovers) {
+
+		// 			// cover.x = cover.holdNote.x - (cover.holdNote.width / 2); //- (playerStrumline.strumlineNotes.members[cover.holdNote.noteDirection].width / 2);	
+		// 			cover.x = 0;
+		// 		}
+		// }
+			
+		// }
 		// if (PlayState.instance != null) {
 		// 	if (FlxG.save.data.middlescroll) {
 		// 		opponentStrumline = PlayState.instance.opponentStrumline;
@@ -201,6 +256,11 @@ class Middlescroll extends Module {
 				}
 			}
 		}
+	}
+
+	function updateHoldNoteCover()
+	{
+
 	}
 
 	// Taken from Blazin'
