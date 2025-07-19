@@ -11,7 +11,6 @@ class MiddlescrollOptions extends Module {
 
     function new (){
         super("Middlescroll Options", 21);
-        FlxG.save.bind("MiddlescrollMod", "JugieNoob");
 
         if (FlxG.save.data.middlescroll == null)
         {

@@ -19,10 +19,11 @@ class Middlescroll extends Module {
 
 	var debugtext:FlxText;
 
+	var lastNoteHit = null;
+	var lastOppNoteHit = null;
 
 	function new() {
 		super("Middlescroll");
-		FlxG.save.bind("MiddlescrollMod", "JugieNoob");
 
 	
 	}
@@ -44,9 +45,10 @@ class Middlescroll extends Module {
 			pixeloffset = 0;
 		}
 
-		if (FlxG.width == 1280)
+		if (FlxG.width >= 1280)
 		{
 			ismobile = true;
+			hideOpponentStrumline();
 		}
 		
 		if (FlxG.save.data.middlescroll) {
@@ -88,30 +90,33 @@ class Middlescroll extends Module {
 		else
 		{
 			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
+			// playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
 
 				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * note.width);
 			}
 
+			// playerStrumline.noteHoldCovers.visible = false;
+
 		}
 	}
 
 	function moveOpponentStrumline() {
-		// opponentStrumline = PlayState.instance.opponentStrumline;
-		// opponentStrumline.remove(opponentStrumline.background);
-		// trace(opponentStrumline.noteStyle.id);
+		opponentStrumline = PlayState.instance.opponentStrumline;
+		opponentStrumline.remove(opponentStrumline.background);
+		trace(opponentStrumline.noteStyle.id);
 
 
-		// if (opponentStrumline != null) {
-		// 	for (i in 2...opponentStrumline.strumlineNotes.members.length) {
-		// 		opponentStrumline.strumlineNotes.members[i].x = (FlxG.width
-		// 			+ ((Constants.STRUMLINE_X_OFFSET
-		// 				- opponentStrumline.strumlineNotes.members[i].width - pixeloffset) * (opponentStrumline.strumlineNotes.members.length - i))
-		// 			- (Constants.STRUMLINE_X_OFFSET * 1.5))
-		// 			+ (pixeloffset / 2);
-		// 	}
-		// }
+		if (opponentStrumline != null) {
+			for (i in 2...opponentStrumline.strumlineNotes.members.length) {
+				opponentStrumline.strumlineNotes.members[i].x = (FlxG.width
+					+ ((Constants.STRUMLINE_X_OFFSET
+						- opponentStrumline.strumlineNotes.members[i].width - pixeloffset) * (opponentStrumline.strumlineNotes.members.length - i))
+					- (Constants.STRUMLINE_X_OFFSET * 1.5))
+					+ (pixeloffset / 2);
+			}
+		}
 	}
 
 
@@ -131,53 +136,55 @@ class Middlescroll extends Module {
 			{
 				var strumNote = playerStrumline.strumlineNotes.members[hold.noteDirection];
 				hold.x = strumNote.x + (strumNote.width / 2) - (ispixel ? 0 : hold.width / 2) + pixeloffset;
-
 			}
 
 		
-
-			// playerStrumline.noteSplashes.x = playerStrumline.strumlineNotes.x;
-
 		}
-		// opponentStrumline = PlayState.instance.opponentStrumline;
+		else
+		{
+			opponentStrumline = PlayState.instance.opponentStrumline;
 
-		// // Move incoming notes
-		// for (i in 0...opponentStrumline.notes.length) {
-		// 	if (opponentStrumline.notes.members[i] != null) {
-		// 		if (FlxG.save.data.oppnotes == "Translucent") {
-		// 			opponentStrumline.notes.members[i].alpha = 0.5;
-		// 		}
+			// Move incoming notes
+			for (i in 0...opponentStrumline.notes.length) {
+				if (opponentStrumline.notes.members[i] != null) {
+					if (FlxG.save.data.oppnotes == "Translucent") {
+						opponentStrumline.notes.members[i].alpha = 0.5;
+					}
 
-		// 		if (FlxG.save.data.middlescroll) {
-		// 			opponentStrumline.notes.members[i].x = (opponentStrumline.strumlineNotes.members[opponentStrumline.notes.members[i].noteData.getDirection()].x)
-		// 				+ (opponentStrumline.notes.members[i].width / 4);
-		// 			if (ispixel) {
-		// 				opponentStrumline.notes.members[i].x = (opponentStrumline.strumlineNotes.members[opponentStrumline.notes.members[i].noteData.getDirection()].x);
-		// 			}
-		// 		}
-		// 	}
-		// }
+					if (FlxG.save.data.middlescroll) {
+						opponentStrumline.notes.members[i].x = (opponentStrumline.strumlineNotes.members[opponentStrumline.notes.members[i].noteData.getDirection()].x)
+							+ (opponentStrumline.notes.members[i].width / 4);
+						if (ispixel) {
+							opponentStrumline.notes.members[i].x = (opponentStrumline.strumlineNotes.members[opponentStrumline.notes.members[i].noteData.getDirection()].x);
+						}
+					}
+				}
+			}
 
-		// for (i in 0...opponentStrumline.holdNotes.length) {
-		// 	if (opponentStrumline.holdNotes.members[i] != null) {
-		// 		if (FlxG.save.data.oppnotes == "Translucent") {
-		// 			opponentStrumline.holdNotes.members[i].alpha = 0.5;
-		// 		}
-		// 		if (FlxG.save.data.middlescroll) {
-		// 			opponentStrumline.holdNotes.members[i].x = opponentStrumline.strumlineNotes.members[opponentStrumline.holdNotes.members[i].noteDirection].x
-		// 				+ (opponentStrumline.holdNotes.members[i].width * 1.75);
-		// 			if (ispixel) {
-		// 				opponentStrumline.holdNotes.members[i].x = opponentStrumline.strumlineNotes.members[opponentStrumline.holdNotes.members[i].noteDirection].x
-		// 					+ (opponentStrumline.holdNotes.members[i].width / 2);
-		// 			}
-		// 		}
-		// 	}
-		// }
+			for (i in 0...opponentStrumline.holdNotes.length) {
+				if (opponentStrumline.holdNotes.members[i] != null) {
+					if (FlxG.save.data.oppnotes == "Translucent") {
+						opponentStrumline.holdNotes.members[i].alpha = 0.5;
+					}
+					if (FlxG.save.data.middlescroll) {
+						opponentStrumline.holdNotes.members[i].x = opponentStrumline.strumlineNotes.members[opponentStrumline.holdNotes.members[i].noteDirection].x
+							+ (opponentStrumline.holdNotes.members[i].width * 1.75);
+						if (ispixel) {
+							opponentStrumline.holdNotes.members[i].x = opponentStrumline.strumlineNotes.members[opponentStrumline.holdNotes.members[i].noteDirection].x
+								+ (opponentStrumline.holdNotes.members[i].width / 2);
+						}
+					}
+				}
+			}
+			}
+		
 	}
 
 	override function onNoteHit(event)
 	{
 		// debugtext.text = event.doesNotesplash;
+		super.onNoteHit(event);
+
 
 		if (event.doesNotesplash)
 		{
@@ -189,80 +196,71 @@ class Middlescroll extends Module {
 				splash.x = event.note.x;
 			}
 		}
-
-
-		super.onNoteHit(event);
-
-		if (event.note.noteData.getMustHitNote() && event.note.noteData.isHoldNote)
+		if (!event.note.noteData.getMustHitNote() && event.note.holdNoteSprite != null)
 		{
-			playerStrumline.noteHoldCovers[playerStrumline.noteHoldCovers.length - 1].x = playerStrumline.strumlineNotes.members[hold.noteDirection].x;
-		
+			lastOppNoteHit = event.note;
 		}
-		
 
+		if (event.note.noteData.getMustHitNote() && event.note.holdNoteSprite != null)
+		{
+			lastNoteHit = event.note;
+
+		}
 	}
 
 	override function onUpdate() {
-		super.onUpdate();
-
-		// if (PlayState.instance != null)
-		// {
-		
-		// 	if (playerStrumline.noteHoldCovers != null) {
-		// 		for (cover in playerStrumline.noteHoldCovers) {
-
-		// 			// cover.x = cover.holdNote.x - (cover.holdNote.width / 2); //- (playerStrumline.strumlineNotes.members[cover.holdNote.noteDirection].width / 2);	
-		// 			cover.x = 0;
-		// 		}
-		// }
+	
 			
-		// }
-		// if (PlayState.instance != null) {
-		// 	if (FlxG.save.data.middlescroll) {
-		// 		opponentStrumline = PlayState.instance.opponentStrumline;
-		// 		noteHoldCoversthing();
-		// 	}
+	
+		if (PlayState.instance != null) {
+			if (FlxG.save.data.middlescroll) {
+				opponentStrumline = PlayState.instance.opponentStrumline;
+				// noteHoldCoversthing();
+				updateOpponentNoteCovers();
+				if (ismobile)
+				{
+					updatePlayerNoteCovers();
+				}
+			}
 
-		// 	if (FlxG.save.data.oppnotes == "Translucent") {
-		// 		opponentStrumline.alpha = 0.5;
-		// 		if (opponentStrumline.strumlineNotes != null) {
-		// 			for (i in 0...opponentStrumline.strumlineNotes.members.length) {
-		// 				opponentStrumline.strumlineNotes.members[i].alpha = 0.5;
-		// 			}
-		// 		}
-		// 	}
-		// }
-	}
-
-	function noteHoldCoversthing() {
-		var opponentStrumline = PlayState.instance.opponentStrumline;
-
-		if (opponentStrumline.noteHoldCovers != null) {
-			for (i in 0...opponentStrumline.noteHoldCovers.members.length) {
-				var pos = opponentStrumline.noteHoldCovers.members[i].x;
-				switch (pos) {
-					case -62:
-						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[0].x
-							- (opponentStrumline.strumlineNotes.members[i].width / 2);
-					case 50:
-						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[1].x
-							- (opponentStrumline.strumlineNotes.members[i].width / 2);
-					case 162:
-						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[2].x
-							- (opponentStrumline.strumlineNotes.members[i].width / 2);
-					case 274:
-						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[3].x
-							- (opponentStrumline.strumlineNotes.members[i].width / 2);
+			if (FlxG.save.data.oppnotes == "Translucent") {
+				opponentStrumline.alpha = 0.5;
+				if (opponentStrumline.strumlineNotes != null) {
+					for (i in 0...opponentStrumline.strumlineNotes.members.length) {
+						opponentStrumline.strumlineNotes.members[i].alpha = 0.5;
+					}
 				}
 			}
 		}
-	}
+		super.onUpdate();
 
-	function updateHoldNoteCover()
+	}
+	
+	function updateOpponentNoteCovers()
 	{
-
+		if (lastOppNoteHit != null)
+		{
+			var hold = lastOppNoteHit.holdNoteSprite;
+			if (hold.cover != null)
+			{
+				hold.cover.x = lastOppNoteHit.x - (lastOppNoteHit.width / 2);
+			}
+		}
+	
 	}
 
+	function updatePlayerNoteCovers()
+	{
+		if (lastNoteHit != null)
+		{
+			var hold = lastNoteHit.holdNoteSprite;
+			if (hold.cover != null)
+			{
+				hold.cover.x = playerStrumline.x + (lastNoteHit.x - lastNoteHit.width);
+			}
+		}
+	
+	}
 	// Taken from Blazin'
 	function hideOpponentStrumline() {
 		var opponentStrumline:FlxSprite = PlayState.instance.opponentStrumline;
