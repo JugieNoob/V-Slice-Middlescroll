@@ -38,11 +38,11 @@ class Middlescroll extends Module {
 			pixeloffset = 0;
 		}
 
-		// if (FlxG.width > 1280)
-		// {
+		if (FlxG.width > 1280)
+		{
 			isMobile = true;
 			hideOpponentStrumline();			
-		// }
+		}
 	
 
 		
