@@ -45,11 +45,11 @@ class Middlescroll extends Module {
 			pixeloffset = 0;
 		}
 
-		// if (FlxG.width > 1280)
-		// {
+		if (FlxG.width > 1280)
+		{
 			isMobile = true;
 			hideOpponentStrumline();
-		// }
+		}
 	
 
 		
@@ -252,7 +252,6 @@ class Middlescroll extends Module {
 	
 		if (PlayState.instance != null) {
 			if (FlxG.save.data.middlescroll) {
-				opponentStrumline = PlayState.instance.opponentStrumline;
 				// noteHoldCoversthing();
 				updateOpponentNoteCovers();
 				if (isMobile)
@@ -279,72 +278,74 @@ class Middlescroll extends Module {
 	
 	function updateOpponentNoteCovers()
 	{
-		if (opponentStrumline.noteHoldCovers != null) {
-			for (i in 0...opponentStrumline.noteHoldCovers.members.length) {
-				var pos = opponentStrumline.noteHoldCovers.members[i].x;
-				switch (pos) {
-					case -62:
-						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[0].x
-							- (opponentStrumline.strumlineNotes.members[i].width / 2);
-					case 50:
-						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[1].x
-							- (opponentStrumline.strumlineNotes.members[i].width / 2);
-					case 162:
-						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[2].x
-							- (opponentStrumline.strumlineNotes.members[i].width / 2);
-					case 274:
-						opponentStrumline.noteHoldCovers.members[i].x = opponentStrumline.strumlineNotes.members[3].x
-							- (opponentStrumline.strumlineNotes.members[i].width / 2);
-				}
+		for (cover in opponentStrumline.noteHoldCovers)
+		{
+			if (StringTools.contains(cover.glow.animation.name, "Purple"))
+			{
+				cover.x = opponentStrumline.strumlineNotes.members[0].x - (opponentStrumline.strumlineNotes.members[0].width / 2);
+			}
+			else if (StringTools.contains(cover.glow.animation.name, "Blue"))
+			{
+				cover.x = opponentStrumline.strumlineNotes.members[1].x - (opponentStrumline.strumlineNotes.members[1].width / 2);
+			}
+			else if (StringTools.contains(cover.glow.animation.name, "Green"))
+			{
+				
+				cover.x = opponentStrumline.strumlineNotes.members[2].x - (opponentStrumline.strumlineNotes.members[2].width / 2);
+				
+			}
+			else if (StringTools.contains(cover.glow.animation.name, "Red"))
+			{
+				cover.x = opponentStrumline.strumlineNotes.members[3].x - (opponentStrumline.strumlineNotes.members[3].width / 2);	
 			}
 		}
 	}
 	function updatePlayerNoteCovers()
 	{
-		// if (lastNoteHit != null)
-		// {
-		// 	var hold = lastNoteHit.holdNoteSprite;
-		// 	if (hold.cover != null)
-		// 	{
-		// 		hold.cover.x = playerStrumline.x + (ispixel ? 0 : lastNoteHit.x - lastNoteHit.width);
-		// 		debugtext.text = hold.cover.glow.animation.name;
-
-		// 	}
-
-		// }
-
 		for (cover in playerStrumline.noteHoldCovers)
 		{
 			if (StringTools.contains(cover.glow.animation.name, "Purple"))
 			{
-				cover.glow.x = playerStrumline.strumlineNotes.members[0].x - (playerStrumline.strumlineNotes.members[0].width / 2);
 				if (ispixel)
 				{
 					cover.glow.x = -pixeloffset + (playerStrumline.strumlineNotes.members[0].width / 5);
 				}
+				else
+				{
+					cover.glow.x = playerStrumline.strumlineNotes.members[0].x - (playerStrumline.strumlineNotes.members[0].width / 2);
+				}
 			}
 			else if (StringTools.contains(cover.glow.animation.name, "Blue"))
 			{
-				cover.glow.x = playerStrumline.strumlineNotes.members[1].x - (playerStrumline.strumlineNotes.members[1].width/ 2);
 				if (ispixel)
 				{
 					cover.glow.x = -pixeloffset + (playerStrumline.strumlineNotes.members[1].width * 1.75);
 				}
+				else
+				{
+					cover.glow.x = playerStrumline.strumlineNotes.members[1].x - (playerStrumline.strumlineNotes.members[1].width/ 2);
+				}
 			}
 			else if (StringTools.contains(cover.glow.animation.name, "Green"))
 			{
-				cover.glow.x = playerStrumline.strumlineNotes.members[2].x - (playerStrumline.strumlineNotes.members[2].width / 2);
 				if (ispixel)
 				{
 					cover.glow.x = -pixeloffset + (playerStrumline.strumlineNotes.members[1].width * 3.3);
 				}
+				else
+				{
+					cover.glow.x = playerStrumline.strumlineNotes.members[2].x - (playerStrumline.strumlineNotes.members[2].width / 2);
+				}
 			}
 			else if (StringTools.contains(cover.glow.animation.name, "Red"))
 			{
-				cover.glow.x = playerStrumline.strumlineNotes.members[3].x - (playerStrumline.strumlineNotes.members[3].width / 2);
 				if (ispixel)
 				{
 					cover.glow.x = -pixeloffset + (playerStrumline.strumlineNotes.members[1].width * 4.8);
+				}
+				else
+				{
+					cover.glow.x = playerStrumline.strumlineNotes.members[3].x - (playerStrumline.strumlineNotes.members[3].width / 2);
 				}
 			}
 		}
