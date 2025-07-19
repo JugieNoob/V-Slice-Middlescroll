@@ -38,11 +38,11 @@ class Middlescroll extends Module {
 			pixeloffset = 0;
 		}
 
-		if (FlxG.width > 1280)
-		{
+		// if (FlxG.width > 1280)
+		// {
 			isMobile = true;
 			hideOpponentStrumline();			
-		}
+		// }
 	
 
 		
@@ -230,9 +230,9 @@ class Middlescroll extends Module {
 				if (isMobile)
 				{
 					updateNoteCovers(playerStrumline);
-					playerStrumline.background.scale.x = playerStrumline.strumlineNotes.width / 2;
+					playerStrumline.background.scale.x = (playerStrumline.strumlineNotes.width / 2) + pixeloffset;
 					playerStrumline.background.updateHitbox();
-					playerStrumline.background.x = playerStrumline.strumlineNotes.members[0].x;
+					playerStrumline.background.x = playerStrumline.strumlineNotes.members[0].x - (pixeloffset / 1.25);
 
 				}
 				else
