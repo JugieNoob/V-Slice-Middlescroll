@@ -18,13 +18,10 @@ class Middlescroll extends Module {
 
 	var debugtext:FlxText;
 
-	var lastNoteHit = null;
-	var lastOppNoteHit = null;
+
 
 	function new() {
 		super("Middlescroll");
-
-	
 	}
 
 	override function onCountdownStart(event) {
@@ -77,7 +74,7 @@ class Middlescroll extends Module {
         debugtext.updateHitbox();
         debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
         debugtext.zIndex = 1000;
-        PlayState.instance.add(debugtext);
+        // PlayState.instance.add(debugtext);
 
 		super.onCountdownStart(event);
 
@@ -207,8 +204,6 @@ class Middlescroll extends Module {
 	{
 		super.onNoteHit(event);
 
-		
-	
 		if (event.doesNotesplash && isMobile)
 		{
 			event.doesNotesplash = false;
@@ -227,42 +222,20 @@ class Middlescroll extends Module {
 				else if (StringTools.contains(splash.animation.name, "UP"))
 				{
 					splash.x = playerStrumline.strumlineNotes.members[2].x + pixeloffset;
-
 				}
 				else if (StringTools.contains(splash.animation.name, "RIGHT"))
 				{
 					splash.x = playerStrumline.strumlineNotes.members[3].x + pixeloffset;
-
 				}
 			}
-		}
-		if (!event.note.noteData.getMustHitNote() && event.note.holdNoteSprite != null)
-		{
-			lastOppNoteHit = event.note;
-		}
-
-		if (event.note.noteData.getMustHitNote() && event.note.holdNoteSprite != null)
-		{
-			lastNoteHit = event.note;
 		}
 	}
 
 	override function onUpdate() {
-	
-			
-	
+
 		if (PlayState.instance != null) {
-			if (playerStrumline != null)
-			{
-				if (playerStrumline.noteHoldCovers != null)
-				{
-					debugtext.text = "AHH" + playerStrumline.noteHoldCovers.x + " " + playerStrumline.strumlineNotes.x;				
-				}
-			}
 
 			if (FlxG.save.data.middlescroll) {
-				// noteHoldCoversthing();
-				// updateOpponentNoteCovers();
 				if (isMobile)
 				{
 					updateNoteCovers(playerStrumline);
@@ -276,13 +249,12 @@ class Middlescroll extends Module {
 			if (FlxG.save.data.oppnotes == "Translucent") {
 				opponentStrumline.alpha = 0.5;
 				if (opponentStrumline.strumlineNotes != null) {
-					for (i in 0...opponentStrumline.strumlineNotes.members.length) {
-						opponentStrumline.strumlineNotes.members[i].alpha = 0.5;
+					for (note in opponentStrumline.strumlineNotes)
+					{
+						note.alpha = 0.5;
 					}
 				}
 			}
-			// debugtext.text = "ismobile: " + isMobile;
-
 		}
 		super.onUpdate();
 
