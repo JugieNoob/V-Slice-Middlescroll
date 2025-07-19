@@ -96,19 +96,13 @@ class Middlescroll extends Module {
 		else
 		{
 			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-			// playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
-			// for (i in 0...playerStrumline.strumlineNotes.length) {
-			// 	var note = playerStrumline.strumlineNotes.members[i];
-
-			// 	note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + pixeloffset)) - pixeloffset * 1.5;
-			// }
-
 			playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
-
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
-				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * note.width);
+
+				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + pixeloffset)) - pixeloffset * 1.5;
 			}
+
 		
 			
 		}
@@ -223,25 +217,23 @@ class Middlescroll extends Module {
 			{
 				if (StringTools.contains(splash.animation.name, "LEFT"))
 				{
-					splash.x = playerStrumline.strumlineNotes.members[0].x;
+					splash.x = playerStrumline.strumlineNotes.members[0].x + pixeloffset;
 				}
 				else if (StringTools.contains(splash.animation.name, "DOWN"))
 				{
-					splash.x = playerStrumline.strumlineNotes.members[1].x;
-
+					splash.x = playerStrumline.strumlineNotes.members[1].x + pixeloffset;
 				}
 				else if (StringTools.contains(splash.animation.name, "UP"))
 				{
-					splash.x = playerStrumline.strumlineNotes.members[2].x;
+					splash.x = playerStrumline.strumlineNotes.members[2].x + pixeloffset;
 
 				}
 				else if (StringTools.contains(splash.animation.name, "RIGHT"))
 				{
-					splash.x = playerStrumline.strumlineNotes.members[3].x;
+					splash.x = playerStrumline.strumlineNotes.members[3].x + pixeloffset;
 
 				}
 			}
-			debugtext.text = playerStrumline.noteSplashes.members[playerStrumline.noteSplashes.length - 1].animation.name;
 		}
 		if (!event.note.noteData.getMustHitNote() && event.note.holdNoteSprite != null)
 		{
@@ -309,12 +301,38 @@ class Middlescroll extends Module {
 	}
 	function updatePlayerNoteCovers()
 	{
-		if (lastNoteHit != null)
+		// if (lastNoteHit != null)
+		// {
+		// 	var hold = lastNoteHit.holdNoteSprite;
+		// 	if (hold.cover != null)
+		// 	{
+		// 		hold.cover.x = playerStrumline.x + (ispixel ? 0 : lastNoteHit.x - lastNoteHit.width);
+		// 		debugtext.text = hold.cover.glow.animation.name;
+
+		// 	}
+
+		// }
+
+		for (cover in playerStrumline.noteHoldCovers)
 		{
-			var hold = lastNoteHit.holdNoteSprite;
-			if (hold.cover != null)
+			if (StringTools.contains(cover.glow.animation.name, "Purple"))
 			{
-				hold.cover.x = playerStrumline.x + (ispixel ? 0 : lastNoteHit.x - lastNoteHit.width);
+				cover.glow.x = playerStrumline.strumlineNotes.members[0].x - (ispixel ? 0 : playerStrumline.strumlineNotes.members[0].width/ 2);
+			}
+			else if (StringTools.contains(cover.glow.animation.name, "Blue"))
+			{
+				cover.glow.x = playerStrumline.strumlineNotes.members[1].x - (ispixel ? 0 : playerStrumline.strumlineNotes.members[1].width/ 2);
+
+			}
+			else if (StringTools.contains(cover.glow.animation.name, "Green"))
+			{
+				cover.glow.x = playerStrumline.strumlineNotes.members[2].x - (ispixel ? 0 : playerStrumline.strumlineNotes.members[2].width/ 2);
+
+			}
+			else if (StringTools.contains(cover.glow.animation.name, "Red"))
+			{
+				cover.glow.x = playerStrumline.strumlineNotes.members[3].x - (ispixel ? 0 : playerStrumline.strumlineNotes.members[3].width / 2);
+
 			}
 		}
 		
