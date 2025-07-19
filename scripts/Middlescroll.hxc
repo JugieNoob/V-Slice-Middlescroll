@@ -82,15 +82,17 @@ class Middlescroll extends Module {
 		if (FlxG.save.data.middlescroll) {
 			setPlayerStrumline();
 			moveOpponentStrumline();		
+
+			playerStrumline.background.scale.x = (playerStrumline.strumlineNotes.width / 2) + pixeloffset;
+			playerStrumline.background.updateHitbox();
+			playerStrumline.background.x = playerStrumline.strumlineNotes.members[0].x - (pixeloffset / 1.25);
 		}
 
 		if (FlxG.save.data.oppnotes == "Hidden") {
 			hideOpponentStrumline();
 		}
 
-		playerStrumline.background.scale.x = (playerStrumline.strumlineNotes.width / 2) + pixeloffset;
-		playerStrumline.background.updateHitbox();
-		playerStrumline.background.x = playerStrumline.strumlineNotes.members[0].x - (pixeloffset / 1.25);
+	
 
 	}
 
