@@ -5,12 +5,11 @@ import funkin.play.notes.Strumline;
 import funkin.util.Constants;
 import funkin.play.notes.NoteSprite;
 import flixel.text.FlxText;
+import StringTools;
 
 class Middlescroll extends Module {
 	var pixeloffset:Int = 0;
 	var ispixel:Int = false;
-	var forcedmove:Bool = false;
-
 
 	var isMobile:Bool = false;
 
@@ -30,9 +29,10 @@ class Middlescroll extends Module {
 
 	override function onCountdownStart(event) {
 	
-		super.onCountdownStart(event);
 
 		playerStrumline = PlayState.instance.playerStrumline;
+		opponentStrumline = PlayState.instance.opponentStrumline;
+
 
 
 		if (playerStrumline.noteStyle.id == 'pixel') {
@@ -45,15 +45,14 @@ class Middlescroll extends Module {
 			pixeloffset = 0;
 		}
 
-		if (FlxG.width > 1280)
-		{
+		// if (FlxG.width > 1280)
+		// {
 			isMobile = true;
-		}
-		
-		if (isMobile)
-		{
 			hideOpponentStrumline();
-		}
+		// }
+	
+
+		
 
 		if (FlxG.save.data.middlescroll) {
 			setPlayerStrumline();
@@ -79,6 +78,9 @@ class Middlescroll extends Module {
         debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
         debugtext.zIndex = 1000;
         PlayState.instance.add(debugtext);
+
+		super.onCountdownStart(event);
+
 	}
 
 	function setPlayerStrumline()
@@ -95,19 +97,22 @@ class Middlescroll extends Module {
 		{
 			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 			// playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
+			// for (i in 0...playerStrumline.strumlineNotes.length) {
+			// 	var note = playerStrumline.strumlineNotes.members[i];
+
+			// 	note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + pixeloffset)) - pixeloffset * 1.5;
+			// }
+
+			playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
+
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
-
-				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + pixeloffset)) - pixeloffset * 1.5;
+				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * note.width);
 			}
-			playerStrumline.noteHoldCovers.visible = false;
-			playerStrumline.noteSplashes.visible = false;
-
-
 		
 			
 		}
-		
+
 		switch (FlxG.save.data.noteEffects)
 		{
 			case "None":
@@ -216,9 +221,27 @@ class Middlescroll extends Module {
 
 			for (splash in playerStrumline.noteSplashes)
 			{
-				splash.x = event.note.x + pixeloffset;
+				if (StringTools.contains(splash.animation.name, "LEFT"))
+				{
+					splash.x = playerStrumline.strumlineNotes.members[0].x;
+				}
+				else if (StringTools.contains(splash.animation.name, "DOWN"))
+				{
+					splash.x = playerStrumline.strumlineNotes.members[1].x;
+
+				}
+				else if (StringTools.contains(splash.animation.name, "UP"))
+				{
+					splash.x = playerStrumline.strumlineNotes.members[2].x;
+
+				}
+				else if (StringTools.contains(splash.animation.name, "RIGHT"))
+				{
+					splash.x = playerStrumline.strumlineNotes.members[3].x;
+
+				}
 			}
-			
+			debugtext.text = playerStrumline.noteSplashes.members[playerStrumline.noteSplashes.length - 1].animation.name;
 		}
 		if (!event.note.noteData.getMustHitNote() && event.note.holdNoteSprite != null)
 		{
@@ -254,8 +277,11 @@ class Middlescroll extends Module {
 					}
 				}
 			}
+			// debugtext.text = "ismobile: " + isMobile;
+
 		}
 		super.onUpdate();
+
 
 	}
 	
@@ -280,7 +306,7 @@ class Middlescroll extends Module {
 				}
 			}
 		}
-
+	}
 	function updatePlayerNoteCovers()
 	{
 		if (lastNoteHit != null)
@@ -296,7 +322,6 @@ class Middlescroll extends Module {
 	}
 	// Taken from Blazin'
 	function hideOpponentStrumline() {
-		var opponentStrumline:FlxSprite = PlayState.instance.opponentStrumline;
 		if (opponentStrumline != null) {
 			for (arrow in opponentStrumline.members) {
 				if (arrow != null)
@@ -308,4 +333,3 @@ class Middlescroll extends Module {
 	}
 }
 
-}
