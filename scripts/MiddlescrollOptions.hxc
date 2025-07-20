@@ -43,24 +43,32 @@ class MiddlescrollOptions extends Module {
             var preferences = event.targetState.optionsCodex.pages.get("preferences");
 
             preferences.createPrefItemCheckbox('Middlescroll', 'Toggles Middlescroll.', function(value:Bool):Void {
-            FlxG.save.data.middlescroll = value; }, FlxG.save.data.middlescroll);
+            FlxG.save.data.middlescroll = value;
+            FlxG.save.flush();
+            }, FlxG.save.data.middlescroll);
 
             preferences.createPrefItemCheckbox('Move Popups', 'Moves the rating and combo popups.', function(value:Bool):Void {
-            FlxG.save.data.movepopups = value; }, FlxG.save.data.movepopups);
+            FlxG.save.data.movepopups = value;
+            FlxG.save.flush();
+
+            }, FlxG.save.data.movepopups);
 
             if (!isMobile)
             {
                 preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
                     FlxG.save.data.oppnotes = value;
+                    FlxG.save.flush();
+
                 }, FlxG.save.data.oppnotes);      
             }
        
 
             preferences.createPrefItemEnum('Note Effects', 'Toggles Note Splashes and Note Hold Covers', ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
                     FlxG.save.data.noteEffects = value;
+                    FlxG.save.flush();
+    
                 }, FlxG.save.data.noteEffects);      
 
-            FlxG.save.flush();
         }
     }
 
