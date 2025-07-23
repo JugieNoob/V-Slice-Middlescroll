@@ -66,8 +66,7 @@ class Middlescroll extends Module {
 
 		if (FlxG.width > 1280)
 		{
-			isMobile = true;
-			hideOpponentStrumline();			
+			isMobile = true;	
 		}
 	
 
@@ -81,7 +80,10 @@ class Middlescroll extends Module {
 		
 		if (FlxG.save.data.middlescroll) {
 			setPlayerStrumline();
-			moveOpponentStrumline();		
+			if (!isMobile)
+			{
+				moveOpponentStrumline();
+			}
 
 			playerStrumline.background.scale.x = (playerStrumline.strumlineNotes.width / 2) + pixeloffset;
 			playerStrumline.background.updateHitbox();

@@ -6,8 +6,6 @@ import Std;
 
 class MiddlescrollOptions extends Module {
     
-    var isMobile:Bool = false;
-
     function new (){
         super("Middlescroll Options", 21);
 
@@ -34,10 +32,6 @@ class MiddlescrollOptions extends Module {
     {
         super.onStateChangeEnd(event);
 
-        if (FlxG.width > 1280)
-		{
-			isMobile = true;
-		}
         if (Std.isOfType(event.targetState, OptionsState))
         {
             var preferences = event.targetState.optionsCodex.pages.get("preferences");
@@ -53,14 +47,11 @@ class MiddlescrollOptions extends Module {
 
             }, FlxG.save.data.movepopups);
 
-            if (!isMobile)
-            {
-                preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
-                    FlxG.save.data.oppnotes = value;
-                    FlxG.save.flush();
-
-                }, FlxG.save.data.oppnotes);      
-            }
+            preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
+                FlxG.save.data.oppnotes = value;
+                FlxG.save.flush();
+            }, FlxG.save.data.oppnotes);      
+            
        
 
             preferences.createPrefItemEnum('Note Effects', 'Toggles Note Splashes and Note Hold Covers', ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
