@@ -4,15 +4,18 @@ import flixel.FlxG;
 import funkin.play.notes.Strumline;
 import funkin.util.Constants;
 import StringTools;
+import flixel.text.FlxText;
 
 class Middlescroll extends Module {
-	var pixeloffset:Int = 0;
-	var ispixel:Int = false;
+	var noteOffset:Int = 0;
+	var isPixel:Int = false;
 
 	var isMobile:Bool = false;
 
 	var playerStrumline:FlxSprite;
 	var opponentStrumline:FlxSprite;
+
+	var debugtext:FlxText;
 	function new() {
 		super("Middlescroll");
 	}
@@ -35,13 +38,17 @@ class Middlescroll extends Module {
 			}
 			
 			if (FlxG.save.data.oppnotes == "Translucent") {
-			opponentStrumline.alpha = 0.5;
-			if (opponentStrumline.strumlineNotes != null) {
-				for (note in opponentStrumline.strumlineNotes)
-				{
-					note.alpha = 0.5;
+			if (opponentStrumline != null)
+			{
+				opponentStrumline.alpha = 0.5;
+				if (opponentStrumline.strumlineNotes != null) {
+					for (note in opponentStrumline.strumlineNotes)
+					{
+						note.alpha = 0.5;
+					}
 				}
 			}
+			
 		}
 
 		}
@@ -54,15 +61,27 @@ class Middlescroll extends Module {
 		opponentStrumline = PlayState.instance.opponentStrumline;
 
 
-		if (playerStrumline.noteStyle.id == 'pixel') {
-			ispixel = true;
-			pixeloffset = 56;
-		} 
-		else 
-		{
-			ispixel = false;
-			pixeloffset = 0;
-		}
+		// if (playerStrumline.noteStyle.id == 'pixel') {
+		// 	isPixel = true;
+		// 	noteOffset = 56;
+		// } 
+		// else 
+		// {
+		// 	isPixel = false;
+		// 	noteOffset = 0;
+		// }
+		isPixel = playerStrumline.noteStyle.isHoldNotePixel();
+		var strumOffset = playerStrumline.noteStyle.getStrumlineOffsets();
+		noteOffset = strumOffset[0] + strumOffset[1];
+
+		debugtext = new FlxText();
+        debugtext.text = "offsets: " + playerStrumline.noteStyle.getStrumlineOffsets() + " cover offsets " + playerStrumline.noteStyle.getHoldCoverOffsets();
+        debugtext.cameras = [PlayState.instance.camHUD];
+        debugtext.size = 18;
+        debugtext.updateHitbox();
+        debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
+        debugtext.zIndex = 1000;
+        PlayState.instance.add(debugtext);
 
 		if (FlxG.width > 1280)
 		{
@@ -85,9 +104,9 @@ class Middlescroll extends Module {
 				moveOpponentStrumline();
 			}
 
-			playerStrumline.background.scale.x = (playerStrumline.strumlineNotes.width / 2) + pixeloffset;
+			playerStrumline.background.scale.x = (playerStrumline.strumlineNotes.width / 2) + noteOffset;
 			playerStrumline.background.updateHitbox();
-			playerStrumline.background.x = playerStrumline.strumlineNotes.members[0].x - (pixeloffset / 1.25);
+			playerStrumline.background.x = playerStrumline.strumlineNotes.members[0].x - (noteOffset / 1.25);
 		}
 
 		if (FlxG.save.data.oppnotes == "Hidden") {
@@ -107,7 +126,7 @@ class Middlescroll extends Module {
 
 			for (note in playerStrumline.notes)
 			{
-				note.x = playerStrumline.strumlineNotes.members[note.direction].x + (ispixel ? 0 : note.width / 4);			
+				note.x = playerStrumline.strumlineNotes.members[note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);			
 			}
 
 			for (hold in playerStrumline.holdNotes)
@@ -123,7 +142,7 @@ class Middlescroll extends Module {
 			// Move incoming notes
 			for (note in opponentStrumline.notes)
 			{
-				note.x = opponentStrumline.strumlineNotes.members[note.direction].x + (ispixel ? 0 : note.width / 4);	
+				note.x = opponentStrumline.strumlineNotes.members[note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);	
 				if (FlxG.save.data.oppnotes == "Translucent") {
 						note.alpha = 0.5;
 					}		
@@ -157,19 +176,19 @@ class Middlescroll extends Module {
 				{
 					if (StringTools.contains(splash.animation.name, "LEFT"))
 					{
-						splash.x = playerStrumline.strumlineNotes.members[0].x + pixeloffset;
+						splash.x = playerStrumline.strumlineNotes.members[0].x + noteOffset;
 					}
 					else if (StringTools.contains(splash.animation.name, "DOWN"))
 					{
-						splash.x = playerStrumline.strumlineNotes.members[1].x + pixeloffset;
+						splash.x = playerStrumline.strumlineNotes.members[1].x + noteOffset;
 					}
 					else if (StringTools.contains(splash.animation.name, "UP"))
 					{
-						splash.x = playerStrumline.strumlineNotes.members[2].x + pixeloffset;
+						splash.x = playerStrumline.strumlineNotes.members[2].x + noteOffset;
 					}
 					else if (StringTools.contains(splash.animation.name, "RIGHT"))
 					{
-						splash.x = playerStrumline.strumlineNotes.members[3].x + pixeloffset;
+						splash.x = playerStrumline.strumlineNotes.members[3].x + noteOffset;
 					}
 				}
 			}
@@ -189,7 +208,7 @@ class Middlescroll extends Module {
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
 
-				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + pixeloffset)) - pixeloffset * 1.5;
+				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + noteOffset)) - noteOffset * 1.5;
 			}
 		}
 
@@ -219,9 +238,9 @@ class Middlescroll extends Module {
 			for (i in 2...opponentStrumline.strumlineNotes.members.length) {
 				opponentStrumline.strumlineNotes.members[i].x = (FlxG.width
 					+ ((Constants.STRUMLINE_X_OFFSET
-						- opponentStrumline.strumlineNotes.members[i].width - pixeloffset) * (opponentStrumline.strumlineNotes.members.length - i))
+						- opponentStrumline.strumlineNotes.members[i].width - noteOffset) * (opponentStrumline.strumlineNotes.members.length - i))
 					- (Constants.STRUMLINE_X_OFFSET * 1.5))
-					+ (pixeloffset / 2);
+					+ (noteOffset / 2);
 			}
 		}
 	}
@@ -229,32 +248,36 @@ class Middlescroll extends Module {
 	function updateNoteCovers(strumline)
 	{
 		var direction = 0;
-		if (strumline.noteHoldCovers != null)
+		if (strumline != null)
 		{
-			for (cover in strumline.noteHoldCovers)
+			if (strumline.noteHoldCovers != null)
 			{
-			
-				if (StringTools.contains(cover.glow.animation.name, "Blue"))
+				for (cover in strumline.noteHoldCovers)
 				{
-					direction = 1;
-				}
-				else if (StringTools.contains(cover.glow.animation.name, "Green"))
-				{
-					direction = 2;
-				}
-				else if (StringTools.contains(cover.glow.animation.name, "Red"))
-				{
-					direction = 3;
-				}
-				else
-				{
-					direction = 0;
-				}
+				
+					if (StringTools.contains(cover.glow.animation.name, "Blue"))
+					{
+						direction = 1;
+					}
+					else if (StringTools.contains(cover.glow.animation.name, "Green"))
+					{
+						direction = 2;
+					}
+					else if (StringTools.contains(cover.glow.animation.name, "Red"))
+					{
+						direction = 3;
+					}
+					else
+					{
+						direction = 0;
+					}
 
-				var note = strumline.strumlineNotes.members[direction];
-				cover.glow.x = note.x - note.width / 2 - (pixeloffset * 6);
+					var note = strumline.strumlineNotes.members[direction];
+					cover.glow.x = note.x - (cover.glow.width / 3.75) - (playerStrumline.noteStyle.getHoldCoverOffsets()[0] * 2.35);
+				}
 			}
 		}
+		
 
 		
 	
