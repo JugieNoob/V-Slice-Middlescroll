@@ -13,6 +13,10 @@ class MiddlescrollOptions extends Module {
         {
             FlxG.save.data.middlescroll = true;
         }
+        if (FlxG.save.data.wideLane == null)
+        {
+            FlxG.save.data.wideLane = false;
+        }
         if (FlxG.save.data.movepopups == null)
         {
             FlxG.save.data.movepopups = true;
@@ -41,11 +45,18 @@ class MiddlescrollOptions extends Module {
             FlxG.save.flush();
             }, FlxG.save.data.middlescroll);
 
+            preferences.createPrefItemCheckbox('Wide Lane', 'Makes the note lane wider.', function(value:Bool):Void {
+            FlxG.save.data.wideLane = value;
+            FlxG.save.flush();
+
+            }, FlxG.save.data.wideLane);
+
             preferences.createPrefItemCheckbox('Move Popups', 'Moves the rating and combo popups.', function(value:Bool):Void {
             FlxG.save.data.movepopups = value;
             FlxG.save.flush();
 
             }, FlxG.save.data.movepopups);
+            
 
             preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
                 FlxG.save.data.oppnotes = value;
