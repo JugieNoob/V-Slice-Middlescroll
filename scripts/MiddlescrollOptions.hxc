@@ -30,6 +30,16 @@ class MiddlescrollOptions extends Module {
             FlxG.save.data.noteEffects = "All";
         }
 
+        if (FlxG.save.data.middlescroll == true)
+        {
+            FlxG.save.data.middlescroll = "On";
+        }
+
+        if (FlxG.save.data.middlescroll == false)
+        {
+            FlxG.save.data.middlescroll = "Off";
+        }
+
     }
 
     function onStateChangeEnd(event)
@@ -40,16 +50,10 @@ class MiddlescrollOptions extends Module {
         {
             var preferences = event.targetState.optionsCodex.pages.get("preferences");
 
-            preferences.createPrefItemCheckbox('Middlescroll', 'Toggles Middlescroll.', function(value:Bool):Void {
-            FlxG.save.data.middlescroll = value;
-            FlxG.save.flush();
-            }, FlxG.save.data.middlescroll);
-
-            preferences.createPrefItemCheckbox('Wide Lane', 'Makes the note lane wider.', function(value:Bool):Void {
-            FlxG.save.data.wideLane = value;
-            FlxG.save.flush();
-
-            }, FlxG.save.data.wideLane);
+            preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline.", ["On" => "On", "Off" => "Off", "Wide Lanes" => "Wide Lanes"], function(value:Bool):Void {
+                FlxG.save.data.middlescroll = value;
+                FlxG.save.flush();
+            }, FlxG.save.data.middlescroll);      
 
             preferences.createPrefItemCheckbox('Move Popups', 'Moves the rating and combo popups.', function(value:Bool):Void {
             FlxG.save.data.movepopups = value;

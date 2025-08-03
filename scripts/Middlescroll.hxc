@@ -26,12 +26,12 @@ class Middlescroll extends Module {
 		super.onUpdate();
 		if (PlayState.instance != null) {
 
-			if (FlxG.save.data.middlescroll) {
+			if (FlxG.save.data.middlescroll != "Off") {
 				if (isMobile)
 				{
 					updateNoteCovers(playerStrumline);
 				}
-				else if (FlxG.save.data.wideLane)
+				else if (FlxG.save.data.middlescroll == "Wide Lanes")
 				{
 					updateNoteCovers(playerStrumline);
 					updateNoteCovers(opponentStrumline);
@@ -85,7 +85,7 @@ class Middlescroll extends Module {
 		}
 
 		
-		if (FlxG.save.data.middlescroll) {
+		if (FlxG.save.data.middlescroll != "Off") {
 			setPlayerStrumline();
 			if (!isMobile)
 			{
@@ -108,7 +108,7 @@ class Middlescroll extends Module {
 	override function onNoteIncoming(event) {
 		super.onNoteIncoming(event);
 
-		if (isMobile || FlxG.save.data.wideLane)
+		if (isMobile || FlxG.save.data.middlescroll == "Wide Lanes")
 		{
 			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
@@ -147,11 +147,11 @@ class Middlescroll extends Module {
 	{
 		super.onNoteHit(event);
 
-		if (FlxG.save.data.middlescroll)
+		if (FlxG.save.data.middlescroll != "Off")
 		{
 			if (event.doesNotesplash)
 			{
-				if (isMobile || FlxG.save.data.wideLane)
+				if (isMobile || FlxG.save.data.middlescroll == "Wide Lanes")
 				{
 					event.doesNotesplash = false;
 					playerStrumline.playNoteSplash(event.note.direction);
@@ -189,14 +189,14 @@ class Middlescroll extends Module {
 		playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
 
 
-		if (isMobile && FlxG.save.data.wideLane)
+		if (isMobile && FlxG.save.data.middlescroll == "Wide Lanes")
 		{
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
 				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width / 1.75)) + (i * (note.width + noteOffset) * 1.25) - noteOffset * 1.5;
 			}
 		}
-		else if (isMobile || FlxG.save.data.wideLane)
+		else if (isMobile || FlxG.save.data.middlescroll == "Wide Lanes")
 		{
 			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 			for (i in 0...playerStrumline.strumlineNotes.length) {
