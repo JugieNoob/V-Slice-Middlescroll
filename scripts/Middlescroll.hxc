@@ -43,18 +43,18 @@ class Middlescroll extends Module {
 			}
 			
 			if (FlxG.save.data.oppnotes == "Translucent") {
-			if (opponentStrumline != null)
-			{
-				opponentStrumline.alpha = 0.5;
-				if (opponentStrumline.strumlineNotes != null) {
-					for (note in opponentStrumline.strumlineNotes)
-					{
-						note.alpha = 0.5;
+				if (opponentStrumline != null)
+				{
+					opponentStrumline.alpha = 0.5;
+					if (opponentStrumline.strumlineNotes != null) {
+						for (note in opponentStrumline.strumlineNotes)
+						{
+							note.alpha = 0.5;
+						}
 					}
 				}
-			}
 			
-		}
+			}
 
 		}
 	}
@@ -121,16 +121,23 @@ class Middlescroll extends Module {
 			{
 				var strumNote = playerStrumline.strumlineNotes.members[hold.noteDirection];
 				hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);
-			}
-
-			if (FlxG.save.data.wideLane)
-			{
-				translucentOpponentNotes();
-			}
-
-		
+			}		
 		}
-		else
+
+		if (!isMobile)
+		{
+			for (note in opponentStrumline.notes)
+			{
+				note.x = opponentStrumline.strumlineNotes.members[note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);	
+			}
+			for (hold in opponentStrumline.holdNotes)
+			{
+				var strumNote = opponentStrumline.strumlineNotes.members[hold.noteDirection];
+				hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);			
+			}
+		}
+
+		if (FlxG.save.data.oppnotes == "Translucent")
 		{
 			translucentOpponentNotes();
 		}
@@ -261,21 +268,6 @@ class Middlescroll extends Module {
 					}
 
 					var note = strumline.strumlineNotes.members[direction];
-					// if (strumline.noteStyle.id == "funkin")
-					// {
-					// 	cover.glow.x = strumline.x + note.x - (cover.glow.width / 3.75) - (playerStrumline.noteStyle.getHoldCoverOffsets()[0] * 2.35); //
-					// }
-					// else
-					// {
-						// cover.x = strumline.x + note.x + (strumline.STRUMLINE_SIZE / 2) - (cover.width / 2) + (strumline.noteStyle.getHoldCoverOffsets()[0] * cover.scale.x) + -12;
-					// }
-					// if (note.holdNoteSprite != null)
-					// {
-					// 	cover.glow.x = note.holdNoteSprite.x;
-					// }
-					//(strumline.STRUMLINE_SIZE / 2) - (cover.width / 3) + (strumline.noteStyle.getHoldCoverOffsets()[0] * cover.scale.x);
-					// cover.x = note.x - (cover.width / 4) - noteOffset;
-					// cover.x = playerStrumline.strumlineNotes.members[0].x - (strumline.noteStyle.getHoldCoverOffsets()[0] * cover.scale.x);
 					cover.glow.x = note.x - note.width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x) + (isPixel ? strumline.noteStyle.getHoldCoverOffsets()[0] - 12: -noteOffset);
 
 				}
@@ -295,20 +287,16 @@ class Middlescroll extends Module {
 
 	function translucentOpponentNotes()
 	{
-		if (FlxG.save.data.oppnotes == "Translucent") {
-			// Move incoming notes
-			for (note in opponentStrumline.notes)
-			{
-				note.x = opponentStrumline.strumlineNotes.members[note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);	
-				note.alpha = 0.5;
-			}
-			for (hold in opponentStrumline.holdNotes)
-			{
-				var strumNote = opponentStrumline.strumlineNotes.members[hold.noteDirection];
-				hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);
-				hold.alpha = 0.5;
-			}
+		// Move incoming notes
+		for (note in opponentStrumline.notes)
+		{
+			note.alpha = 0.5;
 		}
+		for (hold in opponentStrumline.holdNotes)
+		{
+			hold.alpha = 0.5;
+		}
+		
 	}
 }
 
