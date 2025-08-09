@@ -16,6 +16,9 @@ class Middlescroll extends Module {
 	var playerStrumline:FlxSprite;
 	var opponentStrumline:FlxSprite;
 
+	var debugtext:FlxText;
+
+
 	function new() {
 		super("Middlescroll");
 	}
@@ -101,6 +104,15 @@ class Middlescroll extends Module {
 			hideOpponentStrumline();
 		}
 
+		debugtext = new FlxText();
+        // debugtext.text = "Combo: " + combo + "\nSong Position: " + Conductor.instance.songPosition + "\nnotehittime: " + notehittime + "\nholdnoteend: " + holdnoteend + "\nholdnoteendtime: " + holdnoteendtime +"\ncurrent step: " + Conductor.instance.currentStep + "\nhashitnote: " + hashitnote + "\nscreen width: " + FlxG.width;
+        debugtext.cameras = [PlayState.instance.camHUD];
+        debugtext.size = 18;
+        debugtext.updateHitbox();
+        debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
+        debugtext.zIndex = 1000;
+        PlayState.instance.add(debugtext);
+
 	
 
 	}
@@ -112,29 +124,34 @@ class Middlescroll extends Module {
 		{
 			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
-			for (note in playerStrumline.notes)
-			{
-				note.x = playerStrumline.strumlineNotes.members[note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);			
-			}
+			// for (note in playerStrumline.notes)
+			// {
+			//+ (noteOffset > 0 ? 0 : note.width / 4)
+			moveIncomingNote(event.note, playerStrumline);
+			
+			// }
+		
 
-			for (hold in playerStrumline.holdNotes)
-			{
-				var strumNote = playerStrumline.strumlineNotes.members[hold.noteDirection];
-				hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);
-			}		
+
+			// for (hold in playerStrumline.holdNotes)					
+			// {
+				// var strumNote = playerStrumline.strumlineNotes.members[hold.noteDirection];
+				// hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);
+			// }		
 		}
 
 		if (!isMobile)
 		{
-			for (note in opponentStrumline.notes)
-			{
-				note.x = opponentStrumline.strumlineNotes.members[note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);	
-			}
-			for (hold in opponentStrumline.holdNotes)
-			{
-				var strumNote = opponentStrumline.strumlineNotes.members[hold.noteDirection];
-				hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);			
-			}
+			// for (note in opponentStrumline.notes)
+			// {
+			// 	note.x = opponentStrumline.strumlineNotes.members[note.direction].x + (note.width / 3) - note.offset.x;	 //+ (noteOffset > 0 ? 0 : note.width / 4)
+			// }
+			// for (hold in opponentStrumline.holdNotes)
+			// {
+			// 	var strumNote = opponentStrumline.strumlineNotes.members[hold.noteDirection];
+			// 	hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);			
+			// }
+			// moveIncomingNote()
 		}
 
 		if (FlxG.save.data.oppnotes == "Translucent")
@@ -186,14 +203,14 @@ class Middlescroll extends Module {
 
 	function setPlayerStrumline()
 	{
-		playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
 
+		// playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
 
 		if (isMobile && FlxG.save.data.middlescroll == "Wide Lanes")
 		{
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
-				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width / 1.75)) + (i * (note.width + noteOffset) * 1.25) - noteOffset * 1.5;
+				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width / 1.75)) + (i * (note.width + noteOffset) * 1.25) - (noteOffset * 1.5);
 			}
 		}
 		else if (isMobile || FlxG.save.data.middlescroll == "Wide Lanes")
@@ -205,6 +222,7 @@ class Middlescroll extends Module {
 				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + noteOffset)) - noteOffset * 1.5;
 			}
 		}
+
 
 
 		switch (FlxG.save.data.noteEffects)
@@ -298,5 +316,48 @@ class Middlescroll extends Module {
 		}
 		
 	}
+
+	function moveIncomingNote(note, strumline)
+	{
+		// note.updateHitbox();
+		
+		// note.x = opponentStrumline.strumlineNotes.members[note.direction].x + (note.width / 3) - note.offset.x;
+		// note.offset.x = 0;
+		// strumline.strumlineNotes.members[0].offset.x = 0;
+		// note.x = (strumline.strumlineNotes.members[note.direction].x + strumline.strumlineNotes.members[0].offset.x) + (strumline.noteStyle.getStrumlineOffsets() * note.scale.x); //  * note.scale.x + (strumline.NUDGE * 6);
+		// note.offset.x = strumline.strumlineNotes.members[note.direction].offset.x;
+		// if (strumline.noteStyle.getName() == "Funkin'")
+		// {
+		// 	note.x += (note.width / 4);
+		// }
+
+		// OLD: note.x = playerStrumline.strumlineNotes.members[note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);			
+		// LATEST: note.x = strumline.strumlineNotes.members[note.direction].x + ((strumline.noteStyle.getStrumlineOffsets()[0] * (note.scale.x / 4) * strumline.noteStyle.getNoteScale())) + (note.offset.x * (strumline.noteStyle.getNoteScale() / 6)); //;			 + (note.offset.x * 1.25) - (strumline.NUDGE * note.scale.x);
+
+		// note.x = getXPos(note.direction, strumline) + strumline.strumlineNotes.x;
+		// note.x += 
+
+		note.x = strumline.strumlineNotes.members[note.direction].x + strumline.noteStyle.getStrumlineOffsets()[0] + note.offset.x;
+		
+		debugtext.text = "note.scale.x: " + note.scale.x + " strumline.x: " + strumline.x + " strumline.strumlineNotes.x: " + strumline.strumlineNotes.x + "note offset: " + note.offset.x + "\nGet Strum offs: " + strumline.noteStyle.getStrumlineOffsets();
+	}
+	
+	// function getXPos(direction, strumline):Float
+  	// {
+  	//   var pos:Float = 0;
+	//   var noteSpace = strumline.strumlineNotes.members[1].x - (strumline.strumlineNotes.members[0].x + strumline.strumlineNotes.members[0].width);
+   	//   return switch (direction)
+  	//   {
+  	//     case 0: -pos * 2;
+  	//     case 1:
+  	//       -(pos * 2) + (1 * noteSpace) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
+  	//     case 2:
+  	//       pos + (2 * noteSpace) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
+  	//     case 3:
+  	//       pos + (3 * noteSpace) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
+  	//     default: -pos * 2;
+  	//   }
+  	// }
+
 }
 
