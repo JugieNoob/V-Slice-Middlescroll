@@ -337,8 +337,10 @@ class Middlescroll extends Module {
 		// note.x = getXPos(note.direction, strumline) + strumline.strumlineNotes.x;
 		// note.x += 
 
-		note.x = strumline.strumlineNotes.members[note.direction].x + strumline.noteStyle.getStrumlineOffsets()[0] + note.offset.x;
+		// note.x = strumline.strumlineNotes.members[note.direction].x + ((strumline.noteStyle.getStrumlineOffsets()[0] + note.offset.x) / (note.scale.x * 2)) ;
 		
+		// note.x = playerStrumline.strumlineNotes.members[note.direction].x + (note.offset.x >= 23.55 ? -note.offset.x  : note.offset.x);
+
 		debugtext.text = "note.scale.x: " + note.scale.x + " strumline.x: " + strumline.x + " strumline.strumlineNotes.x: " + strumline.strumlineNotes.x + "note offset: " + note.offset.x + "\nGet Strum offs: " + strumline.noteStyle.getStrumlineOffsets();
 	}
 	
