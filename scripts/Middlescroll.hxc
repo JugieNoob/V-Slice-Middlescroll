@@ -127,7 +127,7 @@ class Middlescroll extends Module {
 			// for (note in playerStrumline.notes)
 			// {
 			//+ (noteOffset > 0 ? 0 : note.width / 4)
-			// moveIncomingNote(event.note, playerStrumline);
+			moveIncomingNote(event.note, playerStrumline);
 			// }
 		
 
@@ -204,27 +204,26 @@ class Middlescroll extends Module {
 	{
 
 		// playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
-
-		// if (isMobile && FlxG.save.data.middlescroll == "Wide Lanes")
-		// {
-		// 	for (i in 0...playerStrumline.strumlineNotes.length) {
-		// 		var note = playerStrumline.strumlineNotes.members[i];
-		// 		note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width / 1.75)) + (i * (note.width + noteOffset) * 1.25) - (noteOffset * 1.5);
-		// 	}
-		// }
-		// else if (isMobile || FlxG.save.data.middlescroll == "Wide Lanes")
-		// {
-		// 	// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-		// 	for (i in 0...playerStrumline.strumlineNotes.length) {
-		// 		var note = playerStrumline.strumlineNotes.members[i];
-
-		// 		note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + noteOffset)) - noteOffset * 1.5;
-		// 	}
-		// }
-
-
-		playerStrumline.setNoteSpacing(2);
 		playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
+
+		if (isMobile && FlxG.save.data.middlescroll == "Wide Lanes")
+		{
+			for (i in 0...playerStrumline.strumlineNotes.length) {
+				var note = playerStrumline.strumlineNotes.members[i];
+				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width / 1.75)) + (i * (note.width + noteOffset) * 1.25) - (noteOffset * 1.5);
+			}
+		}
+		else if (isMobile || FlxG.save.data.middlescroll == "Wide Lanes")
+		{
+			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
+			for (i in 0...playerStrumline.strumlineNotes.length) {
+				var note = playerStrumline.strumlineNotes.members[i];
+
+				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + noteOffset)) - noteOffset * 1.5;
+			}
+		}
+
+
 
 
 		switch (FlxG.save.data.noteEffects)
@@ -345,7 +344,7 @@ class Middlescroll extends Module {
 
 		// strumline.setNoteSpacing();
 		// note.x = getXPos(note.direction, strumline);
-		var strumnote = strumline.strumlineNotes.members[direction];
+		var strumnote = strumline.strumlineNotes.members[note.direction];
 		note.x = strumnote.x - strumnote.width / 2 - ((strumline.noteStyle.getStrumlineOffsets()[0] * (isPixel ? 2 : 1))* note.x) + (isPixel ? strumline.noteStyle.getStrumlineOffsets()[0] - 12: -noteOffset);
 
 
