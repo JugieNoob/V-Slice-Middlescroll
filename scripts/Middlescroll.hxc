@@ -127,8 +127,7 @@ class Middlescroll extends Module {
 			// for (note in playerStrumline.notes)
 			// {
 			//+ (noteOffset > 0 ? 0 : note.width / 4)
-			moveIncomingNote(event.note, playerStrumline);
-			
+			// moveIncomingNote(event.note, playerStrumline);
 			// }
 		
 
@@ -206,23 +205,26 @@ class Middlescroll extends Module {
 
 		// playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
 
-		if (isMobile && FlxG.save.data.middlescroll == "Wide Lanes")
-		{
-			for (i in 0...playerStrumline.strumlineNotes.length) {
-				var note = playerStrumline.strumlineNotes.members[i];
-				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width / 1.75)) + (i * (note.width + noteOffset) * 1.25) - (noteOffset * 1.5);
-			}
-		}
-		else if (isMobile || FlxG.save.data.middlescroll == "Wide Lanes")
-		{
-			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-			for (i in 0...playerStrumline.strumlineNotes.length) {
-				var note = playerStrumline.strumlineNotes.members[i];
+		// if (isMobile && FlxG.save.data.middlescroll == "Wide Lanes")
+		// {
+		// 	for (i in 0...playerStrumline.strumlineNotes.length) {
+		// 		var note = playerStrumline.strumlineNotes.members[i];
+		// 		note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width / 1.75)) + (i * (note.width + noteOffset) * 1.25) - (noteOffset * 1.5);
+		// 	}
+		// }
+		// else if (isMobile || FlxG.save.data.middlescroll == "Wide Lanes")
+		// {
+		// 	// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
+		// 	for (i in 0...playerStrumline.strumlineNotes.length) {
+		// 		var note = playerStrumline.strumlineNotes.members[i];
 
-				note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + noteOffset)) - noteOffset * 1.5;
-			}
-		}
+		// 		note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + noteOffset)) - noteOffset * 1.5;
+		// 	}
+		// }
 
+
+		playerStrumline.setNoteSpacing(2);
+		playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
 
 
 		switch (FlxG.save.data.noteEffects)
@@ -341,6 +343,12 @@ class Middlescroll extends Module {
 		
 		// note.x = playerStrumline.strumlineNotes.members[note.direction].x + (note.offset.x >= 23.55 ? -note.offset.x  : note.offset.x);
 
+		// strumline.setNoteSpacing();
+		// note.x = getXPos(note.direction, strumline);
+		var strumnote = strumline.strumlineNotes.members[direction];
+		note.x = strumnote.x - strumnote.width / 2 - ((strumline.noteStyle.getStrumlineOffsets()[0] * (isPixel ? 2 : 1))* note.x) + (isPixel ? strumline.noteStyle.getStrumlineOffsets()[0] - 12: -noteOffset);
+
+
 		debugtext.text = "note.scale.x: " + note.scale.x + " strumline.x: " + strumline.x + " strumline.strumlineNotes.x: " + strumline.strumlineNotes.x + "note offset: " + note.offset.x + "\nGet Strum offs: " + strumline.noteStyle.getStrumlineOffsets();
 	}
 	
@@ -360,6 +368,23 @@ class Middlescroll extends Module {
   	//     default: -pos * 2;
   	//   }
   	// }
+
+	// function getXPos(direction, strumline):Float
+  	// {
+    // var pos:Float = 0;
+    // return switch (direction)
+    // {
+    //   case 0: -pos * 2;
+    //   case 1:
+    //     -(pos * 2) + (1 * strumline.NOTE_SPACING) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
+    //   case 2:
+    //     pos + (2 * strumline.NOTE_SPACING) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
+    //   case 3:
+    //     pos + (3 * strumline.NOTE_SPACING) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
+    //   default: -pos * 2;
+    // }
+  	// }
+
 
 }
 
