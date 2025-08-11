@@ -105,9 +105,7 @@ class Middlescroll extends Module {
 				moveOpponentStrumline();
 			}
 
-			playerStrumline.background.scale.x = (playerStrumline.strumlineNotes.width / 2) + noteOffset;
-			playerStrumline.background.updateHitbox();
-			playerStrumline.background.x = playerStrumline.strumlineNotes.members[0].x - (noteOffset / 1.25);
+
 		}
 
 		if (FlxG.save.data.oppnotes == "Hidden") {
@@ -136,18 +134,18 @@ class Middlescroll extends Module {
 			}
 		}
 
-		if (!MiddlescrollOptions.isMobile)
-		{
-			for (note in opponentStrumline.notes)
-			{
-				note.x = opponentStrumline.strumlineNotes.members[note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);	
-			}
-			for (hold in opponentStrumline.holdNotes)
-			{
-				var strumNote = opponentStrumline.strumlineNotes.members[hold.noteDirection];
-				hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);			
-			}
-		}
+		// if (!MiddlescrollOptions.isMobile)
+		// {
+		// 	for (note in opponentStrumline.notes)
+		// 	{
+		// 		note.x = opponentStrumline.strumlineNotes.members[note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);	
+		// 	}
+		// 	for (hold in opponentStrumline.holdNotes)
+		// 	{
+		// 		var strumNote = opponentStrumline.strumlineNotes.members[hold.noteDirection];
+		// 		hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);			
+		// 	}
+		// }
 
 		if (FlxG.save.data.oppnotes == "Translucent")
 		{
@@ -170,22 +168,29 @@ class Middlescroll extends Module {
 					
 					for (splash in playerStrumline.noteSplashes)
 					{
+						var direction = 0;
+
 						if (StringTools.contains(splash.animation.name, "LEFT"))
 						{
-							splash.x = playerStrumline.strumlineNotes.members[0].x + noteOffset;
+							direction = 0;
 						}
 						else if (StringTools.contains(splash.animation.name, "DOWN"))
 						{
-							splash.x = playerStrumline.strumlineNotes.members[1].x + noteOffset;
+							direction = 1;
 						}
 						else if (StringTools.contains(splash.animation.name, "UP"))
 						{
-							splash.x = playerStrumline.strumlineNotes.members[2].x + noteOffset;
+							direction = 2;
 						}
 						else if (StringTools.contains(splash.animation.name, "RIGHT"))
 						{
-							splash.x = playerStrumline.strumlineNotes.members[3].x + noteOffset;
+							direction = 3;
 						}
+						if (event.note.direction == direction)
+						{
+							splash.x = event.note.x + (playerStrumline.noteStyle.getSplashOffsets()[0] * 1.75);
+						}
+
 					}
 				}
 			
@@ -220,8 +225,15 @@ class Middlescroll extends Module {
 
 			}
 		}
-		playerStrumline.x = (FlxG.width / 2 - playerStrumline.width / 2);
+		playerStrumline.x = (FlxG.width / 2 - playerStrumline.width / 2) - (noteSpacing);
+		// playerStrumline.background.width = 5000;
+		/*
 
+			playerStrumline.background.scale.x = (playerStrumline.strumlineNotes.width / 2) + noteOffset;
+			playerStrumline.background.updateHitbox();
+			playerStrumline.background.x = playerStrumline.strumlineNotes.members[0].x - (noteOffset / 1.25);
+
+		*/
 
 		switch (FlxG.save.data.noteEffects)
 		{
