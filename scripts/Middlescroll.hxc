@@ -18,6 +18,7 @@ class Middlescroll extends Module {
 	var differentLanes = false;
 	var noteSpacing = 0;
 
+	var debugtext;
 
 	function new() {
 		super("Middlescroll");
@@ -106,45 +107,86 @@ class Middlescroll extends Module {
 			hideOpponentStrumline();
 		}
 
-	
+	    debugtext = new FlxText();
+        // debugtext.text = "Combo: " + combo + "\nSong Position: " + Conductor.instance.songPosition + "\nnotehittime: " + notehittime + "\nholdnoteend: " + holdnoteend + "\nholdnoteendtime: " + holdnoteendtime +"\ncurrent step: " + Conductor.instance.currentStep + "\nhashitnote: " + hashitnote + "\nscreen width: " + FlxG.width;
+        debugtext.cameras = [PlayState.instance.camHUD];
+        debugtext.size = 18;
+        debugtext.updateHitbox();
+        debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
+        debugtext.zIndex = 1000;
+        PlayState.instance.add(debugtext);
 
 	}
 
 	override function onNoteIncoming(event) {
+
 		super.onNoteIncoming(event);
 
-		if (MiddlescrollOptions.isMobile || differentLanes)
+		if (event.note.noteData.getMustHitNote())
 		{
-			// Previous method done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
-			event.note.x = playerStrumline.x;
-			event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing)) - Strumline.NUDGE;
-
-			if (event.note.holdNoteSprite != null)
+			if (MiddlescrollOptions.isMobile || differentLanes)
 			{
-				var hold = event.note.holdNoteSprite;
-			
-				hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);
+				// Previous method done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
+				
+				// event.note.updateHitbox();
+				// event.note.updateHitbox();
+				event.note.x = playerStrumline.x;
+				// event.note.x += event.note.width / 1.5;
+				event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing)) - Strumline.NUDGE;
+				// event.note.x -= event.note.width / 2;
+				if (event.note.offset.x >= 40)
+				{
+					event.note.x -= event.note.offset.x;
+				}
+				if (event.note.get_kind() == "trickydeath")
+				{
+					event.note.x -= (playerStrumline.strumlineNotes.members[0].width / 2) - 15;
+				}
+
+				debugtext.text = " " + event.note.get_kind();
+
+				if (event.note.holdNoteSprite != null)
+				{
+					var hold = event.note.holdNoteSprite;
+				
+					hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);
+				}
 			}
 		}
-
-		// if (!MiddlescrollOptions.isMobile)
-		// {
-		// 	for (note in opponentStrumline.notes)
-		// 	{
-		// 		note.x = opponentStrumline.strumlineNotes.members[note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);	
-		// 	}
-		// 	for (hold in opponentStrumline.holdNotes)
-		// 	{
-		// 		var strumNote = opponentStrumline.strumlineNotes.members[hold.noteDirection];
-		// 		hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);			
-		// 	}
-		// }
+	
+		if (!MiddlescrollOptions.isMobile)
+		{
+			if (!event.note.noteData.getMustHitNote())
+			{
+				// Account for strumline offset.
+				var dist = opponentStrumline.x - opponentStrumline.strumlineNotes.members[0].x;
+				if (event.note.direction > 1)
+				{
+					event.note.x = opponentStrumline.strumlineNotes.members[event.note.direction].x + dist;
+					// event.note.x += ((event.note.direction - 2) * (Strumline.STRUMLINE_SIZE)) - Strumline.NUDGE;
+					if (event.note.holdNoteSprite != null)
+					{
+						var hold = event.note.holdNoteSprite;
+					
+						hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);
+					}
+				}
+				
+				// for (hold in opponentStrumline.holdNotes)
+				// {
+				// 	var strumNote = opponentStrumline.strumlineNotes.members[hold.noteDirection];
+				// 	hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);			
+				// }
+			}
+		}
 
 		if (FlxG.save.data.oppnotes == "Translucent")
 		{
 			translucentOpponentNotes();
 		}
+
+
 	}
 
 	override function onNoteHit(event)
@@ -226,7 +268,7 @@ class Middlescroll extends Module {
 
 			}
 			
-			playerStrumline.background.setGraphicSize(playerStrumline.strumlineNotes.width - (Strumline.BACKGROUND_PAD * 1.2), FlxG.height);
+			playerStrumline.background.setGraphicSize(playerStrumline.strumlineNotes.width - (Strumline.BACKGROUND_PAD * 1.2) + (playerStrumline.noteStyle.getStrumlineOffsets()[0] * 1.2), FlxG.height);
 			playerStrumline.background.updateHitbox();
 		}
 		if (FlxG.save.data.middlescroll != "Wide Lanes")
@@ -262,11 +304,11 @@ class Middlescroll extends Module {
 	function moveOpponentStrumline() {
 		opponentStrumline.remove(opponentStrumline.background);
 
+
 		if (opponentStrumline != null) {
-			for (i in 2...opponentStrumline.strumlineNotes.members.length) {
-				opponentStrumline.strumlineNotes.members[i].x = (FlxG.width
-					+ ((Constants.STRUMLINE_X_OFFSET
-						- opponentStrumline.strumlineNotes.members[i].width - noteOffset) * (opponentStrumline.strumlineNotes.members.length - i))
+			for (i in 2...opponentStrumline.strumlineNotes.length) {
+				var opponentNote = opponentStrumline.strumlineNotes.members[i];
+				opponentNote.x = (FlxG.width + ((Constants.STRUMLINE_X_OFFSET - opponentNote.width - noteOffset) * (opponentStrumline.strumlineNotes.length - i))
 					- (Constants.STRUMLINE_X_OFFSET * 1.5))
 					+ (noteOffset / 2);
 			}
@@ -331,5 +373,22 @@ class Middlescroll extends Module {
 		}
 		
 	}
+
+	function getXPos(direction, strumline):Float
+  	{
+  	  var pos:Float = 0;
+
+	  return switch (direction)
+  	  {
+  	    case 0: -pos * 2;
+  	    case 1:
+  	      -(pos * 2) + (1 * Strumline.NOTE_SPACING + noteSpacing) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
+  	    case 2:
+  	      pos + (2 * Strumline.NOTE_SPACING + noteSpacing) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
+  	    case 3:
+  	      pos + (3 * Strumline.NOTE_SPACING + noteSpacing) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
+  	    default: -pos * 2;
+  	  }
+  	}
 }
 

@@ -1,0 +1,22 @@
+import flixel.text.FlxText;
+import funkin.play.PlayState;
+import flixel.FlxG;
+
+class DebugText extends FlxText {
+    public function new(newtext = "")
+    {
+        super();
+        text = newtext;
+        size = 18;
+        updateHitbox();
+        setPosition(30, FlxG.height - height - 10);
+        zIndex = 1000;
+    }
+
+    public function updateText(newtext)
+    {
+        text = newtext;
+        setPosition(30, FlxG.height - height - 10);
+
+    }
+}
