@@ -2,7 +2,7 @@
     "title": "V-Slice Middlescroll",
     "description": "Reimplements middlescroll into the V-Slice version of the game",
     "author": "JugieNoob",
-    "api_version": "0.6.3",
+    "api_version": "0.7.2",
     "mod_version": "1.3.0",
     "license": "CC BY 4.0,MIT"
 }

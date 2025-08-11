@@ -6,6 +6,8 @@ import Std;
 
 class MiddlescrollOptions extends Module {
     
+    public static var isMobile = true;
+
     function new (){
         super("Middlescroll Options", 21);
 
@@ -50,10 +52,22 @@ class MiddlescrollOptions extends Module {
         {
             var preferences = event.targetState.optionsCodex.pages.get("preferences");
 
-            preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline.", ["On" => "On", "Off" => "Off", "Wide Lanes" => "Wide Lanes"], function(value:Bool):Void {
-                FlxG.save.data.middlescroll = value;
-                FlxG.save.flush();
-            }, FlxG.save.data.middlescroll);      
+            if (isMobile)
+            {
+                preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline.", ["On" => "On", "Off" => "Off", "Wide Lanes" => "Wide Lanes", "Narrow Lanes" => "Narrow Lanes"], function(value:Bool):Void {
+                    FlxG.save.data.middlescroll = value;
+                    FlxG.save.flush();
+                }, FlxG.save.data.middlescroll);     
+                 
+            }
+            else
+            {
+                preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline.", ["On" => "On", "Off" => "Off", "Wide Lanes" => "Wide Lanes"], function(value:Bool):Void {
+                    FlxG.save.data.middlescroll = value;
+                    FlxG.save.flush();
+                }, FlxG.save.data.middlescroll);    
+            }
+     
 
             preferences.createPrefItemCheckbox('Move Popups', 'Moves the rating and combo popups.', function(value:Bool):Void {
             FlxG.save.data.movepopups = value;
