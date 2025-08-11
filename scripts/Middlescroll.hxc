@@ -104,8 +104,6 @@ class Middlescroll extends Module {
 			{
 				moveOpponentStrumline();
 			}
-
-
 		}
 
 		if (FlxG.save.data.oppnotes == "Hidden") {
@@ -226,6 +224,9 @@ class Middlescroll extends Module {
 				note.x += (i * (Strumline.STRUMLINE_SIZE + noteSpacing));
 
 			}
+			
+			playerStrumline.background.setGraphicSize(playerStrumline.strumlineNotes.width - (Strumline.BACKGROUND_PAD * 1.2), FlxG.height);
+			playerStrumline.background.updateHitbox();
 		}
 		if (FlxG.save.data.middlescroll != "Wide Lanes")
 		{
@@ -235,14 +236,9 @@ class Middlescroll extends Module {
 		{
 			playerStrumline.x = ((FlxG.width / 2) - (playerStrumline.width / 2)) - (noteSpacing * 1.25);
 		}
-		// playerStrumline.background.width = 5000;
-		/*
+		
 
-			playerStrumline.background.scale.x = (playerStrumline.strumlineNotes.width / 2) + noteOffset;
-			playerStrumline.background.updateHitbox();
-			playerStrumline.background.x = playerStrumline.strumlineNotes.members[0].x - (noteOffset / 1.25);
-
-		*/
+		
 
 		switch (FlxG.save.data.noteEffects)
 		{
