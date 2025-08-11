@@ -214,6 +214,8 @@ class Middlescroll extends Module {
 				noteSpacing = 10;
 			default:
 				noteSpacing = 45;
+
+		
 		}
 
 		if (MiddlescrollOptions.isMobile || differentLanes)
@@ -225,7 +227,14 @@ class Middlescroll extends Module {
 
 			}
 		}
-		playerStrumline.x = (FlxG.width / 2 - playerStrumline.width / 2) - (noteSpacing);
+		if (FlxG.save.data.middlescroll != "Wide Lanes")
+		{
+			playerStrumline.x = ((FlxG.width / 2) - (playerStrumline.width / 2)) - noteSpacing;			
+		}
+		else
+		{
+			playerStrumline.x = ((FlxG.width / 2) - (playerStrumline.width / 2)) - (noteSpacing * 1.25);
+		}
 		// playerStrumline.background.width = 5000;
 		/*
 
