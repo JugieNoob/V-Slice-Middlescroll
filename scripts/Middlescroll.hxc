@@ -123,21 +123,17 @@ class Middlescroll extends Module {
 
 		if (MiddlescrollOptions.isMobile || differentLanes)
 		{
-			// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-
-			// for (note in playerStrumline.notes)
-			// {
-				// event.note.x = playerStrumline.strumlineNotes.members[event.note.direction].x + (noteOffset > 0 ? 0 : note.width / 4);			
-			// }
+			// Previous method done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
 			event.note.x = playerStrumline.x;
-			event.note.x += (event.note.direction * (playerStrumline.strumlineNotes.members[event.note.direction].width + noteSpacing));
+			event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing)) - Strumline.NUDGE;
 
-			// for (hold in playerStrumline.holdNotes)
-			// {
-			// 	var strumNote = playerStrumline.strumlineNotes.members[hold.noteDirection];
-			// 	hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);
-			// }		
+			if (event.note.holdNoteSprite != null)
+			{
+				var hold = event.note.holdNoteSprite;
+			
+				hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);
+			}
 		}
 
 		if (!MiddlescrollOptions.isMobile)
@@ -202,38 +198,29 @@ class Middlescroll extends Module {
 
 	function setPlayerStrumline()
 	{
+		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
-
+		// playerStrumline.x = (FlxG.width / 2 - playerStrumline.strumlineNotes.width / 2) - (playerStrumline.strumlineNotes.members[0].width / 1.5);
 		switch (FlxG.save.data.middlescroll)
 		{
 			case "Wide Lanes":
-				noteSpacing = 50;
+				noteSpacing = 100;
 			case "Narrow Lanes":
-				noteSpacing = -50;
+				noteSpacing = 10;
+			default:
+				noteSpacing = 45;
 		}
 
-		if (MiddlescrollOptions.isMobile && differentLanes)
+		if (MiddlescrollOptions.isMobile || differentLanes)
 		{
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
 				note.x = playerStrumline.strumlineNotes.members[0].x;
-				note.x += (i * (note.width + noteSpacing));
+				note.x += (i * (Strumline.STRUMLINE_SIZE + noteSpacing));
 
 			}
 		}
-		playerStrumline.x = (FlxG.width / 2) - (playerStrumline.width / 2);
-		// playerStrumline.x = (FlxG.width / 2) - (playerStrumline.width / 2);
-
-		// else if (MiddlescrollOptions.isMobile || FlxG.save.data.middlescroll == "Wide Lanes")
-		// {
-		// 	// Done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-		// 	for (i in 0...playerStrumline.strumlineNotes.length) {
-		// 		var note = playerStrumline.strumlineNotes.members[i];
-
-		// 		note.x = (FlxG.width / 2 - (playerStrumline.strumlineNotes.length * note.width) / 2) + (i * (note.width + noteOffset)) - noteOffset * 1.5;
-		// 	}
-		// }
-
+		playerStrumline.x = (FlxG.width / 2 - playerStrumline.width / 2);
 
 
 		switch (FlxG.save.data.noteEffects)
