@@ -1,12 +1,13 @@
 import funkin.modding.module.Module;
 import funkin.ui.options.PreferencesMenu;
+import funkin.Preferences;
 import funkin.ui.options.OptionsState;
 import flixel.FlxG;
 import Std;
 
 class MiddlescrollOptions extends Module {
     
-    public static var isMobile = true;
+    public static var isMobile = false;
 
     function new (){
         super("Middlescroll Options", 21);
@@ -41,6 +42,11 @@ class MiddlescrollOptions extends Module {
         {
             FlxG.save.data.middlescroll = "Off";
         }
+
+        if (FlxG.width > 1280 && Preferences.controlsScheme == "Arrows")
+		{
+			isMobile = true;	
+		}
 
     }
 

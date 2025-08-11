@@ -5,7 +5,6 @@ import funkin.play.notes.Strumline;
 import funkin.util.Constants;
 import StringTools;
 import flixel.text.FlxText;
-import funkin.Preferences;
 
 class Middlescroll extends Module {
 	var noteOffset:Int = 0;
@@ -84,10 +83,7 @@ class Middlescroll extends Module {
 		noteOffset = strumOffset[0] + strumOffset[1];
 
 
-		// if (FlxG.width > 1280 && Preferences.controlsScheme == "Arrows")
-		// {
-		// 	MiddlescrollOptions.isMobile = true;	
-		// }
+
 	
 
 		
@@ -207,13 +203,18 @@ class Middlescroll extends Module {
 		switch (FlxG.save.data.middlescroll)
 		{
 			case "Wide Lanes":
-				noteSpacing = 100;
+				noteSpacing = 60;
 			case "Narrow Lanes":
 				noteSpacing = 10;
 			default:
-				noteSpacing = 45;
-
-		
+				if (MiddlescrollOptions.isMobile)
+				{
+					noteSpacing = 45;	
+				}
+				else
+				{
+					noteSpacing = 0;
+				}
 		}
 
 		if (MiddlescrollOptions.isMobile || differentLanes)
@@ -236,7 +237,6 @@ class Middlescroll extends Module {
 		{
 			playerStrumline.x = ((FlxG.width / 2) - (playerStrumline.width / 2)) - (noteSpacing * 1.25);
 		}
-		
 
 		
 
