@@ -268,7 +268,7 @@ class Middlescroll extends Module {
 
 			}
 			
-			playerStrumline.background.setGraphicSize(playerStrumline.strumlineNotes.width - (Strumline.BACKGROUND_PAD * 1.2) + (playerStrumline.noteStyle.getStrumlineOffsets()[0] * 1.2), FlxG.height);
+			playerStrumline.background.setGraphicSize(playerStrumline.strumlineNotes.width - Strumline.BACKGROUND_PAD, FlxG.height + 50); //(4 * ((Strumline.NOTE_SPACING + noteSpacing) + (Strumline.BACKGROUND_PAD * 2)))
 			playerStrumline.background.updateHitbox();
 		}
 		if (FlxG.save.data.middlescroll != "Wide Lanes")
