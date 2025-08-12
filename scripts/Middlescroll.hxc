@@ -7,7 +7,6 @@ import StringTools;
 import flixel.text.FlxText;
 
 class Middlescroll extends Module {
-	var noteOffset:Int = 0;
 	var isPixel:Int = false;
 
 	// public var MiddlescrollOptions.isMobile:Bool = false;
@@ -91,21 +90,13 @@ class Middlescroll extends Module {
 
 
 		isPixel = playerStrumline.noteStyle.isHoldNotePixel();
-		var strumOffset = playerStrumline.noteStyle.getStrumlineOffsets();
-		noteOffset = strumOffset[0] + strumOffset[1];
-
-
-
-	
-
-		
 
 		if (FlxG.save.data.movepopups) {
 			// Taken from Blazin'
 			PlayState.instance.comboPopUps.offsets = [480, -50];
 		}
 
-		
+
 		if (FlxG.save.data.middlescroll != "Off") {
 			setPlayerStrumline();
 			if (!MiddlescrollOptions.isMobile)
@@ -131,13 +122,9 @@ class Middlescroll extends Module {
 			if (MiddlescrollOptions.isMobile || differentLanes)
 			{
 				// Previous method done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-				
-				// event.note.updateHitbox();
-				// event.note.updateHitbox();
 				event.note.x = playerStrumline.x;
-				// event.note.x += event.note.width / 1.5;
 				event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing)) - Strumline.NUDGE;
-				// event.note.x -= event.note.width / 2;
+
 				if (event.note.offset.x >= 40)
 				{
 					event.note.x -= event.note.offset.x;
@@ -151,7 +138,6 @@ class Middlescroll extends Module {
 				if (event.note.holdNoteSprite != null)
 				{
 					var hold = event.note.holdNoteSprite;
-				
 					hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);
 				}
 			}
@@ -166,7 +152,6 @@ class Middlescroll extends Module {
 				if (event.note.direction > 1)
 				{
 					event.note.x = opponentStrumline.strumlineNotes.members[event.note.direction].x + dist;
-					// event.note.x += ((event.note.direction - 2) * (Strumline.STRUMLINE_SIZE)) - Strumline.NUDGE;
 					if (event.note.holdNoteSprite != null)
 					{
 						var hold = event.note.holdNoteSprite;
@@ -174,12 +159,7 @@ class Middlescroll extends Module {
 						hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);
 					}
 				}
-				
-				// for (hold in opponentStrumline.holdNotes)
-				// {
-				// 	var strumNote = opponentStrumline.strumlineNotes.members[hold.noteDirection];
-				// 	hold.x = strumNote.x + (strumNote.width / 2) - (hold.width / 2);			
-				// }
+		
 			}
 		}
 
@@ -243,7 +223,6 @@ class Middlescroll extends Module {
 	{
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
-		// playerStrumline.x = (FlxG.width / 2 - playerStrumline.strumlineNotes.width / 2) - (playerStrumline.strumlineNotes.members[0].width / 1.5);
 		debugtext.text = "middle: " + ((FlxG.width - playerStrumline.width) / 2);
 
 		switch (FlxG.save.data.middlescroll)
@@ -334,9 +313,9 @@ class Middlescroll extends Module {
 		if (opponentStrumline != null) {
 			for (i in 2...opponentStrumline.strumlineNotes.length) {
 				var opponentNote = opponentStrumline.strumlineNotes.members[i];
-				opponentNote.x = (FlxG.width + ((Constants.STRUMLINE_X_OFFSET - opponentNote.width - noteOffset) * (opponentStrumline.strumlineNotes.length - i))
+				opponentNote.x = (FlxG.width + ((Constants.STRUMLINE_X_OFFSET - opponentNote.width - opponentStrumline.getStrumlineOffsets()[0]) * (opponentStrumline.strumlineNotes.length - i))
 					- (Constants.STRUMLINE_X_OFFSET * 1.5))
-					+ (noteOffset / 2);
+					+ (opponentStrumline.getStrumlineOffsets()[0] / 2);
 			}
 		}
 	}
@@ -350,7 +329,6 @@ class Middlescroll extends Module {
 			{
 				for (cover in strumline.noteHoldCovers)
 				{
-				
 					if (StringTools.contains(cover.glow.animation.name, "Blue"))
 					{
 						direction = 1;
@@ -369,7 +347,7 @@ class Middlescroll extends Module {
 					}
 
 					var note = strumline.strumlineNotes.members[direction];
-					cover.glow.x = note.x - note.width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x) + (isPixel ? strumline.noteStyle.getHoldCoverOffsets()[0] - 12: -noteOffset);
+					cover.glow.x = note.x - note.width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x) + (isPixel ? strumline.noteStyle.getHoldCoverOffsets()[0] - 12: -strumline.noteStyle.getHoldCoverOffsets()[0]);
 
 				}
 			}
@@ -400,21 +378,5 @@ class Middlescroll extends Module {
 		
 	}
 
-	function getXPos(direction, strumline):Float
-  	{
-  	  var pos:Float = 0;
-
-	  return switch (direction)
-  	  {
-  	    case 0: -pos * 2;
-  	    case 1:
-  	      -(pos * 2) + (1 * Strumline.NOTE_SPACING + noteSpacing) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
-  	    case 2:
-  	      pos + (2 * Strumline.NOTE_SPACING + noteSpacing) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
-  	    case 3:
-  	      pos + (3 * Strumline.NOTE_SPACING + noteSpacing) * (strumline.noteSpacingScale * strumline.strumlineScale.x);
-  	    default: -pos * 2;
-  	  }
-  	}
 }
 
