@@ -66,6 +66,17 @@ class Middlescroll extends Module {
 	override function onCountdownStart(event) {
 		super.onCountdownStart(event);
 
+		
+	    debugtext = new FlxText();
+        // debugtext.text = "Combo: " + combo + "\nSong Position: " + Conductor.instance.songPosition + "\nnotehittime: " + notehittime + "\nholdnoteend: " + holdnoteend + "\nholdnoteendtime: " + holdnoteendtime +"\ncurrent step: " + Conductor.instance.currentStep + "\nhashitnote: " + hashitnote + "\nscreen width: " + FlxG.width;
+        debugtext.cameras = [PlayState.instance.camHUD];
+        debugtext.size = 18;
+        debugtext.updateHitbox();
+        debugtext.setPosition(30, FlxG.height - debugtext.height - 40);
+        debugtext.zIndex = 1000;
+        PlayState.instance.add(debugtext);
+
+
 		if (FlxG.save.data.middlescroll == "Wide Lanes" || FlxG.save.data.middlescroll == "Narrow Lanes")
 		{
 			differentLanes = true;
@@ -107,14 +118,6 @@ class Middlescroll extends Module {
 			hideOpponentStrumline();
 		}
 
-	    debugtext = new FlxText();
-        // debugtext.text = "Combo: " + combo + "\nSong Position: " + Conductor.instance.songPosition + "\nnotehittime: " + notehittime + "\nholdnoteend: " + holdnoteend + "\nholdnoteendtime: " + holdnoteendtime +"\ncurrent step: " + Conductor.instance.currentStep + "\nhashitnote: " + hashitnote + "\nscreen width: " + FlxG.width;
-        debugtext.cameras = [PlayState.instance.camHUD];
-        debugtext.size = 18;
-        debugtext.updateHitbox();
-        debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
-        debugtext.zIndex = 1000;
-        PlayState.instance.add(debugtext);
 
 	}
 
@@ -144,7 +147,6 @@ class Middlescroll extends Module {
 					event.note.x -= (playerStrumline.strumlineNotes.members[0].width / 2) - 15;
 				}
 
-				debugtext.text = " " + event.note.get_kind();
 
 				if (event.note.holdNoteSprite != null)
 				{
@@ -242,6 +244,8 @@ class Middlescroll extends Module {
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
 		// playerStrumline.x = (FlxG.width / 2 - playerStrumline.strumlineNotes.width / 2) - (playerStrumline.strumlineNotes.members[0].width / 1.5);
+		debugtext.text = "middle: " + ((FlxG.width - playerStrumline.width) / 2);
+
 		switch (FlxG.save.data.middlescroll)
 		{
 			case "Wide Lanes":
@@ -251,7 +255,7 @@ class Middlescroll extends Module {
 			default:
 				if (MiddlescrollOptions.isMobile)
 				{
-					noteSpacing = 45;	
+					noteSpacing = 45;//45;	
 				}
 				else
 				{
@@ -259,27 +263,49 @@ class Middlescroll extends Module {
 				}
 		}
 
+		var originalPos = (FlxG.width - playerStrumline.width) / 2; 
+		
 		if (MiddlescrollOptions.isMobile || differentLanes)
 		{
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
 				note.x = playerStrumline.strumlineNotes.members[0].x;
 				note.x += (i * (Strumline.STRUMLINE_SIZE + noteSpacing));
-
+				
 			}
-			
-			playerStrumline.background.setGraphicSize(playerStrumline.strumlineNotes.width - Strumline.BACKGROUND_PAD, FlxG.height + 50); //(4 * ((Strumline.NOTE_SPACING + noteSpacing) + (Strumline.BACKGROUND_PAD * 2)))
-			playerStrumline.background.updateHitbox();
+			// playerStrumline.background.setGraphicSize(playerStrumline.strumlineNotes.width - Strumline.BACKGROUND_PAD, FlxG.height + 50); //(4 * ((Strumline.NOTE_SPACING + noteSpacing) + (Strumline.BACKGROUND_PAD * 2)))
+			//4 * (Strumline.STRUMLINE_SIZE + noteSpacing) - Strumline.BACKGROUND_PAD
+			// playerStrumline.background.setGraphicSize(4 * (Strumline.STRUMLINE_SIZE + noteSpacing), FlxG.height + 50);
+			// playerStrumline.background.setGraphicSize(playerStrumline.background.width + (Strumline.STRUMLINE_SIZE / 2) + noteSpacing + (Strumline.BACKGROUND_PAD / 2), FlxG.height + 50);
+			// playerStrumline.x = (FlxG.width - playerStrumline.background.width) / 2;
+			// playerStrumline.x = ((FlxG.width - playerStrumline.width) / 2) - (noteSpacing + (Strumline.BACKGROUND_PAD / 2));
 		}
-		if (FlxG.save.data.middlescroll != "Wide Lanes")
-		{
-			playerStrumline.x = ((FlxG.width / 2) - (playerStrumline.width / 2)) - noteSpacing;			
-		}
-		else
-		{
-			playerStrumline.x = ((FlxG.width / 2) - (playerStrumline.width / 2)) - (noteSpacing * 1.25);
-		}
+		//
+		var firststrumNote = playerStrumline.strumlineNotes.members[0];
+		// playerStrumline.x = ((FlxG.width - (firststrumNote.width + (3 * (Strumline.STRUMLINE_SIZE + noteSpacing)))) + firststrumNote.offset.x) / 2;//playerStrumline.strumlineNotes.members[0].width) );
+		// playerStrumline.x += noteSpacing * (2 - 1.45);
+		
+		playerStrumline.x = (FlxG.width / 2) - (2 * ((Strumline.STRUMLINE_SIZE))) + (Strumline.STRUMLINE_SIZE / 4) - (noteSpacing * 4.2);
 
+		debugtext.text += "\nStrumline x: " + playerStrumline.x + " difference: " + (originalPos - playerStrumline.x);
+
+		// playerStrumline.background.setGraphicSize((4 * (Strumline.STRUMLINE_SIZE) + ((Strumline.BACKGROUND_PAD + noteSpacing) * 2)), FlxG.height + 50); //2.85
+		// playerStrumline.background.updateHitbox();
+
+		// playerStrumline.background.setGraphicSize()
+
+		 //(FlxG.width / 2) - (playerStrumline.background.width / 2) + (noteSpacing / 4);//(playerStrumline.width / 2) - noteSpacing;
+
+		// if (FlxG.save.data.middlescroll != "Wide Lanes")
+		// {
+		// 	playerStrumline.x = ((FlxG.width / 2) - (playerStrumline.width / 2)) - noteSpacing;			
+		// }
+		// else
+		// {
+		// 	playerStrumline.x = ((FlxG.width / 2) - (playerStrumline.width / 2)) - (noteSpacing * 1.25);
+		// }
+		// playerStrumline.x = (FlxG.width / 2) - (2 * (Strumline.STRUMLINE_SIZE + noteSpacing)) + (noteSpacing / 3);
+		//+ (noteSpacing / 3)
 		
 
 		switch (FlxG.save.data.noteEffects)
