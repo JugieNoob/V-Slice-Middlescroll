@@ -7,7 +7,7 @@ import Std;
 
 class MiddlescrollOptions extends Module {
     
-    public static var isMobile = true;
+    public static var isMobile = false;
 
     function new (){
         super("Middlescroll Options", 21);
