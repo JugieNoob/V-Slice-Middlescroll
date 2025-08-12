@@ -5,6 +5,8 @@ import funkin.play.notes.Strumline;
 import funkin.util.Constants;
 import StringTools;
 import flixel.text.FlxText;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
 
 class Middlescroll extends Module {
 	var isPixel:Int = false;
@@ -40,22 +42,21 @@ class Middlescroll extends Module {
 					updateNoteCovers(opponentStrumline);
 				}
 			}
+			// if (opponentStrumline != null){
+			// 	if (FlxG.save.data.oppnotes == "Translucent")
+			// 	{
+			// 		for (hold in opponentStrumline.holdNotes)
+			// 		{
+			// 			hold.alpha = 0.5;
+			// 		}
+			// 	}
+			// }
 			
-			if (FlxG.save.data.oppnotes == "Translucent") {
-				if (opponentStrumline != null)
-				{
-					if (opponentStrumline.strumlineNotes != null) {
-						for (note in opponentStrumline.strumlineNotes)
-						{
-							note.alpha = 0.5;
-						}
-					}
-				}
-			
-			}
+
 
 		}
 	}
+
 
 	override function onCountdownStart(event) {
 		super.onCountdownStart(event);
@@ -97,8 +98,18 @@ class Middlescroll extends Module {
 		}
 		if (FlxG.save.data.oppnotes == "Translucent")
 		{
-			// opponentStrumline.notes.alpha = 1;
 			opponentStrumline.alpha = 0.5;
+			opponentStrumline.holdNotes.directAlpha = true;
+
+			for (arrow in opponentStrumline.strumlineNotes)
+			{
+				FlxTween.cancelTweensOf(arrow);
+
+				arrow.y -= 10;
+    			arrow.alpha = 0.0;
+    			FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.5}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
+			}
+    
 
 		}
 
@@ -144,18 +155,26 @@ class Middlescroll extends Module {
 				if (event.note.direction > 1)
 				{
 					event.note.x = opponentStrumline.strumlineNotes.members[event.note.direction].x + dist;
-
+			
 					if (event.note.holdNoteSprite != null)
 					{
 						var hold = event.note.holdNoteSprite;
 					
 						hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);
-
-						if (FlxG.save.data.oppnotes == "Translucent")
-						{
-							hold.alpha = 0.5;
-						}
+						hold.setColorTransform(1,1,1,0.5);
+						
 					}
+				}
+				
+				if (FlxG.save.data.oppnotes == "Translucent") 
+				{
+					if (opponentStrumline != null)
+					{
+						opponentStrumline.holdNotes.forEach(function(hold){
+							hold.alpha = 0.5;
+						});
+					}
+			
 				}
 		
 			}
