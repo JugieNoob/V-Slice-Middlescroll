@@ -99,7 +99,6 @@ class Middlescroll extends Module {
 		if (FlxG.save.data.oppnotes == "Translucent")
 		{
 			opponentStrumline.alpha = 0.5;
-			opponentStrumline.holdNotes.directAlpha = true;
 
 			for (arrow in opponentStrumline.strumlineNotes)
 			{
@@ -125,17 +124,29 @@ class Middlescroll extends Module {
 			if (MiddlescrollOptions.isMobile || differentLanes)
 			{
 				// Previous method done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-				event.note.x = playerStrumline.x;
+
+				if (MiddlescrollOptions.isMobile)
+				{
+					event.note.x = playerStrumline.strumlineNotes.members[0].x;
+					if (playerStrumline.noteStyle.getName() == "Funkin'")
+					{
+						event.note.x += event.note.offset.x + Strumline.NUDGE;
+					}
+				}
+				else
+				{
+					event.note.x = playerStrumline.x;
+				}			
 				event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing)) - Strumline.NUDGE;
 
-				if (event.note.offset.x >= 40)
-				{
-					event.note.x -= event.note.offset.x;
-				}
-				if (event.note.get_kind() == "trickydeath")
-				{
-					event.note.x -= (playerStrumline.strumlineNotes.members[0].width / 2) - 15;
-				}
+				// if (event.note.offset.x >= 40)
+				// {
+				// 	event.note.x -= event.note.offset.x;
+				// }
+				// if (event.note.get_kind() == "trickydeath")
+				// {
+				// 	event.note.x -= (playerStrumline.strumlineNotes.members[0].width / 2) - 15;
+				// }
 
 
 				if (event.note.holdNoteSprite != null)
@@ -232,7 +243,7 @@ class Middlescroll extends Module {
 	function setPlayerStrumline()
 	{
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-
+  		Strumline.STRUMLINE_SIZE = 104;
 		switch (FlxG.save.data.middlescroll)
 		{
 			case "Wide Lanes":
@@ -242,7 +253,7 @@ class Middlescroll extends Module {
 			default:
 				if (MiddlescrollOptions.isMobile)
 				{
-					noteSpacing = 45;
+					noteSpacing = 100;
 				}
 				else
 				{
@@ -260,8 +271,8 @@ class Middlescroll extends Module {
 				
 			}
 
-			playerStrumline.background.setGraphicSize(4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)) + (Strumline.BACKGROUND_PAD * 2), FlxG.height + 50);
-			playerStrumline.background.updateHitbox();
+			// playerStrumline.background.setGraphicSize(4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)) + (Strumline.BACKGROUND_PAD * 2), FlxG.height + 50);
+			// playerStrumline.background.updateHitbox();
 
 			playerStrumline.x = FlxG.width - (4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)));//
 			playerStrumline.x = playerStrumline.x / 2;
@@ -292,13 +303,25 @@ class Middlescroll extends Module {
 	function moveOpponentStrumline() {
 		opponentStrumline.remove(opponentStrumline.background);
 
-
 		if (opponentStrumline != null) {
 			for (i in 2...opponentStrumline.strumlineNotes.length) {
 				var opponentNote = opponentStrumline.strumlineNotes.members[i];
-				opponentNote.x = (FlxG.width + ((Constants.STRUMLINE_X_OFFSET - opponentNote.width - opponentStrumline.noteStyle.getStrumlineOffsets()[0]) * (opponentStrumline.strumlineNotes.length - i))
-					- (Constants.STRUMLINE_X_OFFSET * 1.5))
-					+ (opponentStrumline.noteStyle.getStrumlineOffsets()[0] / 2);
+				opponentNote.x = FlxG.width;
+				// if (opponentStrumline.noteStyle.getStrumlineOffsets()[0] == 0)
+				// {
+				// 	opponentNote.x -= (opponentNote.width - opponentNote.offset.x);
+				// }
+				// else
+				// {
+				opponentNote.x -= opponentNote.width - opponentNote.offset.x;
+				// }
+				opponentNote.x -= Constants.STRUMLINE_X_OFFSET;
+				// opponentNote.x -= (opponentNote.width * 1.1) * (3 - i);
+				opponentNote.x -= (opponentNote.offset.x * 2) * (3-i);
+
+				// opponentNote.x = (FlxG.width + ((Constants.STRUMLINE_X_OFFSET - opponentNote.width - opponentStrumline.noteStyle.getStrumlineOffsets()[0]) * (opponentStrumline.strumlineNotes.length - i))
+				// 	- (Constants.STRUMLINE_X_OFFSET * 1.5))
+				// 	+ ((opponentStrumline.noteStyle.getStrumlineOffsets()[0] + opponentNote.offset.x) / 2);
 			}
 		}
 	}
@@ -331,7 +354,10 @@ class Middlescroll extends Module {
 
 					var note = strumline.strumlineNotes.members[direction];
 					cover.glow.x = note.x - note.width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x) + (isPixel ? strumline.noteStyle.getHoldCoverOffsets()[0] - 12: -strumline.noteStyle.getHoldCoverOffsets()[0]);
-
+					if (FlxG.save.data.oppnotes == "Translucent") 
+					{
+						cover.alpha = 0.5;
+					}
 				}
 			}
 		}

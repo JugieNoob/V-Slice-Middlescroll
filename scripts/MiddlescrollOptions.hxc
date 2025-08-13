@@ -7,7 +7,7 @@ import Std;
 
 class MiddlescrollOptions extends Module {
     
-    public static var isMobile = false;
+    public static var isMobile = true;
 
     function new (){
         super("Middlescroll Options", 21);
@@ -43,16 +43,18 @@ class MiddlescrollOptions extends Module {
             FlxG.save.data.middlescroll = "Off";
         }
 
-        if (FlxG.width > 1280 && Preferences.controlsScheme == "Arrows")
-		{
-			isMobile = true;	
-		}
+     
 
     }
 
     function onStateChangeEnd(event)
     {
         super.onStateChangeEnd(event);
+
+        if (FlxG.width > 1280 && Preferences.controlsScheme == "Arrows")
+		{
+			isMobile = true;	
+		}
 
         if (Std.isOfType(event.targetState, OptionsState))
         {
