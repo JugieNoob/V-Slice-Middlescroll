@@ -90,27 +90,28 @@ class Middlescroll extends Module {
 			}
 		}
 
-		if (FlxG.save.data.oppnotes == "Hidden") {
-			// Taken from Blazin'
-			if (opponentStrumline != null) {
-				opponentStrumline.visible = false;
-			}		
-		}
-		if (FlxG.save.data.oppnotes == "Translucent")
-		{
-			opponentStrumline.alpha = 0.5;
+		// if (FlxG.save.data.oppnotes == "Hidden") {
+		// 	// Taken from Blazin'
+		// 	if (opponentStrumline != null) {
+		// 		opponentStrumline.visible = false;
+		// 	}		
+		// }
+		// if (FlxG.save.data.oppnotes == "Translucent")
+		// {
+		// 	opponentStrumline.alpha = 0.5;
 
-			for (arrow in opponentStrumline.strumlineNotes)
-			{
-				FlxTween.cancelTweensOf(arrow);
+		// 	for (arrow in opponentStrumline.strumlineNotes)
+		// 	{
+		// 		FlxTween.cancelTweensOf(arrow);
 
-				arrow.y -= 10;
-    			arrow.alpha = 0.0;
-    			FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.5}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
-			}
+		// 		arrow.y -= 10;
+    	// 		arrow.alpha = 0.0;
+    	// 		FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.5}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
+		// 	}
     
 
-		}
+		// }
+		opponentStrumline.visible = false;
 
 	}
 
@@ -139,14 +140,14 @@ class Middlescroll extends Module {
 				}			
 				event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing)) - Strumline.NUDGE;
 
-				// if (event.note.offset.x >= 40)
-				// {
-				// 	event.note.x -= event.note.offset.x;
-				// }
-				// if (event.note.get_kind() == "trickydeath")
-				// {
-				// 	event.note.x -= (playerStrumline.strumlineNotes.members[0].width / 2) - 15;
-				// }
+				if (event.note.offset.x >= 40)
+				{
+					event.note.x -= event.note.offset.x;
+				}
+				if (event.note.get_kind() == "trickydeath")
+				{
+					event.note.x -= (playerStrumline.strumlineNotes.members[0].width / 2) - 15;
+				}
 
 
 				if (event.note.holdNoteSprite != null)
@@ -171,9 +172,7 @@ class Middlescroll extends Module {
 					{
 						var hold = event.note.holdNoteSprite;
 					
-						hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);
-						hold.setColorTransform(1,1,1,0.5);
-						
+						hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);						
 					}
 				}
 				
@@ -243,7 +242,6 @@ class Middlescroll extends Module {
 	function setPlayerStrumline()
 	{
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-  		Strumline.STRUMLINE_SIZE = 104;
 		switch (FlxG.save.data.middlescroll)
 		{
 			case "Wide Lanes":
@@ -253,7 +251,7 @@ class Middlescroll extends Module {
 			default:
 				if (MiddlescrollOptions.isMobile)
 				{
-					noteSpacing = 100;
+					noteSpacing = 45;
 				}
 				else
 				{
@@ -261,24 +259,51 @@ class Middlescroll extends Module {
 				}
 		}		
 
-		playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
+		// playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
+		playerStrumline.setNoteSpacing(0);
+
+
 		if (MiddlescrollOptions.isMobile || differentLanes)
 		{
+			var mobilepos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
-				note.x = playerStrumline.strumlineNotes.members[0].x;
+				// note.x = playerStrumline.strumlineNotes.members[0].x;
 				note.x += (i * (Strumline.STRUMLINE_SIZE + noteSpacing));
 				
+				if (MiddlescrollOptions.isMobile)
+				{
+					if (note.direction > 1)
+					{
+						note.x -= (mobilepos * 3);
+					}
+				}
 			}
 
-			// playerStrumline.background.setGraphicSize(4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)) + (Strumline.BACKGROUND_PAD * 2), FlxG.height + 50);
-			// playerStrumline.background.updateHitbox();
+			playerStrumline.background.setGraphicSize(4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)) + (Strumline.BACKGROUND_PAD * 2), FlxG.height + 50);
+			playerStrumline.background.updateHitbox();
+
 
 			playerStrumline.x = FlxG.width - (4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)));//
+			if (MiddlescrollOptions.isMobile)
+			{
+				playerStrumline.x += mobilepos * 4;
+			}
+			// playerStrumline.x += playerStrumline.noteStyle.getStrumlineOffsets()[0];
+			// playerStrumline.x += playerStrumline.strumlineNotes.members[0].width;
+			// 						event.note.x += event.note.offset.x + Strumline.NUDGE;
+
 			playerStrumline.x = playerStrumline.x / 2;
+
+			// for (strum in playerStrumline)
+    		// {
+    		//   strum.width /= 2;
+    		// }
+
 		}
 		
 
+		// playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
 
 
 		switch (FlxG.save.data.noteEffects)
