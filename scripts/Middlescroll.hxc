@@ -245,9 +245,16 @@ class Middlescroll extends Module {
 		switch (FlxG.save.data.middlescroll)
 		{
 			case "Wide Lanes":
-				noteSpacing = 60;
+				if (MiddlescrollOptions.isMobile)
+				{
+					noteSpacing = 80;
+				}
+				else
+				{
+					noteSpacing = 60;
+				}
 			case "Narrow Lanes":
-				noteSpacing = 10;
+				noteSpacing = 30;
 			default:
 				if (MiddlescrollOptions.isMobile)
 				{
@@ -284,7 +291,7 @@ class Middlescroll extends Module {
 			playerStrumline.background.updateHitbox();
 
 
-			playerStrumline.x = FlxG.width - (4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)));//
+			playerStrumline.x = (FlxG.width - (4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)))) / 2;//
 			if (MiddlescrollOptions.isMobile)
 			{
 				playerStrumline.x += mobilepos * 4;
@@ -293,7 +300,7 @@ class Middlescroll extends Module {
 			// playerStrumline.x += playerStrumline.strumlineNotes.members[0].width;
 			// 						event.note.x += event.note.offset.x + Strumline.NUDGE;
 
-			playerStrumline.x = playerStrumline.x / 2;
+	
 
 			// for (strum in playerStrumline)
     		// {
