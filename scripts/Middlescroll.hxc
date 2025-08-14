@@ -17,6 +17,8 @@ class Middlescroll extends Module {
 	var differentLanes = false;
 	var noteSpacing = 0;
 
+	var mobilepos = 0;
+
 	function new() {
 		super("Middlescroll");
 	}
@@ -115,39 +117,51 @@ class Middlescroll extends Module {
 
 	}
 
+	
+    function onStateChangeEnd(event)
+    {
+        super.onStateChangeEnd(event);
+	}
+
 	override function onNoteIncoming(event) {
 
 		super.onNoteIncoming(event);
 
-		if (event.note.noteData.getMustHitNote())
+		if (MiddlescrollOptions.isMobile || differentLanes)
 		{
-
-			if (MiddlescrollOptions.isMobile || differentLanes)
+			if (event.note.noteData.getMustHitNote())
 			{
+
+		
 				// Previous method done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
-				if (MiddlescrollOptions.isMobile)
-				{
-					event.note.x = playerStrumline.strumlineNotes.members[0].x;
-					if (playerStrumline.noteStyle.getName() == "Funkin'")
-					{
-						event.note.x += event.note.offset.x + Strumline.NUDGE;
-					}
-				}
-				else
-				{
-					event.note.x = playerStrumline.x;
-				}			
-				event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing)) - Strumline.NUDGE;
+				// if (MiddlescrollOptions.isMobile)
+				// {
+				// 	event.note.x = playerStrumline.strumlineNotes.members[0].x;
+				// 	if (playerStrumline.noteStyle.getName() == "Funkin'")
+				// 	{
+				// 		event.note.x += event.note.offset.x + Strumline.NUDGE;
+				// 	}
+				// }
+				// else
+				// {
+				// 	event.note.x = playerStrumline.x;
+				// }			
+				event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing));
 
-				if (event.note.offset.x >= 40)
+				if (MiddlescrollOptions.isMobile && event.note.direction > 1)
 				{
-					event.note.x -= event.note.offset.x;
+					event.note.x -= mobilepos * 3;
 				}
-				if (event.note.get_kind() == "trickydeath")
-				{
-					event.note.x -= (playerStrumline.strumlineNotes.members[0].width / 2) - 15;
-				}
+
+				// if (event.note.offset.x >= 40)
+				// {
+				// 	event.note.x -= event.note.offset.x;
+				// }
+				// if (event.note.get_kind() == "trickydeath")
+				// {
+				// 	event.note.x -= (playerStrumline.strumlineNotes.members[0].width / 2) - 15;
+				// }
 
 
 				if (event.note.holdNoteSprite != null)
@@ -269,10 +283,19 @@ class Middlescroll extends Module {
 		// playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
 		playerStrumline.setNoteSpacing(0);
 
+		for (strum in playerStrumline)
+    	{
+    	  strum.width /= 2;
+    	}
+
+		if (MiddlescrollOptions.isMobile)
+		{
+			mobilepos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
+		}
 
 		if (MiddlescrollOptions.isMobile || differentLanes)
 		{
-			var mobilepos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
+			
 			for (i in 0...playerStrumline.strumlineNotes.length) {
 				var note = playerStrumline.strumlineNotes.members[i];
 				// note.x = playerStrumline.strumlineNotes.members[0].x;
@@ -287,14 +310,14 @@ class Middlescroll extends Module {
 				}
 			}
 
-			playerStrumline.background.setGraphicSize(4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)) + (Strumline.BACKGROUND_PAD * 2), FlxG.height + 50);
+			playerStrumline.background.setGraphicSize(4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)) + (Strumline.BACKGROUND_PAD * 2) + (mobilepos / 1.6), FlxG.height + 50);
 			playerStrumline.background.updateHitbox();
 
 
 			playerStrumline.x = (FlxG.width - (4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)))) / 2;//
 			if (MiddlescrollOptions.isMobile)
 			{
-				playerStrumline.x += mobilepos * 4;
+				playerStrumline.x += mobilepos * 2.1;
 			}
 			// playerStrumline.x += playerStrumline.noteStyle.getStrumlineOffsets()[0];
 			// playerStrumline.x += playerStrumline.strumlineNotes.members[0].width;
@@ -302,10 +325,7 @@ class Middlescroll extends Module {
 
 	
 
-			// for (strum in playerStrumline)
-    		// {
-    		//   strum.width /= 2;
-    		// }
+		
 
 		}
 		
@@ -386,10 +406,10 @@ class Middlescroll extends Module {
 
 					var note = strumline.strumlineNotes.members[direction];
 					cover.glow.x = note.x - note.width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x) + (isPixel ? strumline.noteStyle.getHoldCoverOffsets()[0] - 12: -strumline.noteStyle.getHoldCoverOffsets()[0]);
-					if (FlxG.save.data.oppnotes == "Translucent") 
-					{
-						cover.alpha = 0.5;
-					}
+					// if (FlxG.save.data.oppnotes == "Translucent") 
+					// {
+					// 	cover.alpha = 0.5;
+					// }
 				}
 			}
 		}
