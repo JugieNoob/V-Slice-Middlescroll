@@ -286,7 +286,10 @@ class Middlescroll extends Module {
 
 		// playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
 	
-
+		if (MiddlescrollOptions.isMobile)
+		{
+			mobilepos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
+		}
 	
 		if (MiddlescrollOptions.isMobile || differentLanes)
 		{

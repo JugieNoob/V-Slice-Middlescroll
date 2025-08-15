@@ -83,7 +83,7 @@ class MiddlescrollOptions extends Module {
             }
             else
             {
-                preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline.", ["On" => "On", "Off" => "Off", "Wide Lanes" => "Wide Lanes"], function(value:Bool):Void {
+                preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline. (Preview's Y level may not represent what is seen during gameplay)", ["On" => "On", "Off" => "Off", "Wide Lanes" => "Wide Lanes"], function(value:Bool):Void {
                     FlxG.save.data.middlescroll = value;
                     FlxG.save.flush();
                     middleScrollCallback();
@@ -156,15 +156,17 @@ class MiddlescrollOptions extends Module {
         {
             OptionsState.instance.remove(strumline);
         }
-        strumline = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), false);
+        strumline = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), true);
         strumline.background.alpha = 0;
         strumline.camera = preferences.hudCamera;
         strumline.zIndex = 1000;
         OptionsState.instance.add(strumline);
 
+    
 
         if (isMobile)
         {
+
             // Adapted from PlayState
             final amplification:Float = (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
             final playerStrumlineScale:Float = ((FlxG.height / FlxG.width) * 1.95) * amplification;
