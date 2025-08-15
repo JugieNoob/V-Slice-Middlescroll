@@ -1,13 +1,23 @@
+import funkin.mobile.ui.FunkinHitbox;
 import funkin.modding.module.Module;
 import funkin.ui.options.PreferencesMenu;
+import funkin.play.notes.Strumline;
 import funkin.Preferences;
 import funkin.ui.options.OptionsState;
+import funkin.data.notestyle.NoteStyleRegistry;
+import funkin.ui.FullScreenScaleMode;
 import flixel.FlxG;
+import funkin.util.Constants;
 import Std;
 
 class MiddlescrollOptions extends Module {
     
     public static var isMobile = true;
+    var strumline = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), false);
+    var itemID = 0;
+    var items;
+    var preferences;
+    var currentState;
 
     function new (){
         super("Middlescroll Options", 21);
@@ -50,21 +60,24 @@ class MiddlescrollOptions extends Module {
     function onStateChangeEnd(event)
     {
         super.onStateChangeEnd(event);
+        currentState = event.targetState;
 
-        if (FlxG.width > 1280 && Preferences.controlsScheme == "Arrows")
-		{
-			isMobile = true;	
-		}
+        // if (FlxG.width > 1280 && Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows)
+		// {
+		// 	isMobile = true;	
+		// }
 
         if (Std.isOfType(event.targetState, OptionsState))
         {
-            var preferences = event.targetState.optionsCodex.pages.get("preferences");
+            preferences = event.targetState.optionsCodex.pages.get("preferences");
+
 
             if (isMobile)
             {
                 preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline.", ["On" => "On", "Off" => "Off", "Wide Lanes" => "Wide Lanes", "Narrow Lanes" => "Narrow Lanes"], function(value:Bool):Void {
                     FlxG.save.data.middlescroll = value;
                     FlxG.save.flush();
+                    middleScrollCallback();
                 }, FlxG.save.data.middlescroll);     
                  
             }
@@ -73,8 +86,12 @@ class MiddlescrollOptions extends Module {
                 preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline.", ["On" => "On", "Off" => "Off", "Wide Lanes" => "Wide Lanes"], function(value:Bool):Void {
                     FlxG.save.data.middlescroll = value;
                     FlxG.save.flush();
+                    middleScrollCallback();
                 }, FlxG.save.data.middlescroll);    
-            }
+            }                     
+            
+            items = preferences.items;
+            itemID = items.length - 1;
      
 
             preferences.createPrefItemCheckbox('Move Popups', 'Moves the rating and combo popups.', function(value:Bool):Void {
@@ -97,8 +114,101 @@ class MiddlescrollOptions extends Module {
     
                 }, FlxG.save.data.noteEffects);      
 
+                
+       
+            middleScrollCallback();
         }
     }
 
+    override function onUpdate(event)
+    {
+        super.onUpdate(event);
+        if (Std.isOfType(currentState, OptionsState))
+        {
+            if (items != null)
+            {
+            if (Std.isOfType(currentState.optionsCodex.currentPage, PreferencesMenu))
+            {
+                if (items.selectedIndex == itemID)
+                {
+                    strumline.visible = true;
 
+                }
+                else
+                {
+                    strumline.visible = false;
+                }
+            }
+            else
+            {
+                strumline.visible = false;
+            }
+    
+
+           
+            }
+        }
+    }
+
+    function middleScrollCallback()
+    {
+        if (strumline != null)
+        {
+            OptionsState.instance.remove(strumline);
+        }
+        strumline = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), false);
+        strumline.background.alpha = 0;
+        strumline.camera = preferences.hudCamera;
+        strumline.zIndex = 1000;
+        OptionsState.instance.add(strumline);
+
+
+        if (isMobile)
+        {
+            // Adapted from PlayState
+            final amplification:Float = (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
+            final playerStrumlineScale:Float = ((FlxG.height / FlxG.width) * 1.95) * amplification;
+            final playerNoteSpacing:Float = ((FlxG.height / FlxG.width) * 2.8) * amplification;
+            strumline.strumlineScale.set(playerStrumlineScale, playerStrumlineScale);
+            strumline.setNoteSpacing(playerNoteSpacing);
+            for (strum in strumline)
+            {
+              strum.width *= 2;
+            }
+        }
+
+        switch (FlxG.save.data.middlescroll)
+        {
+            case "Off":
+                if (isMobile)
+                {
+                    strumline.x = (FlxG.width - strumline.width) / 2 + Constants.STRUMLINE_X_OFFSET;
+                }
+                else
+                {
+                    strumline.x = (FlxG.width / 2 + Constants.STRUMLINE_X_OFFSET) + ((FullScreenScaleMode.gameCutoutSize.x / 2.5) / 2.0);
+                }
+            case "On":
+                if (isMobile)
+                {
+                    Middlescroll.positionStrumline(strumline, 45);
+                }
+                else
+                {
+                    strumline.x = (FlxG.width - strumline.width) / 2;
+                }
+            case "Wide Lanes":
+                if (isMobile)
+                {
+                    Middlescroll.positionStrumline(strumline, 80);
+                }
+                else
+                {
+                    Middlescroll.positionStrumline(strumline, 60);
+                }
+                
+            case "Narrow Lanes":
+                Middlescroll.positionStrumline(strumline, 30);
+        }
+    }
 }
