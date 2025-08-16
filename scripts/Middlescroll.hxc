@@ -3,6 +3,7 @@ import funkin.modding.module.Module;
 import flixel.FlxG;
 import funkin.play.notes.Strumline;
 import funkin.util.Constants;
+import funkin.Preferences;
 import StringTools;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
@@ -22,7 +23,7 @@ class Middlescroll extends Module {
 	function new() {
 		super("Middlescroll");
 
-	
+
 
 	}
 	
@@ -33,7 +34,7 @@ class Middlescroll extends Module {
 		if (PlayState.instance != null) {
 
 			if (FlxG.save.data.middlescroll != "Off") {
-				if (MiddlescrollOptions.isMobile)
+				if (Preferences.controlsScheme == "Arrows")
 				{
 					updateNoteCovers(playerStrumline);
 				}
@@ -89,7 +90,7 @@ class Middlescroll extends Module {
 
 		if (FlxG.save.data.middlescroll != "Off") {
 			setPlayerStrumline();
-			if (!MiddlescrollOptions.isMobile)
+			if (!Preferences.controlsScheme == "Arrows")
 			{
 				moveOpponentStrumline();
 			}
@@ -122,16 +123,20 @@ class Middlescroll extends Module {
 	}
 
 	
-    function onStateChangeEnd(event)
+    override function onStateChangeEnd(event)
     {
         super.onStateChangeEnd(event);
+		if (Preferences.controlsScheme == "Arrows")
+		{
+			Preferences.controlsScheme == "Arrows" = true;	
+		}
 	}
 
 	override function onNoteIncoming(event) {
 
 		super.onNoteIncoming(event);
 
-		if (MiddlescrollOptions.isMobile || differentLanes)
+		if (Preferences.controlsScheme == "Arrows" || differentLanes)
 		{
 			if (event.note.noteData.getMustHitNote())
 			{
@@ -139,7 +144,7 @@ class Middlescroll extends Module {
 		
 				// Previous method done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
-				// if (MiddlescrollOptions.isMobile)
+				// if (Preferences.controlsScheme == "Arrows")
 				// {
 				// 	event.note.x = playerStrumline.strumlineNotes.members[0].x;
 				// 	if (playerStrumline.noteStyle.getName() == "Funkin'")
@@ -153,7 +158,7 @@ class Middlescroll extends Module {
 				// }			
 				event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing));
 
-				if (MiddlescrollOptions.isMobile && event.note.direction > 1)
+				if (Preferences.controlsScheme == "Arrows" && event.note.direction > 1)
 				{
 					event.note.x -= mobilepos * 3;
 				}
@@ -176,7 +181,7 @@ class Middlescroll extends Module {
 			}
 		}
 	
-		if (!MiddlescrollOptions.isMobile)
+		if (!Preferences.controlsScheme == "Arrows")
 		{
 			if (!event.note.noteData.getMustHitNote())
 			{
@@ -217,7 +222,7 @@ class Middlescroll extends Module {
 		{
 			if (event.doesNotesplash)
 			{
-				if (MiddlescrollOptions.isMobile || differentLanes)
+				if (Preferences.controlsScheme == "Arrows" || differentLanes)
 				{
 					event.doesNotesplash = false;
 					playerStrumline.playNoteSplash(event.note.direction);
@@ -263,7 +268,7 @@ class Middlescroll extends Module {
 		switch (FlxG.save.data.middlescroll)
 		{
 			case "Wide Lanes":
-				if (MiddlescrollOptions.isMobile)
+				if (Preferences.controlsScheme == "Arrows")
 				{
 					noteSpacing = 80;
 				}
@@ -274,7 +279,7 @@ class Middlescroll extends Module {
 			case "Narrow Lanes":
 				noteSpacing = 30;
 			default:
-				if (MiddlescrollOptions.isMobile)
+				if (Preferences.controlsScheme == "Arrows")
 				{
 					noteSpacing = 45;
 				}
@@ -286,12 +291,12 @@ class Middlescroll extends Module {
 
 		// playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
 	
-		if (MiddlescrollOptions.isMobile)
+		if (Preferences.controlsScheme == "Arrows")
 		{
 			mobilepos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
 		}
 	
-		if (MiddlescrollOptions.isMobile || differentLanes)
+		if (Preferences.controlsScheme == "Arrows" || differentLanes)
 		{
 			
 			positionStrumline(playerStrumline, noteSpacing);
@@ -411,7 +416,7 @@ class Middlescroll extends Module {
     	  strum.width /= 2;
     	}
 
-		if (MiddlescrollOptions.isMobile)
+		if (Preferences.controlsScheme == "Arrows")
 		{
 			mobilepos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
 		}
@@ -421,7 +426,7 @@ class Middlescroll extends Module {
 			var note = strumline.strumlineNotes.members[i];
 			note.x += (i * (Strumline.STRUMLINE_SIZE + thisNoteSpacing));
 			
-			if (MiddlescrollOptions.isMobile)
+			if (Preferences.controlsScheme == "Arrows")
 			{
 				if (note.direction > 1)
 				{
@@ -431,7 +436,7 @@ class Middlescroll extends Module {
 		}
 
 		strumline.x = (FlxG.width - (4 * (Strumline.STRUMLINE_SIZE + (thisNoteSpacing / 1.3)))) / 2;//
-		if (MiddlescrollOptions.isMobile)
+		if (Preferences.controlsScheme == "Arrows")
 		{
 			strumline.x += mobilepos * 2.1;
 		}
