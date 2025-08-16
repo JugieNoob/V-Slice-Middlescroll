@@ -48,15 +48,7 @@ class Middlescroll extends Module {
 					updateNoteCovers(opponentStrumline);
 				}
 			}
-			// if (opponentStrumline != null){
-			// 	if (FlxG.save.data.oppnotes == "Translucent")
-			// 	{
-			// 		for (hold in opponentStrumline.holdNotes)
-			// 		{
-			// 			hold.alpha = 0.5;
-			// 		}
-			// 	}
-			// }
+	
 			
 
 
@@ -96,28 +88,26 @@ class Middlescroll extends Module {
 			}
 		}
 
-		// if (FlxG.save.data.oppnotes == "Hidden") {
-		// 	// Taken from Blazin'
-		// 	if (opponentStrumline != null) {
-		// 		opponentStrumline.visible = false;
-		// 	}		
-		// }
-		// if (FlxG.save.data.oppnotes == "Translucent")
-		// {
-		// 	opponentStrumline.alpha = 0.5;
-
-		// 	for (arrow in opponentStrumline.strumlineNotes)
-		// 	{
-		// 		FlxTween.cancelTweensOf(arrow);
-
-		// 		arrow.y -= 10;
-    	// 		arrow.alpha = 0.0;
-    	// 		FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.5}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
-		// 	}
-    
-
-		// }
-
+		switch (FlxG.save.data.oppnotes)
+		{
+			case "Hidden":
+				// Taken from Blazin'
+				if (opponentStrumline != null) {
+					opponentStrumline.visible = false;
+				}	
+			case "Translucent":
+				opponentStrumline.strumlineNotes.alpha = 0.5;
+				opponentStrumline.noteHoldCovers.alpha = 0.5;
+				opponentStrumline.notes.alpha = 0.5;
+				// Use custom animation when spawning in strumline notes.
+				for (arrow in opponentStrumline.strumlineNotes)
+				{
+					FlxTween.cancelTweensOf(arrow);
+					arrow.alpha = 0.0;
+					FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.5}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
+				}
+		}
+			
 		
 
 	}
@@ -433,10 +423,7 @@ class Middlescroll extends Module {
 
 					var note = strumline.strumlineNotes.members[direction];
 					cover.glow.x = note.x - note.width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x) + (isPixel ? strumline.noteStyle.getHoldCoverOffsets()[0] - 12: -strumline.noteStyle.getHoldCoverOffsets()[0]);
-					// if (FlxG.save.data.oppnotes == "Translucent") 
-					// {
-					// 	cover.alpha = 0.5;
-					// }
+				
 				}
 			}
 		}
