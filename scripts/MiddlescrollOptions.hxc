@@ -19,7 +19,6 @@ class MiddlescrollOptions extends Module {
     var items;
     var preferences;
     var currentState;
-    var debugtext;
 
     function new (){
         super("Middlescroll Options", 21);
@@ -105,14 +104,14 @@ class MiddlescrollOptions extends Module {
             }, FlxG.save.data.movepopups);
             
 
-            preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
+            preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes.', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
                 FlxG.save.data.oppnotes = value;
                 FlxG.save.flush();
             }, FlxG.save.data.oppnotes);      
             
        
 
-            preferences.createPrefItemEnum('Note Effects', 'Toggles Note Splashes and Note Hold Covers', ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
+            preferences.createPrefItemEnum('Note Effects', "Toggles Note Splashes and Note Hold Covers for the player's strumline.", ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
                     FlxG.save.data.noteEffects = value;
                     FlxG.save.flush();
     
@@ -122,16 +121,7 @@ class MiddlescrollOptions extends Module {
        
             middleScrollCallback();
 
-            debugtext = new FlxText();
-            debugtext.text = "isMobile: " + isMobile + " controls scheme: " + Preferences.controlsScheme;
-            // debugtext.text = "testing hello";
-            // debugtext.text = "Combo: " + combo + "\nSong Position: " + Conductor.instance.songPosition + "\nnotehittime: " + notehittime + "\nholdnoteend: " + holdnoteend + "\nholdnoteendtime: " + holdnoteendtime +"\ncurrent step: " + Conductor.instance.currentStep + "\nhashitnote: " + hashitnote + "\nscreen width: " + FlxG.width;
-            debugtext.camera = preferences.hudCamera;
-            debugtext.size = 18;
-            debugtext.updateHitbox();
-            debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
-            debugtext.zIndex = 1000;
-            OptionsState.instance.add(debugtext);
+    
         }
     }
 
@@ -162,10 +152,7 @@ class MiddlescrollOptions extends Module {
 
            
             }
-            // if (OptionsState.instance != null)
-            // {
-            //     OptionsState.instance.add(debugtext);
-            // }
+   
             
         }
     }
