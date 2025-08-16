@@ -279,7 +279,7 @@ class Middlescroll extends Module {
 				}
 		}		
 
-		// playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
+		// 
 	
 		if (Preferences.controlsScheme == "Arrows")
 		{
@@ -301,10 +301,10 @@ class Middlescroll extends Module {
 			// playerStrumline.x += playerStrumline.strumlineNotes.members[0].width;
 			// 						event.note.x += event.note.offset.x + Strumline.NUDGE;
 
-	
-
-		
-
+		}
+		else 
+		{
+			playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
 		}
 		
 
