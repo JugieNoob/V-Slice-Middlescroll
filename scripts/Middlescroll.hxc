@@ -392,6 +392,10 @@ class Middlescroll extends Module {
 				opponentNote.x = FlxG.width;
 				opponentNote.x -= (opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0] + opponentNote.offset.x)) * (4 - i);
 				opponentNote.x -= Constants.STRUMLINE_X_OFFSET;
+				if (opponentNote.direction == 2)
+				{
+					opponentNote.x += opponentNote.width * 0.05;
+				}
 				// opponentNote.x += ;
 				// if (opponentNote.direction == 2)
 				// {
