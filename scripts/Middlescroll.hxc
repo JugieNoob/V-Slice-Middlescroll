@@ -22,9 +22,6 @@ class Middlescroll extends Module {
 
 	function new() {
 		super("Middlescroll");
-
-
-
 	}
 	
 	// ----- Override Functions
@@ -239,7 +236,7 @@ class Middlescroll extends Module {
 						}
 						if (event.note.direction == direction)
 						{
-							splash.x = event.note.x + (playerStrumline.noteStyle.getSplashOffsets()[0] * 1.75);
+							splash.x += (event.note.x - playerStrumline.x);
 						}
 
 					}
