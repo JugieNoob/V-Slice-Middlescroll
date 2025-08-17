@@ -31,9 +31,9 @@ class Middlescroll extends Module {
 	override function onUpdate() {
 
 		super.onUpdate();
-		if (PlayState.instance != null) {
+		if (PlayState.instance != null && !PlayState.instance.isInCutscene) {
 
-			if (FlxG.save.data.middlescroll != "Off") {
+			if (FlxG.save.data.middlescroll != "Off" ) {
 				if (Preferences.controlsScheme == "Arrows")
 				{
 					updateNoteCovers(playerStrumline);
