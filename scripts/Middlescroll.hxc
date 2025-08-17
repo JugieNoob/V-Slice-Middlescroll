@@ -20,6 +20,7 @@ class Middlescroll extends Module {
 
 	public static var mobilepos = 0;
 
+
 	function new() {
 		super("Middlescroll");
 	}
@@ -172,12 +173,30 @@ class Middlescroll extends Module {
 		{
 			if (!event.note.noteData.getMustHitNote())
 			{
-				// Account for strumline offset.
-				var dist = opponentStrumline.x - opponentStrumline.strumlineNotes.members[0].x;
 				if (event.note.direction > 1)
 				{
-					event.note.x = opponentStrumline.strumlineNotes.members[event.note.direction].x + dist;
-			
+					// event.note.x = opponentStrumline.strumlineNotes.members[event.note.direction].x + dist;
+
+					var dist = opponentStrumline.strumlineNotes.members[2].x - opponentStrumline.strumlineNotes.members[1].x;// opponentStrumline.strumlineNotes.members[event.note.direction].x - event.note.x;
+
+					event.note.x += dist;
+					// event.note.x -= Constants.STRUMLINE_X_OFFSET * 2.3;
+					event.note.x -= Strumline.STRUMLINE_SIZE;
+					if (event.note.direction == 2)
+					{
+						event.note.x -= Strumline.NUDGE * 3;
+					}
+					else if (event.note.direction == 3)
+					{
+						event.note.x -= event.note.scale.x + 0.5;
+					}
+
+
+					// event.note.x += dist;
+					// event.note.x = opponentStrumline.strumlineNotes.members[0].x + opponentStrumline.x;
+					// opponentNote.x -= (opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0] + opponentNote.offset.x)) * (4 - i);
+
+
 					if (event.note.holdNoteSprite != null)
 					{
 						var hold = event.note.holdNoteSprite;
