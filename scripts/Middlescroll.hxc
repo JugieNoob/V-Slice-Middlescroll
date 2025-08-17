@@ -182,14 +182,14 @@ class Middlescroll extends Module {
 					event.note.x += dist;
 					// event.note.x -= Constants.STRUMLINE_X_OFFSET * 2.3;
 					event.note.x -= Strumline.STRUMLINE_SIZE;
-					if (event.note.direction == 2)
-					{
-						event.note.x -= Strumline.NUDGE * 3;
-					}
-					else if (event.note.direction == 3)
-					{
-						event.note.x -= event.note.scale.x + 0.5;
-					}
+					// if (event.note.direction == 2)
+					// {
+					event.note.x -= Strumline.NUDGE * 3;
+					// }
+					// else if (event.note.direction == 3)
+					// {
+					// 	event.note.x -= event.note.scale.x + 0.5;
+					// }
 
 
 					// event.note.x += dist;
@@ -229,10 +229,9 @@ class Middlescroll extends Module {
 			if (event.doesNotesplash)
 			{
 				if (Preferences.controlsScheme == "Arrows" || differentLanes)
-				{
+				{				
 					event.doesNotesplash = false;
 					playerStrumline.playNoteSplash(event.note.direction);
-					
 					for (splash in playerStrumline.noteSplashes)
 					{
 						var direction = 0;
@@ -255,7 +254,7 @@ class Middlescroll extends Module {
 						}
 						if (event.note.direction == direction)
 						{
-							splash.x += (event.note.x - playerStrumline.x);
+							splash.x = event.note.x + (playerStrumline.noteStyle.getSplashOffsets()[0] * 1.75);
 						}
 
 					}
@@ -396,12 +395,13 @@ class Middlescroll extends Module {
 				// }
 		// }
 				opponentNote.x = FlxG.width;
-				opponentNote.x -= (opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0] + opponentNote.offset.x)) * (4 - i);
-				opponentNote.x -= Constants.STRUMLINE_X_OFFSET;
-				if (opponentNote.direction == 2)
-				{
-					opponentNote.x += opponentNote.width * 0.05;
-				}
+				// opponentNote.x -= (opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0])) * (4 - i);
+				opponentNote.x += (Strumline.NOTE_SPACING) * (i-2);
+				opponentNote.x -= (((Strumline.STRUMLINE_SIZE / 2) + (Constants.STRUMLINE_X_OFFSET * 2)) * 2) - opponentStrumline.noteStyle.getStrumlineOffsets()[0];
+				// if (opponentNote.direction == 2)
+				// {
+				// 	opponentNote.x += opponentNote.width * 0.05;
+				// }
 				// opponentNote.x += ;
 				// if (opponentNote.direction == 2)
 				// {
@@ -439,8 +439,7 @@ class Middlescroll extends Module {
 
 					var note = strumline.strumlineNotes.members[direction];
 					cover.glow.x = note.x - note.width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x) + (isPixel ? strumline.noteStyle.getHoldCoverOffsets()[0] - 12: -strumline.noteStyle.getHoldCoverOffsets()[0]);
-				
-				}
+			}
 			}
 		}
 		
