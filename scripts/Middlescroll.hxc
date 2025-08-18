@@ -22,6 +22,8 @@ class Middlescroll extends Module {
 
 	var originalcoverx:Float = 0;
 
+	var coverPositions = [];
+
 
 	function new() {
 		super("Middlescroll");
@@ -41,15 +43,15 @@ class Middlescroll extends Module {
 				else if (FlxG.save.data.middlescroll == "Wide Lanes")
 				{
 					updateNoteCovers(playerStrumline, true);
-					updateNoteCovers(opponentStrumline);
+					// updateNoteCovers(opponentStrumline);
 				}
 				else
 				{
-					updateNoteCovers(opponentStrumline);
+					// updateNoteCovers(opponentStrumline);
 				}
 			}
-	
-			
+		
+			// updateNoteCovers(playerStrumline, true);
 
 
 		}
@@ -59,6 +61,9 @@ class Middlescroll extends Module {
 	override function onCountdownStart(event) {
 		super.onCountdownStart(event);
 		originalcoverx = 0;
+		coverPositions = [];
+
+	
 
 		if (FlxG.save.data.middlescroll == "Wide Lanes" || FlxG.save.data.middlescroll == "Narrow Lanes")
 		{
@@ -172,6 +177,7 @@ class Middlescroll extends Module {
 			}
 		}
 	
+		
 		if (Preferences.controlsScheme != "Arrows")
 		{
 			if (!event.note.noteData.getMustHitNote())
@@ -221,11 +227,13 @@ class Middlescroll extends Module {
 		
 			}
 		}
+			
 	}
 
 	override function onNoteHit(event)
 	{
 		super.onNoteHit(event);
+
 
 		if (FlxG.save.data.middlescroll != "Off")
 		{
@@ -298,6 +306,11 @@ class Middlescroll extends Module {
 		}		
 
 		// 
+
+		for (i in 0...Strumline.KEY_COUNT)
+		{
+			coverPositions.push(i * (Strumline.STRUMLINE_SIZE + noteSpacing));
+		}
 	
 		if (Preferences.controlsScheme == "Arrows")
 		{
@@ -416,13 +429,21 @@ class Middlescroll extends Module {
 
 	function updateNoteCovers(strumline:Strumline, isPlayer:Bool = false)
 	{
-		var direction = 0;
+		if (!isPlayer)
+		{
+			return;
+		}
 		if (strumline != null)
 		{
 			if (strumline.noteHoldCovers != null)
 			{
+
 				for (cover in strumline.noteHoldCovers)
 				{
+			
+			
+					var direction = 0;
+
 					if (StringTools.contains(cover.glow.animation.name, "Blue"))
 					{
 						direction = 1;
@@ -435,22 +456,15 @@ class Middlescroll extends Module {
 					{
 						direction = 3;
 					}
-					else
-					{
-						direction = 0;
-					}
-
-					if (isPlayer)
-					{
-						if (originalcoverx == 0)
-						{
-							originalcoverx = cover.x;
-						}
-						cover.x = originalcoverx;
-						cover.x += (direction * (Strumline.STRUMLINE_SIZE + noteSpacing));
-						// cover.x -= strumline.noteStyle.getHoldCoverOffsets()[0];
 						
+				
+					if (originalcoverx == 0)
+					{
+						originalcoverx = cover.x;
 					}
+				
+					cover.x = originalcoverx + coverPositions[direction];			
+					
 				}
 			}
 		}
