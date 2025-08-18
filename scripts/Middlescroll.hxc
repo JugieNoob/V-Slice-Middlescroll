@@ -20,6 +20,8 @@ class Middlescroll extends Module {
 
 	public static var mobilepos = 0;
 
+	var originalcoverx:Float = 0;
+
 
 	function new() {
 		super("Middlescroll");
@@ -34,11 +36,11 @@ class Middlescroll extends Module {
 			if (FlxG.save.data.middlescroll != "Off" ) {
 				if (Preferences.controlsScheme == "Arrows")
 				{
-					updateNoteCovers(playerStrumline);
+					updateNoteCovers(playerStrumline, true);
 				}
 				else if (FlxG.save.data.middlescroll == "Wide Lanes")
 				{
-					updateNoteCovers(playerStrumline);
+					updateNoteCovers(playerStrumline, true);
 					updateNoteCovers(opponentStrumline);
 				}
 				else
@@ -56,6 +58,7 @@ class Middlescroll extends Module {
 
 	override function onCountdownStart(event) {
 		super.onCountdownStart(event);
+		originalcoverx = 0;
 
 		if (FlxG.save.data.middlescroll == "Wide Lanes" || FlxG.save.data.middlescroll == "Narrow Lanes")
 		{
@@ -411,7 +414,7 @@ class Middlescroll extends Module {
 		}
 	}
 
-	function updateNoteCovers(strumline)
+	function updateNoteCovers(strumline:Strumline, isPlayer:Bool = false)
 	{
 		var direction = 0;
 		if (strumline != null)
@@ -437,9 +440,18 @@ class Middlescroll extends Module {
 						direction = 0;
 					}
 
-					var note = strumline.strumlineNotes.members[direction];
-					cover.glow.x = note.x - note.width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x) + (isPixel ? strumline.noteStyle.getHoldCoverOffsets()[0] - 12: -strumline.noteStyle.getHoldCoverOffsets()[0]);
-			}
+					if (isPlayer)
+					{
+						if (originalcoverx == 0)
+						{
+							originalcoverx = cover.x;
+						}
+						cover.x = originalcoverx;
+						cover.x += (direction * (Strumline.STRUMLINE_SIZE + noteSpacing));
+						// cover.x -= strumline.noteStyle.getHoldCoverOffsets()[0];
+						
+					}
+				}
 			}
 		}
 		
@@ -447,6 +459,7 @@ class Middlescroll extends Module {
 		
 	
 	}
+
 
 	public static function positionStrumline(strumline, thisNoteSpacing)
 	{
