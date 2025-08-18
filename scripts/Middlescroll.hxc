@@ -23,6 +23,9 @@ class Middlescroll extends Module {
 	var originalcoverx:Float = 0;
 
 	var coverPositions = [];
+	var oldOppPositions = [];
+	var oldOppCoverPositions = [0,0];
+
 
 
 	function new() {
@@ -32,7 +35,6 @@ class Middlescroll extends Module {
 	// ----- Override Functions
 	override function onUpdate() {
 
-		super.onUpdate();
 		if (PlayState.instance != null && !PlayState.instance.isInCutscene) {
 
 			if (FlxG.save.data.middlescroll != "Off" ) {
@@ -53,8 +55,12 @@ class Middlescroll extends Module {
 		
 			// updateNoteCovers(playerStrumline, true);
 
+			updateNoteCovers(opponentStrumline);
 
 		}
+
+		super.onUpdate();
+
 	}
 
 
@@ -62,6 +68,8 @@ class Middlescroll extends Module {
 		super.onCountdownStart(event);
 		originalcoverx = 0;
 		coverPositions = [];
+		oldOppPositions = [];
+		oldOppCoverPositions = [0,0];
 
 	
 
@@ -367,6 +375,7 @@ class Middlescroll extends Module {
 		if (opponentStrumline != null) {
 			for (i in 2...opponentStrumline.strumlineNotes.length) {
 				var opponentNote = opponentStrumline.strumlineNotes.members[i];
+				oldOppPositions.push(opponentNote.x);
 				// opponentNote.x = FlxG.width;
 				// if (opponentStrumline.noteStyle.getStrumlineOffsets()[0] == 0)
 				// {
@@ -429,10 +438,6 @@ class Middlescroll extends Module {
 
 	function updateNoteCovers(strumline:Strumline, isPlayer:Bool = false)
 	{
-		if (!isPlayer)
-		{
-			return;
-		}
 		if (strumline != null)
 		{
 			if (strumline.noteHoldCovers != null)
@@ -457,14 +462,35 @@ class Middlescroll extends Module {
 						direction = 3;
 					}
 						
+			
 				
-					if (originalcoverx == 0)
+					if (isPlayer)
 					{
-						originalcoverx = cover.x;
+							
+						if (originalcoverx == 0)
+						{
+							originalcoverx = cover.x;
+						}
+						cover.x = originalcoverx + coverPositions[direction];			
 					}
-				
-					cover.x = originalcoverx + coverPositions[direction];			
-					
+					else
+					{
+						// cover.x += (opponentStrumline.strumlineNotes.members[2].x - opponentStrumline.strumlineNotes.members[1].x);
+						// opponentNote.x -= (opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0])) * (4 - i);
+						// cover.x = strumline.strumlineNotes.members[direction].x - strumline.strumlineNotes.members[direction].width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x);
+						if (direction > 1)
+						{
+							// direction - 2
+							
+							if (oldOppCoverPositions[direction - 2] == 0)
+							{
+								oldOppCoverPositions[direction -2] = cover.x;
+							}
+							cover.x = oldOppCoverPositions[direction-2] + (strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2]);
+							// cover.x += 200;
+							// cover.x += strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2];
+						}
+					}
 				}
 			}
 		}
