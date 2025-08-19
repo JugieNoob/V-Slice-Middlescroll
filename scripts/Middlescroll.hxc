@@ -36,7 +36,11 @@ class Middlescroll extends Module {
 	// ----- Override Functions
 	override function onUpdate() {
 		super.onUpdate();
-
+		if (PlayState.instance == null)
+		{
+			return;
+		}
+		
 		if (FlxG.save.data.oppnotes == "Translucent")
 		{
 			for (cover in PlayState.instance.opponentStrumline.noteHoldCovers)
@@ -44,11 +48,13 @@ class Middlescroll extends Module {
 				cover.alpha = 0.5;
 			}
 		}
+
 		if (FlxG.save.data.middlescroll == "Off")
 		{
 			return;
 		}
-		if (PlayState.instance != null && !PlayState.instance.isInCutscene) 
+	
+		if (!PlayState.instance.isInCutscene) 
 		{
 				if (Preferences.controlsScheme == "Arrows")
 				{

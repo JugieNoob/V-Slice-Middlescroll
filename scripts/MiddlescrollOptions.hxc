@@ -86,6 +86,7 @@ class MiddlescrollOptions extends Module {
             itemID = items.length - 1;
      
 
+            // Never, Middlescroll Only, Always
             preferences.createPrefItemCheckbox('Move Popups', 'Moves the rating and combo popups.', function(value:Bool):Void {
             FlxG.save.data.movepopups = value;
             FlxG.save.flush();
