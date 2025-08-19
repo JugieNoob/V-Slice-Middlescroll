@@ -34,10 +34,15 @@ class Middlescroll extends Module {
 	
 	// ----- Override Functions
 	override function onUpdate() {
+		super.onUpdate();
 
-		if (PlayState.instance != null && !PlayState.instance.isInCutscene) {
 
-			if (FlxG.save.data.middlescroll != "Off" ) {
+		if (FlxG.save.data.middlescroll == "Off")
+		{
+			return;
+		}
+		if (PlayState.instance != null && !PlayState.instance.isInCutscene) 
+		{
 				if (Preferences.controlsScheme == "Arrows")
 				{
 					updateNoteCovers(playerStrumline, true);
@@ -52,25 +57,22 @@ class Middlescroll extends Module {
 				{
 					updateNoteCovers(opponentStrumline);
 				}
-			}
-	
 		}
-
-		super.onUpdate();
-
+	
 	}
 
-
-	override function onCountdownStart(event) {
-		super.onCountdownStart(event);
+	override function onStateChangeEnd(event) {
+		super.onStateChangeEnd(event);
+		
+		if (!Std.isOfType(event.targetState, PlayState))
+        {
+			return;
+		}
 		originalcoverx = 0;
 		coverPositions = [];
 		oldOppPositions = [];
 		oldOppCoverPositions = [0,0];
-
-	
-
-		if (FlxG.save.data.middlescroll == "Wide Lanes" || FlxG.save.data.middlescroll == "Narrow Lanes")
+        if (FlxG.save.data.middlescroll == "Wide Lanes" || FlxG.save.data.middlescroll == "Narrow Lanes")
 		{
 			differentLanes = true;
 		}
@@ -78,6 +80,8 @@ class Middlescroll extends Module {
 		{
 			differentLanes = false;
 		}
+
+	
 
 		playerStrumline = PlayState.instance.playerStrumline;
 		opponentStrumline = PlayState.instance.opponentStrumline;
@@ -122,15 +126,7 @@ class Middlescroll extends Module {
 
 	}
 
-	
-    override function onStateChangeEnd(event)
-    {
-        super.onStateChangeEnd(event);
-		if (Preferences.controlsScheme == "Arrows")
-		{
-			Preferences.controlsScheme == "Arrows" = true;	
-		}
-	}
+
 
 	override function onNoteIncoming(event) {
 
@@ -434,9 +430,7 @@ class Middlescroll extends Module {
 
 	function updateNoteCovers(strumline:Strumline, isPlayer:Bool = false)
 	{
-		if (strumline != null)
-		{
-			if (strumline.noteHoldCovers != null)
+			if (strumline != null && strumline.noteHoldCovers != null)
 			{
 
 				for (cover in strumline.noteHoldCovers)
@@ -498,7 +492,7 @@ class Middlescroll extends Module {
 							// cover.x += strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2];
 						}
 					}
-				}
+				
 			}
 		}
 		
