@@ -469,8 +469,12 @@ class Middlescroll extends Module {
 							originalcoverx = cover.x;
 						}
 
-						cover.x = (originalcoverx + coverPositions[direction]);
 						
+						cover.x = (originalcoverx + coverPositions[direction]) - (mobilepos * 3);
+						// if (strumline.noteStyle.isHoldNotePixel() || FlxG.save.data.middlescroll != "Wide Lanes")
+						// {
+						// 	cover.x -= mobilepos * 3;
+						// }
 					}
 					else
 					{
