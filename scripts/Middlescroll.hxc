@@ -37,7 +37,13 @@ class Middlescroll extends Module {
 	override function onUpdate() {
 		super.onUpdate();
 
-
+		if (FlxG.save.data.oppnotes == "Translucent")
+		{
+			for (cover in PlayState.instance.opponentStrumline.noteHoldCovers)
+			{
+				cover.alpha = 0.5;
+			}
+		}
 		if (FlxG.save.data.middlescroll == "Off")
 		{
 			return;
@@ -58,6 +64,8 @@ class Middlescroll extends Module {
 				{
 					updateNoteCovers(opponentStrumline);
 				}
+
+	
 		}
 	
 	}
@@ -186,7 +194,7 @@ class Middlescroll extends Module {
 				if (event.note.holdNoteSprite != null)
 				{
 					var hold = event.note.holdNoteSprite;
-					hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);
+					hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2) + Strumline.NUDGE;
 				}
 			}
 		}
@@ -487,10 +495,7 @@ class Middlescroll extends Module {
 						// cover.x += (opponentStrumline.strumlineNotes.members[2].x - opponentStrumline.strumlineNotes.members[1].x);
 						// opponentNote.x -= (opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0])) * (4 - i);
 						// cover.x = strumline.strumlineNotes.members[direction].x - strumline.strumlineNotes.members[direction].width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x);
-						if (FlxG.save.data.oppnotes == "Translucent")
-						{
-							cover.alpha = 0.5;
-						}
+					
 
 						if (direction > 1)
 						{
