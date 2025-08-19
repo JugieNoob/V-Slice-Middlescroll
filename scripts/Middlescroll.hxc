@@ -8,6 +8,7 @@ import StringTools;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+import flixel.util.FlxTimer;
 
 class Middlescroll extends Module {
 	var isPixel:Int = false;
@@ -61,6 +62,11 @@ class Middlescroll extends Module {
 	
 	}
 
+	override function onCountdownStart(event)
+	{
+		super.onCountdownStart(event);
+	}
+
 	override function onStateChangeEnd(event) {
 		super.onStateChangeEnd(event);
 		
@@ -94,14 +100,19 @@ class Middlescroll extends Module {
 			PlayState.instance.comboPopUps.offsets = [480, -50];
 		}
 
-
-		if (FlxG.save.data.middlescroll != "Off") {
+		// 0.2s delay or else the player's strumline won't be set properly in Blazin'
+		new FlxTimer().start(0.2, ()->{
+			
+			if (FlxG.save.data.middlescroll != "Off") {
 			setPlayerStrumline();
 			if (Preferences.controlsScheme != "Arrows")
 			{
 				moveOpponentStrumline();
 			}
 		}
+		});
+		
+		
 
 		switch (FlxG.save.data.oppnotes)
 		{
@@ -111,6 +122,7 @@ class Middlescroll extends Module {
 					opponentStrumline.visible = false;
 				}	
 			case "Translucent":
+				opponentStrumline.visible = true;
 				opponentStrumline.strumlineNotes.alpha = 0.5;
 				opponentStrumline.notes.alpha = 0.5;
 				// Use custom animation when spawning in strumline notes.
@@ -120,6 +132,8 @@ class Middlescroll extends Module {
 					arrow.alpha = 0.0;
 					FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.5}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
 				}
+			default:
+				opponentStrumline.visible = true;
 		}
 			
 		
