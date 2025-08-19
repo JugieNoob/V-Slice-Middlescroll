@@ -74,24 +74,13 @@ class MiddlescrollOptions extends Module {
         {
             preferences = event.targetState.optionsCodex.pages.get("preferences");
 
-
-            if (isMobile)
-            {
-                preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline. (Preview's Y level may not represent what is seen during gameplay)", ["On" => "On", "Off" => "Off", "Wide Lanes" => "Wide Lanes", "Narrow Lanes" => "Narrow Lanes"], function(value:Bool):Void {
-                    FlxG.save.data.middlescroll = value;
-                    FlxG.save.flush();
-                    middleScrollCallback();
-                }, FlxG.save.data.middlescroll);     
+            preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline. (Preview's Y level may not represent what is seen during gameplay)", ["On" => "On", "Off" => "Off", "Narrow Lanes" => "Narrow Lanes", "Wide Lanes" => "Wide Lanes",], function(value:Bool):Void {
+                FlxG.save.data.middlescroll = value;
+                FlxG.save.flush();
+                middleScrollCallback();
+            }, FlxG.save.data.middlescroll);     
                  
-            }
-            else
-            {
-                preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline. (Preview's Y level may not represent what is seen during gameplay)", ["On" => "On", "Off" => "Off", "Wide Lanes" => "Wide Lanes"], function(value:Bool):Void {
-                    FlxG.save.data.middlescroll = value;
-                    FlxG.save.flush();
-                    middleScrollCallback();
-                }, FlxG.save.data.middlescroll);    
-            }                     
+                       
             
             items = preferences.items;
             itemID = items.length - 1;
