@@ -108,7 +108,6 @@ class Middlescroll extends Module {
 				}	
 			case "Translucent":
 				opponentStrumline.strumlineNotes.alpha = 0.5;
-				opponentStrumline.noteHoldCovers.alpha = 0.5;
 				opponentStrumline.notes.alpha = 0.5;
 				// Use custom animation when spawning in strumline notes.
 				for (arrow in opponentStrumline.strumlineNotes)
@@ -469,7 +468,6 @@ class Middlescroll extends Module {
 							originalcoverx = cover.x;
 						}
 
-						
 						cover.x = (originalcoverx + coverPositions[direction]) - (mobilepos * 3);
 						// if (strumline.noteStyle.isHoldNotePixel() || FlxG.save.data.middlescroll != "Wide Lanes")
 						// {
@@ -481,6 +479,11 @@ class Middlescroll extends Module {
 						// cover.x += (opponentStrumline.strumlineNotes.members[2].x - opponentStrumline.strumlineNotes.members[1].x);
 						// opponentNote.x -= (opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0])) * (4 - i);
 						// cover.x = strumline.strumlineNotes.members[direction].x - strumline.strumlineNotes.members[direction].width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x);
+						if (FlxG.save.data.oppnotes == "Translucent")
+						{
+							cover.alpha = 0.5;
+						}
+
 						if (direction > 1)
 						{
 							// direction - 2
