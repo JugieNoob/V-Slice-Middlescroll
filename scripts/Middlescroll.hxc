@@ -42,21 +42,18 @@ class Middlescroll extends Module {
 				{
 					updateNoteCovers(playerStrumline, true);
 				}
-				else if (FlxG.save.data.middlescroll == "Wide Lanes")
+				else if (differentLanes)
 				{
 					updateNoteCovers(playerStrumline, true);
-					// updateNoteCovers(opponentStrumline);
+					updateNoteCovers(opponentStrumline);
+
 				}
 				else
 				{
-					// updateNoteCovers(opponentStrumline);
+					updateNoteCovers(opponentStrumline);
 				}
 			}
-		
-			// updateNoteCovers(playerStrumline, true);
-
-			updateNoteCovers(opponentStrumline);
-
+	
 		}
 
 		super.onUpdate();
@@ -471,7 +468,9 @@ class Middlescroll extends Module {
 						{
 							originalcoverx = cover.x;
 						}
-						cover.x = originalcoverx + coverPositions[direction];			
+
+						cover.x = (originalcoverx + coverPositions[direction]);
+						
 					}
 					else
 					{
@@ -486,6 +485,7 @@ class Middlescroll extends Module {
 							{
 								oldOppCoverPositions[direction -2] = cover.x;
 							}
+								
 							cover.x = oldOppCoverPositions[direction-2] + (strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2]);
 							// cover.x += 200;
 							// cover.x += strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2];
@@ -507,7 +507,7 @@ class Middlescroll extends Module {
 
 		for (strum in strumline)
     	{
-    	  strum.width /= 2;
+    		strum.width /= 2;
     	}
 
 		if (Preferences.controlsScheme == "Arrows")
