@@ -31,6 +31,30 @@ class Middlescroll extends Module {
 
 	function new() {
 		super("Middlescroll", 20);
+
+		switch (FlxG.save.data.middlescroll)
+		{
+			case "Wide Lanes":
+				if (Preferences.controlsScheme == "Arrows")
+				{
+					noteSpacing = 80;
+				}
+				else
+				{
+					noteSpacing = 60;
+				}
+			case "Narrow Lanes":
+				noteSpacing = 30;
+			default:
+				if (Preferences.controlsScheme == "Arrows")
+				{
+					noteSpacing = 45;
+				}
+				else
+				{
+					noteSpacing = 0;
+				}
+		}		
 	}
 	
 	// ----- Override Functions
@@ -540,10 +564,14 @@ class Middlescroll extends Module {
 						}
 
 						cover.x = (originalcoverx + coverPositions[direction]); //
-						if (PlayState.instance.playerStrumline.noteStyle.isHoldNotePixel())
+						if (playerStrumline.noteStyle.getName() != "Funkin'")
 						{
 							cover.x -= (mobilepos * 3);
 						}
+						// if (!PlayState.instance.playerStrumline.noteStyle.isHoldNotePixel())
+						// {
+						// 	cover.x -= (mobilepos * 3);
+						// }
 						// if (strumline.noteStyle.isHoldNotePixel() || FlxG.save.data.middlescroll != "Wide Lanes")
 						// {
 						// 	cover.x -= mobilepos * 3;
