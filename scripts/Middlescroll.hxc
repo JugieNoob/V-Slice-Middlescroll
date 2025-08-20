@@ -19,7 +19,7 @@ class Middlescroll extends Module {
 	var differentLanes = false;
 	var noteSpacing = 0;
 
-	public static var mobilepos = 0;
+	var mobilepos = 0;
 
 	var originalcoverx:Float = 0;
 
@@ -27,7 +27,7 @@ class Middlescroll extends Module {
 	var oldOppPositions = [];
 	var oldOppCoverPositions = [0,0];
 
-
+	var a:FlxText;
 
 	function new() {
 		super("Middlescroll");
@@ -71,7 +71,13 @@ class Middlescroll extends Module {
 					updateNoteCovers(opponentStrumline);
 				}
 
-	
+			if (a != null)
+			{
+				a.text = "coverx: " +  originalcoverx;
+				a.text += "\nCover Pos: " +  coverPositions;
+				a.text += "\nMobile Pos: " +  mobilepos;
+
+			}
 		}
 	
 	}
@@ -79,6 +85,16 @@ class Middlescroll extends Module {
 	override function onCountdownStart(event)
 	{
 		super.onCountdownStart(event);
+
+	}
+
+	override function onSongLoaded(event)
+	{
+		super.onSongLoaded(event);
+		a = new FlxText(30, 30, 0, "hello " + event.id); //PlayState.instance.targetSong.songName
+		a.size = 30;
+		a.camera = PlayState.instance.camHUD;
+		PlayState.instance.add(a);
 	}
 
 	override function onStateChangeEnd(event) {
@@ -101,6 +117,30 @@ class Middlescroll extends Module {
 			differentLanes = false;
 		}
 
+		switch (FlxG.save.data.middlescroll)
+		{
+			case "Wide Lanes":
+				if (Preferences.controlsScheme == "Arrows")
+				{
+					noteSpacing = 80;
+				}
+				else
+				{
+					noteSpacing = 60;
+				}
+			case "Narrow Lanes":
+				noteSpacing = 30;
+			default:
+				if (Preferences.controlsScheme == "Arrows")
+				{
+					noteSpacing = 45;
+				}
+				else
+				{
+					noteSpacing = 0;
+				}
+		}		
+
 	
 
 		playerStrumline = PlayState.instance.playerStrumline;
@@ -114,6 +154,8 @@ class Middlescroll extends Module {
 			PlayState.instance.comboPopUps.offsets = [480, -50];
 		}
 
+		
+		// if (PlayState.instance.targetSong.songName == "blazin")
 		// 0.2s delay or else the player's strumline won't be set properly in Blazin'
 		new FlxTimer().start(0.2, ()->{
 			
@@ -309,29 +351,7 @@ class Middlescroll extends Module {
 	function setPlayerStrumline()
 	{
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-		switch (FlxG.save.data.middlescroll)
-		{
-			case "Wide Lanes":
-				if (Preferences.controlsScheme == "Arrows")
-				{
-					noteSpacing = 80;
-				}
-				else
-				{
-					noteSpacing = 60;
-				}
-			case "Narrow Lanes":
-				noteSpacing = 30;
-			default:
-				if (Preferences.controlsScheme == "Arrows")
-				{
-					noteSpacing = 45;
-				}
-				else
-				{
-					noteSpacing = 0;
-				}
-		}		
+	
 
 		// 
 
@@ -490,7 +510,11 @@ class Middlescroll extends Module {
 							originalcoverx = cover.x;
 						}
 
-						cover.x = (originalcoverx + coverPositions[direction]) - (mobilepos * 3);
+						cover.x = (originalcoverx + coverPositions[direction]); //
+						if (PlayState.instance.playerStrumline.noteStyle.isHoldNotePixel())
+						{
+							cover.x -= (mobilepos * 3);
+						}
 						// if (strumline.noteStyle.isHoldNotePixel() || FlxG.save.data.middlescroll != "Wide Lanes")
 						// {
 						// 	cover.x -= mobilepos * 3;
