@@ -28,14 +28,21 @@ class MiddlescrollOptions extends Module {
     function new (){
         super("Middlescroll Options", 21);
 
-        if (FlxG.save.data.movepopups == null)
+        if (FlxG.save.data.movepopups == null || FlxG.save.data.movepopups == true)
         {
-            FlxG.save.data.movepopups = true;
+            FlxG.save.data.movepopups = "Middlescroll Only";
         }
+
+        if (FlxG.save.data.movepopups == false)
+        {
+            FlxG.save.data.movepopups = "Never";
+        }
+
         if (FlxG.save.data.oppnotes == null)
         {
             FlxG.save.data.oppnotes = "Visible";
         }
+
         if (FlxG.save.data.noteEffects == null)
         {
             FlxG.save.data.noteEffects = "All";
@@ -94,11 +101,11 @@ class MiddlescrollOptions extends Module {
      
 
             // Never, Middlescroll Only, Always
-            preferences.createPrefItemCheckbox('Move Popups', 'Moves the rating and combo popups.', function(value:Bool):Void {
-            FlxG.save.data.movepopups = value;
-            FlxG.save.flush();
 
-            }, FlxG.save.data.movepopups);
+            preferences.createPrefItemEnum('Move Popups', "Moves the rating and combo pop-ups.", ["Never" => "Never", "Middlescroll Only" => "Middlescroll Only", "Always" => "Always",], function(value:Bool):Void {
+                FlxG.save.data.movepopups = value;
+                FlxG.save.flush();
+            }, FlxG.save.data.movepopups);    
             
 
             preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes.', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
@@ -107,12 +114,14 @@ class MiddlescrollOptions extends Module {
             }, FlxG.save.data.oppnotes);      
 
             //Always affect opponent notes
-            preferences.createPrefItemCheckbox('Always Affect\nOpponent Notes', "When checked, the opponent's notes will always be affected by the above option.", function(value:Bool):Void {
+            preferences.createPrefItemCheckbox('Always Affect\nOpponent Notes', "When checked, the opponent's notes will always be affected by the above option when not using Middlescroll.", function(value:Bool):Void {
                 FlxG.save.data.alwaysOppNotes = value;
                 FlxG.save.flush();
             }, FlxG.save.data.alwaysOppNotes);    
 
             scrollText = items.members[items.length - 1].atlasText;
+            scrollText.scale.set(0.8, 0.8);
+            scrollText.updateHitbox();
        
 
             preferences.createPrefItemEnum('Note Effects', "Toggles Note Splashes and Note Hold Covers for the player's strumline.", ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
@@ -154,14 +163,17 @@ class MiddlescrollOptions extends Module {
                     {
                         strumline.visible = false;
                     }
-
                 }
                 else
                 {
                     strumline.visible = false;
                 }
     
-                scrollText.y -= scrollText.height /4;
+             
+                scrollText.y -= scrollText.height / 1.5;
+                scrollText.x -= 300;
+
+                
             }
    
 

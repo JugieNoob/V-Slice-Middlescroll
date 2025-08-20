@@ -154,10 +154,19 @@ class Middlescroll extends Module {
 
 		isPixel = playerStrumline.noteStyle.isHoldNotePixel();
 
-		if (FlxG.save.data.movepopups) {
-			// Taken from Blazin'
-			PlayState.instance.comboPopUps.offsets = [480, -50];
+		switch (FlxG.save.data.movepopups)
+		{
+			case "Always":
+				// Taken from Blazin'
+				PlayState.instance.comboPopUps.offsets = [480, -50];
+			case "Middlescroll Only":
+				if (FlxG.save.data.middlescroll != "Off")
+				{
+					PlayState.instance.comboPopUps.offsets = [480, -50];
+				}
 		}
+		
+
 
 		
 		// if (PlayState.instance.targetSong.songName == "blazin")
