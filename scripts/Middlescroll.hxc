@@ -202,10 +202,23 @@ class Middlescroll extends Module {
 
 		super.onNoteIncoming(event);
 
+		if (Preferences.controlsScheme != "Arrows" && FlxG.save.data.oppnotes == "Translucent") 
+				{
+					if (opponentStrumline != null)
+					{
+						opponentStrumline.holdNotes.forEach(function(hold){
+							hold.alpha = 0.5;
+						});
+					}
+			
+				}
+
 		if (FlxG.save.data.middlescroll == "Off")
 		{
 			return;
 		}
+
+		
 
 		if (Preferences.controlsScheme == "Arrows" || differentLanes)
 		{
@@ -289,16 +302,7 @@ class Middlescroll extends Module {
 					}
 				}
 				
-				if (FlxG.save.data.oppnotes == "Translucent") 
-				{
-					if (opponentStrumline != null)
-					{
-						opponentStrumline.holdNotes.forEach(function(hold){
-							hold.alpha = 0.5;
-						});
-					}
-			
-				}
+				
 		
 			}
 		}
@@ -488,8 +492,6 @@ class Middlescroll extends Module {
 
 				for (cover in strumline.noteHoldCovers)
 				{
-			
-			
 					var direction = 0;
 
 					if (StringTools.contains(cover.glow.animation.name, "Blue"))

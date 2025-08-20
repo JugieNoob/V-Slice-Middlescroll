@@ -98,6 +98,8 @@ class MiddlescrollOptions extends Module {
                 FlxG.save.data.oppnotes = value;
                 FlxG.save.flush();
             }, FlxG.save.data.oppnotes);      
+
+            //Always affect opponent notes
             
        
 
