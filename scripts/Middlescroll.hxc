@@ -41,6 +41,10 @@ class Middlescroll extends Module {
 			return;
 		}
 		
+		if (FlxG.save.data.middlescroll == "Off" && !FlxG.save.data.alwaysOppNotes)
+		{
+			return;
+		}
 		if (FlxG.save.data.oppnotes == "Translucent")
 		{
 			for (cover in PlayState.instance.opponentStrumline.noteHoldCovers)
@@ -168,8 +172,11 @@ class Middlescroll extends Module {
 			}
 		});
 		
+		if (FlxG.save.data.middlescroll == "Off" && !FlxG.save.data.alwaysOppNotes)
+		{
+			return;
+		}
 		
-
 		switch (FlxG.save.data.oppnotes)
 		{
 			case "Hidden":
@@ -201,7 +208,12 @@ class Middlescroll extends Module {
 	override function onNoteIncoming(event) {
 
 		super.onNoteIncoming(event);
-
+		
+		if (FlxG.save.data.middlescroll == "Off" && !FlxG.save.data.alwaysOppNotes)
+		{
+			return;
+		}
+	
 		if (Preferences.controlsScheme != "Arrows" && FlxG.save.data.oppnotes == "Translucent") 
 				{
 					if (opponentStrumline != null)
@@ -213,12 +225,13 @@ class Middlescroll extends Module {
 			
 				}
 
+	
+
+		
 		if (FlxG.save.data.middlescroll == "Off")
 		{
 			return;
 		}
-
-		
 
 		if (Preferences.controlsScheme == "Arrows" || differentLanes)
 		{
