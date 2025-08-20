@@ -30,7 +30,7 @@ class Middlescroll extends Module {
 	var a:FlxText;
 
 	function new() {
-		super("Middlescroll");
+		super("Middlescroll", 20);
 	}
 	
 	// ----- Override Functions
@@ -48,6 +48,7 @@ class Middlescroll extends Module {
 				cover.alpha = 0.5;
 			}
 		}
+
 
 		if (FlxG.save.data.middlescroll == "Off")
 		{
@@ -71,13 +72,13 @@ class Middlescroll extends Module {
 					updateNoteCovers(opponentStrumline);
 				}
 
-			if (a != null)
-			{
-				a.text = "coverx: " +  originalcoverx;
-				a.text += "\nCover Pos: " +  coverPositions;
-				a.text += "\nMobile Pos: " +  mobilepos;
+			// if (a != null)
+			// {
+			// 	a.text = "coverx: " +  originalcoverx;
+			// 	a.text += "\nCover Pos: " +  coverPositions;
+			// 	a.text += "\nMobile Pos: " +  mobilepos;
 
-			}
+			// }
 		}
 	
 	}
@@ -94,7 +95,7 @@ class Middlescroll extends Module {
 		a = new FlxText(30, 30, 0, "hello " + event.id); //PlayState.instance.targetSong.songName
 		a.size = 30;
 		a.camera = PlayState.instance.camHUD;
-		PlayState.instance.add(a);
+		// PlayState.instance.add(a);
 	}
 
 	override function onStateChangeEnd(event) {
@@ -156,16 +157,15 @@ class Middlescroll extends Module {
 
 		
 		// if (PlayState.instance.targetSong.songName == "blazin")
-		// 0.2s delay or else the player's strumline won't be set properly in Blazin'
-		new FlxTimer().start(0.2, ()->{
-			
+		// slight delay or else the player's strumline won't be set properly in Blazin'
+		new FlxTimer().start(0.105, ()->{
 			if (FlxG.save.data.middlescroll != "Off") {
-			setPlayerStrumline();
+				setPlayerStrumline();
 			if (Preferences.controlsScheme != "Arrows")
 			{
 				moveOpponentStrumline();
 			}
-		}
+			}
 		});
 		
 		
@@ -201,6 +201,11 @@ class Middlescroll extends Module {
 	override function onNoteIncoming(event) {
 
 		super.onNoteIncoming(event);
+
+		if (FlxG.save.data.middlescroll == "Off")
+		{
+			return;
+		}
 
 		if (Preferences.controlsScheme == "Arrows" || differentLanes)
 		{
@@ -353,7 +358,7 @@ class Middlescroll extends Module {
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 	
 
-		// 
+	
 
 		for (i in 0...Strumline.KEY_COUNT)
 		{
