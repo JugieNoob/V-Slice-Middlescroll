@@ -13,6 +13,7 @@ import flixel.text.FlxText;
 import flixel.FlxSprite;
 
 
+
 class MiddlescrollOptions extends Module {
     
     public static var isMobile = false;
@@ -21,6 +22,8 @@ class MiddlescrollOptions extends Module {
     var items;
     var preferences;
     var currentState;
+
+    var scrollText;
 
     function new (){
         super("Middlescroll Options", 21);
@@ -104,10 +107,12 @@ class MiddlescrollOptions extends Module {
             }, FlxG.save.data.oppnotes);      
 
             //Always affect opponent notes
-            preferences.createPrefItemCheckbox('Always Affect Opponent Notes', "When checked, the opponent's notes will always be affected by the above option.", function(value:Bool):Void {
+            preferences.createPrefItemCheckbox('Always Affect\nOpponent Notes', "When checked, the opponent's notes will always be affected by the above option.", function(value:Bool):Void {
                 FlxG.save.data.alwaysOppNotes = value;
                 FlxG.save.flush();
             }, FlxG.save.data.alwaysOppNotes);    
+
+            scrollText = items.members[items.length - 1].atlasText;
        
 
             preferences.createPrefItemEnum('Note Effects', "Toggles Note Splashes and Note Hold Covers for the player's strumline.", ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
@@ -118,6 +123,10 @@ class MiddlescrollOptions extends Module {
 
                 
             createPrefSeparator("# End of MiddleScroll");
+
+            // items.members[items.length - 1].alpha = 0.5;
+
+
        
             middleScrollCallback();
 
@@ -134,28 +143,29 @@ class MiddlescrollOptions extends Module {
         {
             if (items != null)
             {
-            if (Std.isOfType(currentState.optionsCodex.currentPage, PreferencesMenu))
-            {
-                if (items.selectedIndex == itemID)
+                if (Std.isOfType(currentState.optionsCodex.currentPage, PreferencesMenu))
                 {
-                    strumline.visible = true;
+                    if (items.selectedIndex == itemID)
+                    {
+                        strumline.visible = true;
+
+                    }
+                    else
+                    {
+                        strumline.visible = false;
+                    }
 
                 }
                 else
                 {
                     strumline.visible = false;
                 }
-            }
-            else
-            {
-                strumline.visible = false;
-            }
     
-
-           
+                scrollText.y -= scrollText.height /4;
             }
    
-            
+
+
         }
     }
 
