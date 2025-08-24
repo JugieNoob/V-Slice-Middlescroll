@@ -5,29 +5,24 @@ import funkin.play.notes.Strumline;
 import funkin.util.Constants;
 import funkin.Preferences;
 import StringTools;
-import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
 
 class Middlescroll extends Module {
-	var isPixel:Int = false;
 
 	var playerStrumline:FlxSprite;
 	var opponentStrumline:FlxSprite;
 
 	var differentLanes = false;
 	var noteSpacing = 0;
-
-	var mobilepos = 0;
+	var mobilePos = 0;
 
 
 	var oldCoverPositions = [0,0,0,0];
 	var coverPositions = [];
 	var oldOppPositions = [];
 	var oldOppCoverPositions = [0,0];
-
-	var a:FlxText;
 
 	function new() {
 		super("Middlescroll", 20);
@@ -76,33 +71,8 @@ class Middlescroll extends Module {
 					updateNoteCovers(opponentStrumline);
 				}
 
-			if (a != null)
-			{
-				a.text = "coverx: " +  oldCoverPositions;
-				a.text += "\nCover Pos: " +  coverPositions;
-				a.text += "\nMobile Pos: " +  mobilepos;
-
-			}
 		}
 	
-	}
-
-	override function onCountdownStart(event)
-	{
-		super.onCountdownStart(event);
-
-	
-
-	}
-
-	override function onSongLoaded(event)
-	{
-		super.onSongLoaded(event);
-		a = new FlxText(30, 30, 0, "hello " + event.id); //PlayState.instance.targetSong.songName
-		a.size = 30;
-		a.camera = PlayState.instance.camHUD;
-		// PlayState.instance.add(a);
-
 	}
 
 	override function onStateChangeEnd(event) {
@@ -120,7 +90,6 @@ class Middlescroll extends Module {
 		opponentStrumline = PlayState.instance.opponentStrumline;
 
 
-		isPixel = playerStrumline.noteStyle.isHoldNotePixel();
 
 		switch (FlxG.save.data.movepopups)
 		{
@@ -136,8 +105,6 @@ class Middlescroll extends Module {
 		
 
 
-		
-		// if (PlayState.instance.targetSong.songName == "blazin")
 		// slight delay or else the player's strumline won't be set properly in Blazin'
 		new FlxTimer().start(0.105, ()->{
 			if (FlxG.save.data.middlescroll != "Off") {
@@ -214,38 +181,16 @@ class Middlescroll extends Module {
 		{
 			if (event.note.noteData.getMustHitNote())
 			{
-
-		
 				// Previous method done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
-				// if (Preferences.controlsScheme == "Arrows")
-				// {
-				// 	event.note.x = playerStrumline.strumlineNotes.members[0].x;
-				// 	if (playerStrumline.noteStyle.getName() == "Funkin'")
-				// 	{
-				// 		event.note.x += event.note.offset.x + Strumline.NUDGE;
-				// 	}
-				// }
-				// else
-				// {
-				// 	event.note.x = playerStrumline.x;
-				// }			
 				event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing));
 
 				if (Preferences.controlsScheme == "Arrows" && event.note.direction > 1)
 				{
-					event.note.x -= mobilepos * 3;
+					event.note.x -= mobilePos * 3;
 				}
 
-				// if (event.note.offset.x >= 40)
-				// {
-				// 	event.note.x -= event.note.offset.x;
-				// }
-				// if (event.note.get_kind() == "trickydeath")
-				// {
-				// 	event.note.x -= (playerStrumline.strumlineNotes.members[0].width / 2) - 15;
-				// }
-
+		
 
 				if (event.note.holdNoteSprite != null)
 				{
@@ -262,26 +207,15 @@ class Middlescroll extends Module {
 			{
 				if (event.note.direction > 1)
 				{
-					// event.note.x = opponentStrumline.strumlineNotes.members[event.note.direction].x + dist;
-
-					var dist = opponentStrumline.strumlineNotes.members[2].x - opponentStrumline.strumlineNotes.members[1].x;// opponentStrumline.strumlineNotes.members[event.note.direction].x - event.note.x;
+					var dist = opponentStrumline.strumlineNotes.members[2].x - opponentStrumline.strumlineNotes.members[1].x;
 
 					event.note.x += dist;
-					// event.note.x -= Constants.STRUMLINE_X_OFFSET * 2.3;
 					event.note.x -= Strumline.STRUMLINE_SIZE;
-					// if (event.note.direction == 2)
-					// {
 					event.note.x -= Strumline.NUDGE * 3;
-					// }
-					// else if (event.note.direction == 3)
-					// {
-					// 	event.note.x -= event.note.scale.x + 0.5;
-					// }
+			
 
 
-					// event.note.x += dist;
-					// event.note.x = opponentStrumline.strumlineNotes.members[0].x + opponentStrumline.x;
-					// opponentNote.x -= (opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0] + opponentNote.offset.x)) * (4 - i);
+		
 
 
 					if (event.note.holdNoteSprite != null)
@@ -358,24 +292,14 @@ class Middlescroll extends Module {
 			positionStrumline(playerStrumline, noteSpacing);
 		
 
-			playerStrumline.background.setGraphicSize(4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)) + (Strumline.BACKGROUND_PAD * 2) + (mobilepos / 1.6), FlxG.height + 50);
+			playerStrumline.background.setGraphicSize(4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)) + (Strumline.BACKGROUND_PAD * 2) + (mobilePos / 1.6), FlxG.height + 50);
 			playerStrumline.background.updateHitbox();
-
-
-		
-			// playerStrumline.x += playerStrumline.noteStyle.getStrumlineOffsets()[0];
-			// playerStrumline.x += playerStrumline.strumlineNotes.members[0].width;
-			// 						event.note.x += event.note.offset.x + Strumline.NUDGE;
-
 		}
 		else 
 		{
 			playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
 		}
-		
-
-		// playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
-
+	
 
 		switch (FlxG.save.data.noteEffects)
 		{
@@ -403,62 +327,10 @@ class Middlescroll extends Module {
 			for (i in 2...opponentStrumline.strumlineNotes.length) {
 				var opponentNote = opponentStrumline.strumlineNotes.members[i];
 				oldOppPositions.push(opponentNote.x);
-				// opponentNote.x = FlxG.width;
-				// if (opponentStrumline.noteStyle.getStrumlineOffsets()[0] == 0)
-				// {
-				// 	opponentNote.x -= (opponentNote.width - opponentNote.offset.x);
-				// }
-				// else
-				// {
-				// opponentNote.x -= opponentNote.width;
-				// }
-				// opponentNote.x -= Constants.STRUMLINE_X_OFFSET;
-				// opponentNote.x -= (opponentNote.width * 1.1) * (3 - i);
-				// if (opponentNote.direction == 2)
-				// {
-				// 	opponentNote.x -= opponentNote.width;
-				// 	opponentNote.x += Strumline.INITIAL_OFFSET;
-				// }
-				
-				// opponentNote.x = FlxG.width;
-				// opponentNote.x += ((Constants.STRUMLINE_X_OFFSET - opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0]) * 2) * (opponentStrumline.strumlineNotes.length - i)); //- (opponentStrumline.noteStyle.getStrumlineOffsets()[0]) + (opponentNote.offset.x / 2)
-				// opponentNote.x -= Constants.STRUMLINE_X_OFFSET + opponentNote.offset.x;
-				// opponentNote.x += (opponentStrumline.noteStyle.getStrumlineOffsets()[0] + opponentNote.offset.x) / 2;
-				// opponentNote.x = (FlxG.width + ((Constants.STRUMLINE_X_OFFSET - opponentNote.width - opponentStrumline.noteStyle.getStrumlineOffsets()[0]) * (opponentStrumline.strumlineNotes.length - i))
-				// 	- (Constants.STRUMLINE_X_OFFSET * 1.5))
-				// 	+ ((opponentStrumline.noteStyle.getStrumlineOffsets()[0] + opponentNote.offset.x) / 2);
-
-				// opponentNote.x = FlxG.width;
-				// opponentNote.x -= opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0] + opponentNote.offset.x);
-				// opponentNote.x -= Constants.STRUMLINE_X_OFFSET;
-				// opponentNote.x -= ((opponentNote.width - (opponentNote.offset.x / 1.25)) + Strumline.INITIAL_OFFSET) * (3 - i);
-
-				// for (i in 0...strumline.strumlineNotes.length) {
 		
-				// var note = strumline.strumlineNotes.members[i];
-				// note.x += (i * (Strumline.STRUMLINE_SIZE + thisNoteSpacing));
-					
-				// if (Preferences.controlsScheme == "Arrows")
-				// {
-				// 	if (note.direction > 1)
-				// 	{
-				// 		note.x -= (mobilepos * 3);
-				// 	}
-				// }
-		// }
 				opponentNote.x = FlxG.width;
-				// opponentNote.x -= (opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0])) * (4 - i);
 				opponentNote.x += (Strumline.NOTE_SPACING) * (i-2);
 				opponentNote.x -= (((Strumline.STRUMLINE_SIZE / 2) + (Constants.STRUMLINE_X_OFFSET * 2)) * 2) - opponentStrumline.noteStyle.getStrumlineOffsets()[0];
-				// if (opponentNote.direction == 2)
-				// {
-				// 	opponentNote.x += opponentNote.width * 0.05;
-				// }
-				// opponentNote.x += ;
-				// if (opponentNote.direction == 2)
-				// {
-				// 	opponentNote.x -= opponentNote.width * 1.1;
-				// }
 			}
 		}
 	}
@@ -495,35 +367,17 @@ class Middlescroll extends Module {
 							oldCoverPositions[direction] = cover.x;
 							if (direction > 1)
 							{
-								oldCoverPositions[direction] -= mobilepos * 3;
+								oldCoverPositions[direction] -= mobilePos * 3;
 							}
 						}
-						// oldCoverPositions[direction]
 						cover.x = (oldCoverPositions[direction] + coverPositions[direction]); //
-						// cover.x -= (mobilepos * 3);
-						// if (playerStrumline.noteStyle.getName() != "Funkin'" || playerStrumline.noteStyle.getStrumlineOffsets()[0] > 0 || FlxG.save.data.middlescroll == "Wide Lanes")
-						// {
-						// 	cover.x -= (mobilepos * 3);
-						// }
-						// if (!PlayState.instance.playerStrumline.noteStyle.isHoldNotePixel())
-						// {
-						// 	cover.x -= (mobilepos * 3);
-						// }
-						// if (strumline.noteStyle.isHoldNotePixel() || FlxG.save.data.middlescroll != "Wide Lanes")
-						// {
-						// 	cover.x -= mobilepos * 3;
-						// }
 					}
 					else
 					{
-						// cover.x += (opponentStrumline.strumlineNotes.members[2].x - opponentStrumline.strumlineNotes.members[1].x);
-						// opponentNote.x -= (opponentNote.width - (opponentStrumline.noteStyle.getStrumlineOffsets()[0])) * (4 - i);
-						// cover.x = strumline.strumlineNotes.members[direction].x - strumline.strumlineNotes.members[direction].width / 2 - ((strumline.noteStyle.getHoldCoverOffsets()[0] * (isPixel ? 2 : 1))* cover.scale.x);
-					
+						
 
 						if (direction > 1)
 						{
-							// direction - 2
 							
 							if (oldOppCoverPositions[direction - 2] == 0)
 							{
@@ -531,8 +385,7 @@ class Middlescroll extends Module {
 							}
 								
 							cover.x = oldOppCoverPositions[direction-2] + (strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2]);
-							// cover.x += 200;
-							// cover.x += strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2];
+				
 						}
 					}
 				
@@ -556,7 +409,7 @@ class Middlescroll extends Module {
 
 		if (Preferences.controlsScheme == "Arrows")
 		{
-			mobilepos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
+			mobilePos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
 		}
 		
 		for (i in 0...strumline.strumlineNotes.length) {
@@ -568,7 +421,7 @@ class Middlescroll extends Module {
 			{
 				if (note.direction > 1)
 				{
-					note.x -= (mobilepos * 3);
+					note.x -= (mobilePos * 3);
 				}
 			}
 		}
@@ -576,13 +429,13 @@ class Middlescroll extends Module {
 		strumline.x = (FlxG.width - (4 * (Strumline.STRUMLINE_SIZE + (thisNoteSpacing / 1.3)))) / 2;//
 		if (Preferences.controlsScheme == "Arrows")
 		{
-			strumline.x += mobilepos * 2.1;
+			strumline.x += mobilePos * 2.1;
 		}
 	}
 
 	function init()
 	{
-		mobilepos = 0;
+		mobilePos = 0;
 		oldCoverPositions = [0,0,0,0];
 		coverPositions = [];
 		oldOppPositions = [];
@@ -623,12 +476,12 @@ class Middlescroll extends Module {
 
 		if (Preferences.controlsScheme == "Arrows")
 		{
-			mobilepos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
+			mobilePos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
 		}
 
 		for (i in 0...Strumline.KEY_COUNT)
 		{
-			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + noteSpacing))); //- (mobilepos * 3)
+			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + noteSpacing))); //- (mobilePos * 3)
 		}
 	
 	}
