@@ -122,6 +122,10 @@ class Middlescroll extends Module {
 				{
 					if (opponentStrumline != null)
 					{
+						opponentStrumline.notes.forEach(function(note){
+							note.alpha = 0.5;
+						});
+
 						opponentStrumline.holdNotes.forEach(function(hold){
 							hold.alpha = 0.5;
 						});
@@ -220,7 +224,8 @@ class Middlescroll extends Module {
 						}
 						if (event.note.direction == direction)
 						{
-							splash.x = event.note.x + (playerStrumline.noteStyle.getSplashOffsets()[0] * 1.75);
+							// splash.x = event.note.x + (playerStrumline.noteStyle.getSplashOffsets()[0] * 1.75);
+							splash.x += coverPositions[direction];
 						}
 
 					}
@@ -481,7 +486,6 @@ class Middlescroll extends Module {
 			case "Translucent":
 				opponentStrumline.visible = true;
 				opponentStrumline.strumlineNotes.alpha = 0.5;
-				opponentStrumline.notes.alpha = 0.5;
 				// Use custom animation when spawning in strumline notes.
 				for (arrow in opponentStrumline.strumlineNotes)
 				{
