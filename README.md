@@ -11,8 +11,7 @@ A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blaz
 
 **If you come across any bugs please create an issue [here](https://github.com/JugieNoob/V-Slice-Middlescroll/issues).**
 
-***Thank you to [Mofoy](https://gamebanana.com/members/4648991) for for helping with porting this mod to mobile!***
-
+***Thank you to [Mofoy](https://gamebanana.com/members/4648991) for helping with porting this mod to mobile!***
 
 ## Features
 
@@ -46,6 +45,14 @@ A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blaz
   <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/7.jpg width=31%>
 </div>
 
+<br>
+<div>
+  <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/8.png align=left width=31%>
+  <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/9.png align=left width=31%>
+  <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/10.png width=31%>
+</div>
+
+
 ### Also Works on Mobile!
 
 <div>
@@ -61,6 +68,7 @@ A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blaz
   <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile5.jpg width=31%>
 </div>
 
+<br>
 
 <div>
 <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile6.png align=left width=47.5%>
