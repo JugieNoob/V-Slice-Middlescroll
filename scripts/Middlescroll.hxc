@@ -89,8 +89,12 @@ class Middlescroll extends Module {
 		}
 		
 		init();
-	
 
+	}
+
+	override function onCountdownStart(event)
+	{
+		super.onCountdownStart(event);
 		playerStrumline = PlayState.instance.playerStrumline;
 		opponentStrumline = PlayState.instance.opponentStrumline;
 
@@ -148,10 +152,7 @@ class Middlescroll extends Module {
 				opponentStrumline.visible = true;
 		}
 			
-		
-
 	}
-
 
 
 	override function onNoteIncoming(event) {
