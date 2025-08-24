@@ -101,7 +101,7 @@ class Middlescroll extends Module {
 		a = new FlxText(30, 30, 0, "hello " + event.id); //PlayState.instance.targetSong.songName
 		a.size = 30;
 		a.camera = PlayState.instance.camHUD;
-		PlayState.instance.add(a);
+		// PlayState.instance.add(a);
 
 	}
 
