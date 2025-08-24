@@ -1,4 +1,3 @@
-import funkin.mobile.ui.FunkinHitbox;
 import funkin.modding.module.Module;
 import funkin.ui.options.PreferencesMenu;
 import funkin.play.notes.Strumline;
@@ -9,7 +8,6 @@ import funkin.ui.FullScreenScaleMode;
 import flixel.FlxG;
 import funkin.util.Constants;
 import Std;
-import flixel.text.FlxText;
 import flixel.FlxSprite;
 
 
