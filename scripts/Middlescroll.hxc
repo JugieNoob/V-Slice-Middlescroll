@@ -9,6 +9,12 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
 
+/*
+	Middlescroll V-Slice created by JugieNoob
+	GitHub Link: https://github.com/JugieNoob/V-Slice-Middlescroll
+	GameBanana Link: https://gamebanana.com/mods/516762
+*/
+
 class Middlescroll extends Module {
 
 	var playerStrumline:FlxSprite;
@@ -64,7 +70,6 @@ class Middlescroll extends Module {
 				{
 					updateNoteCovers(playerStrumline, true);
 					updateNoteCovers(opponentStrumline);
-
 				}
 				else
 				{
@@ -213,11 +218,6 @@ class Middlescroll extends Module {
 					event.note.x -= Strumline.STRUMLINE_SIZE;
 					event.note.x -= Strumline.NUDGE * 3;
 			
-
-
-		
-
-
 					if (event.note.holdNoteSprite != null)
 					{
 						var hold = event.note.holdNoteSprite;
@@ -225,9 +225,6 @@ class Middlescroll extends Module {
 						hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);						
 					}
 				}
-				
-				
-		
 			}
 		}
 			
