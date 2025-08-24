@@ -8,6 +8,7 @@ import StringTools;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
+import funkin.ui.debug.charting.ChartEditorState;
 
 /*
 	Middlescroll V-Slice created by JugieNoob
@@ -29,6 +30,8 @@ class Middlescroll extends Module {
 	var coverPositions = [];
 	var oldOppPositions = [];
 	var oldOppCoverPositions = [0,0];
+
+	var currentState;
 
 	function new() {
 		super("Middlescroll", 20);
@@ -82,6 +85,8 @@ class Middlescroll extends Module {
 
 	override function onStateChangeEnd(event) {
 		super.onStateChangeEnd(event);
+
+		currentState = event.targetState;
 		
 		if (!Std.isOfType(event.targetState, PlayState))
         {
@@ -89,70 +94,19 @@ class Middlescroll extends Module {
 		}
 		
 		init();
-
 	}
 
 	override function onCountdownStart(event)
 	{
 		super.onCountdownStart(event);
-		playerStrumline = PlayState.instance.playerStrumline;
-		opponentStrumline = PlayState.instance.opponentStrumline;
-
-
-
-		switch (FlxG.save.data.movepopups)
-		{
-			case "Always":
-				// Taken from Blazin'
-				PlayState.instance.comboPopUps.offsets = [480, -50];
-			case "Middlescroll Only":
-				if (FlxG.save.data.middlescroll != "Off")
-				{
-					PlayState.instance.comboPopUps.offsets = [480, -50];
-				}
-		}
-		
-
-
-		// slight delay or else the player's strumline won't be set properly in Blazin'
-		new FlxTimer().start(0.105, ()->{
-			if (FlxG.save.data.middlescroll != "Off") {
-				setPlayerStrumline();
-			if (Preferences.controlsScheme != "Arrows")
-			{
-				moveOpponentStrumline();
-			}
-			}
-		});
-		
-		if (FlxG.save.data.middlescroll == "Off" && !FlxG.save.data.alwaysOppNotes)
-		{
+		if (!Std.isOfType(currentState, ChartEditorState))
+        {
 			return;
 		}
-		
-		switch (FlxG.save.data.oppnotes)
-		{
-			case "Hidden":
-				// Taken from Blazin'
-				if (opponentStrumline != null) {
-					opponentStrumline.visible = false;
-				}	
-			case "Translucent":
-				opponentStrumline.visible = true;
-				opponentStrumline.strumlineNotes.alpha = 0.5;
-				opponentStrumline.notes.alpha = 0.5;
-				// Use custom animation when spawning in strumline notes.
-				for (arrow in opponentStrumline.strumlineNotes)
-				{
-					FlxTween.cancelTweensOf(arrow);
-					arrow.alpha = 0.0;
-					FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.5}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
-				}
-			default:
-				opponentStrumline.visible = true;
-		}
-			
+
+		init();
 	}
+
 
 
 	override function onNoteIncoming(event) {
@@ -482,6 +436,62 @@ class Middlescroll extends Module {
 			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + noteSpacing))); //- (mobilePos * 3)
 		}
 	
+		playerStrumline = PlayState.instance.playerStrumline;
+		opponentStrumline = PlayState.instance.opponentStrumline;
+
+
+
+		switch (FlxG.save.data.movepopups)
+		{
+			case "Always":
+				// Taken from Blazin'
+				PlayState.instance.comboPopUps.offsets = [480, -50];
+			case "Middlescroll Only":
+				if (FlxG.save.data.middlescroll != "Off")
+				{
+					PlayState.instance.comboPopUps.offsets = [480, -50];
+				}
+		}
+		
+
+
+		// slight delay or else the player's strumline won't be set properly in Blazin'
+		new FlxTimer().start(0.105, ()->{
+			if (FlxG.save.data.middlescroll != "Off") {
+				setPlayerStrumline();
+			if (Preferences.controlsScheme != "Arrows")
+			{
+				moveOpponentStrumline();
+			}
+			}
+		});
+		
+		if (FlxG.save.data.middlescroll == "Off" && !FlxG.save.data.alwaysOppNotes)
+		{
+			return;
+		}
+		
+		switch (FlxG.save.data.oppnotes)
+		{
+			case "Hidden":
+				// Taken from Blazin'
+				if (opponentStrumline != null) {
+					opponentStrumline.visible = false;
+				}	
+			case "Translucent":
+				opponentStrumline.visible = true;
+				opponentStrumline.strumlineNotes.alpha = 0.5;
+				opponentStrumline.notes.alpha = 0.5;
+				// Use custom animation when spawning in strumline notes.
+				for (arrow in opponentStrumline.strumlineNotes)
+				{
+					FlxTween.cancelTweensOf(arrow);
+					arrow.alpha = 0.0;
+					FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.5}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
+				}
+			default:
+				opponentStrumline.visible = true;
+		}
 	}
 
 
