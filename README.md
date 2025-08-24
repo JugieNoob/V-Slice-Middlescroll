@@ -1,4 +1,11 @@
-# V-Slice Middlescroll
+**<h1 align="center">V-Slice Middlescroll</h1>**
+
+<div align=center>
+  <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/_polymod_icon.png width=32.5%>
+  <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/middlescrollmod.png width=55.5%>
+</div>
+
+<br>
 
 A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blazin'" to all of the songs and adds new options.
 
