@@ -21,8 +21,8 @@ class Middlescroll extends Module {
 
 	var mobilepos = 0;
 
-	var originalcoverx:Float = 0;
 
+	var oldCoverPositions = [0,0,0,0];
 	var coverPositions = [];
 	var oldOppPositions = [];
 	var oldOppCoverPositions = [0,0];
@@ -31,30 +31,6 @@ class Middlescroll extends Module {
 
 	function new() {
 		super("Middlescroll", 20);
-
-		switch (FlxG.save.data.middlescroll)
-		{
-			case "Wide Lanes":
-				if (Preferences.controlsScheme == "Arrows")
-				{
-					noteSpacing = 80;
-				}
-				else
-				{
-					noteSpacing = 60;
-				}
-			case "Narrow Lanes":
-				noteSpacing = 30;
-			default:
-				if (Preferences.controlsScheme == "Arrows")
-				{
-					noteSpacing = 45;
-				}
-				else
-				{
-					noteSpacing = 0;
-				}
-		}		
 	}
 	
 	// ----- Override Functions
@@ -100,13 +76,13 @@ class Middlescroll extends Module {
 					updateNoteCovers(opponentStrumline);
 				}
 
-			// if (a != null)
-			// {
-			// 	a.text = "coverx: " +  originalcoverx;
-			// 	a.text += "\nCover Pos: " +  coverPositions;
-			// 	a.text += "\nMobile Pos: " +  mobilepos;
+			if (a != null)
+			{
+				a.text = "coverx: " +  oldCoverPositions;
+				a.text += "\nCover Pos: " +  coverPositions;
+				a.text += "\nMobile Pos: " +  mobilepos;
 
-			// }
+			}
 		}
 	
 	}
@@ -114,6 +90,8 @@ class Middlescroll extends Module {
 	override function onCountdownStart(event)
 	{
 		super.onCountdownStart(event);
+
+	
 
 	}
 
@@ -123,7 +101,8 @@ class Middlescroll extends Module {
 		a = new FlxText(30, 30, 0, "hello " + event.id); //PlayState.instance.targetSong.songName
 		a.size = 30;
 		a.camera = PlayState.instance.camHUD;
-		// PlayState.instance.add(a);
+		PlayState.instance.add(a);
+
 	}
 
 	override function onStateChangeEnd(event) {
@@ -133,43 +112,8 @@ class Middlescroll extends Module {
         {
 			return;
 		}
-		originalcoverx = 0;
-		coverPositions = [];
-		oldOppPositions = [];
-		oldOppCoverPositions = [0,0];
-        if (FlxG.save.data.middlescroll == "Wide Lanes" || FlxG.save.data.middlescroll == "Narrow Lanes")
-		{
-			differentLanes = true;
-		}
-		else
-		{
-			differentLanes = false;
-		}
-
-		switch (FlxG.save.data.middlescroll)
-		{
-			case "Wide Lanes":
-				if (Preferences.controlsScheme == "Arrows")
-				{
-					noteSpacing = 80;
-				}
-				else
-				{
-					noteSpacing = 60;
-				}
-			case "Narrow Lanes":
-				noteSpacing = 30;
-			default:
-				if (Preferences.controlsScheme == "Arrows")
-				{
-					noteSpacing = 45;
-				}
-				else
-				{
-					noteSpacing = 0;
-				}
-		}		
-
+		
+		init();
 	
 
 		playerStrumline = PlayState.instance.playerStrumline;
@@ -407,18 +351,6 @@ class Middlescroll extends Module {
 	{
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 	
-
-	
-
-		for (i in 0...Strumline.KEY_COUNT)
-		{
-			coverPositions.push(i * (Strumline.STRUMLINE_SIZE + noteSpacing));
-		}
-	
-		if (Preferences.controlsScheme == "Arrows")
-		{
-			mobilepos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
-		}
 	
 		if (Preferences.controlsScheme == "Arrows" || differentLanes)
 		{
@@ -558,16 +490,21 @@ class Middlescroll extends Module {
 					if (isPlayer)
 					{
 							
-						if (originalcoverx == 0)
+						if (oldCoverPositions[direction] == 0)
 						{
-							originalcoverx = cover.x;
+							oldCoverPositions[direction] = cover.x;
+							if (direction > 1)
+							{
+								oldCoverPositions[direction] -= mobilepos * 3;
+							}
 						}
-
-						cover.x = (originalcoverx + coverPositions[direction]); //
-						if (playerStrumline.noteStyle.getName() != "Funkin'")
-						{
-							cover.x -= (mobilepos * 3);
-						}
+						// oldCoverPositions[direction]
+						cover.x = (oldCoverPositions[direction] + coverPositions[direction]); //
+						// cover.x -= (mobilepos * 3);
+						// if (playerStrumline.noteStyle.getName() != "Funkin'" || playerStrumline.noteStyle.getStrumlineOffsets()[0] > 0 || FlxG.save.data.middlescroll == "Wide Lanes")
+						// {
+						// 	cover.x -= (mobilepos * 3);
+						// }
 						// if (!PlayState.instance.playerStrumline.noteStyle.isHoldNotePixel())
 						// {
 						// 	cover.x -= (mobilepos * 3);
@@ -641,6 +578,59 @@ class Middlescroll extends Module {
 		{
 			strumline.x += mobilepos * 2.1;
 		}
+	}
+
+	function init()
+	{
+		mobilepos = 0;
+		oldCoverPositions = [0,0,0,0];
+		coverPositions = [];
+		oldOppPositions = [];
+		oldOppCoverPositions = [0,0];
+	
+		if (FlxG.save.data.middlescroll == "Wide Lanes" || FlxG.save.data.middlescroll == "Narrow Lanes")
+		{
+			differentLanes = true;
+		}
+		else
+		{
+			differentLanes = false;
+		}
+
+		switch (FlxG.save.data.middlescroll)
+		{
+			case "Wide Lanes":
+				if (Preferences.controlsScheme == "Arrows")
+				{
+					noteSpacing = 80;
+				}
+				else
+				{
+					noteSpacing = 60;
+				}
+			case "Narrow Lanes":
+				noteSpacing = 30;
+			default:
+				if (Preferences.controlsScheme == "Arrows")
+				{
+					noteSpacing = 45;
+				}
+				else
+				{
+					noteSpacing = 0;
+				}
+		}		
+
+		if (Preferences.controlsScheme == "Arrows")
+		{
+			mobilepos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
+		}
+
+		for (i in 0...Strumline.KEY_COUNT)
+		{
+			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + noteSpacing))); //- (mobilepos * 3)
+		}
+	
 	}
 
 
