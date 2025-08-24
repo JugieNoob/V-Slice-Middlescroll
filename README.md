@@ -60,3 +60,9 @@ A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blaz
   <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile4.jpg align=left width=31%>
   <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile5.jpg width=31%>
 </div>
+
+
+<div>
+<img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile6.png align=left width=47.5%>
+<img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile7.png width=47.5%>
+</div>
