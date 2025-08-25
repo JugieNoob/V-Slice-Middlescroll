@@ -206,6 +206,7 @@ class Middlescroll extends Module {
 				{
 					event.doesNotesplash = false;
 					playerStrumline.playNoteSplash(event.note.direction);
+				
 					for (splash in playerStrumline.noteSplashes)
 					{
 						var direction = 0;
@@ -228,8 +229,11 @@ class Middlescroll extends Module {
 						}
 						if (event.note.direction == direction)
 						{
-							// splash.x = event.note.x + (playerStrumline.noteStyle.getSplashOffsets()[0] * 1.75);
 							splash.x += coverPositions[direction];
+							if (direction > 1)
+							{
+								splash.x -= mobilePos * 3;
+							}
 						}
 
 					}
