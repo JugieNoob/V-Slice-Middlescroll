@@ -19,7 +19,7 @@ import funkin.ui.debug.charting.ChartEditorState;
 class Middlescroll extends Module {
 
 	var playerStrumline:FlxSprite;
-	var opponentStrumline:FlxSprite;
+	private var opponentStrumline:FlxSprite;
 
 	var differentLanes = false;
 	var noteSpacing = 0;
@@ -44,7 +44,6 @@ class Middlescroll extends Module {
 		{
 			return;
 		}
-
 
 		if (FlxG.save.data.middlescroll == "Off" && !FlxG.save.data.alwaysOppNotes)
 		{
@@ -81,7 +80,13 @@ class Middlescroll extends Module {
 				}
 
 		}
-
+		if (PlayState.instance.currentSong == "Song(blazin)")
+		{
+			if (playerStrumline != null)
+			{	
+				setPlayerStrumline();
+			}
+		}
 	}
 
 	override function onStateChangeEnd(event) {
@@ -475,11 +480,14 @@ class Middlescroll extends Module {
 		// new FlxTimer().start(0.105, ()->{
 		if (FlxG.save.data.middlescroll != "Off") {
 				setPlayerStrumline();
-
-				if (Preferences.controlsScheme != "Arrows")
+				trace("SONG: " + PlayState.instance.currentSong);
+				if (PlayState.instance.currentSong != "Song(blazin)")
 				{
-					moveOpponentStrumline();
-				}
+					if (Preferences.controlsScheme != "Arrows")
+					{
+						moveOpponentStrumline();
+					}
+				}	
 		}
 		// });
 
