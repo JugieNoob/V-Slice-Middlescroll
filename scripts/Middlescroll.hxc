@@ -229,6 +229,7 @@ class Middlescroll extends Module {
 						}
 						if (event.note.direction == direction)
 						{
+							// Adapted from FNF Source Code
 							splash.x = playerStrumline.x;
       						splash.x += playerStrumline.getXPos(direction);
       						splash.x += Strumline.INITIAL_OFFSET;
@@ -343,8 +344,6 @@ class Middlescroll extends Module {
 					}
 					else
 					{
-
-
 						if (direction > 1)
 						{
 
@@ -352,7 +351,7 @@ class Middlescroll extends Module {
 							{
 								oldOppCoverPositions[direction -2] = cover.x;
 							}
-
+							
 							cover.x = oldOppCoverPositions[direction-2] + (strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2]);
 
 						}
