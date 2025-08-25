@@ -229,6 +229,10 @@ class Middlescroll extends Module {
 						}
 						if (event.note.direction == direction)
 						{
+							splash.x = playerStrumline.x;
+      						splash.x += playerStrumline.getXPos(direction);
+      						splash.x += Strumline.INITIAL_OFFSET;
+      						splash.x += playerStrumline.noteStyle.getSplashOffsets()[0] * splash.scale.x;
 							splash.x += coverPositions[direction];
 							if (direction > 1)
 							{
