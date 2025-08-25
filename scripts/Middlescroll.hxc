@@ -126,17 +126,15 @@ class Middlescroll extends Module {
 
 		if (Preferences.controlsScheme != "Arrows" && FlxG.save.data.oppnotes == "Translucent")
 				{
-					if (opponentStrumline != null)
+					if (!event.note.noteData.getMustHitNote())
 					{
-						opponentStrumline.notes.forEach(function(note){
-							note.alpha = 0.5;
-						});
+						event.note.alpha = 0.5;
 
-						opponentStrumline.holdNotes.forEach(function(hold){
-							hold.alpha = 0.5;
-						});
+						if (event.note.holdNoteSprite != null)
+						{
+							event.note.holdNoteSprite.alpha = 0.5;
+						}
 					}
-
 				}
 
 
