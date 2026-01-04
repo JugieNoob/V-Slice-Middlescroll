@@ -9,8 +9,6 @@ import flixel.FlxG;
 import funkin.util.Constants;
 import Std;
 import flixel.FlxSprite;
-import funkin.ui.AtlasText;
-
 
 
 class MiddlescrollOptions extends Module {

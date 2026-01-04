@@ -296,7 +296,7 @@ class Middlescroll extends Module {
 	}
 
 	function moveOpponentStrumline() {
-		opponentStrumline.remove(opponentStrumline.background);
+		opponentStrumline.background.visible = false;
 
 		if (opponentStrumline != null) {
 			for (i in 2...opponentStrumline.strumlineNotes.length) {
