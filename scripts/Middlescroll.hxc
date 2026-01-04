@@ -8,7 +8,6 @@ import StringTools;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
-import funkin.ui.debug.charting.ChartEditorState;
 
 /*
 	Middlescroll V-Slice created by JugieNoob
@@ -34,7 +33,7 @@ class Middlescroll extends Module {
 	var currentState;
 
 	function new() {
-		super("Middlescroll", 20);
+		super("Middlescroll", 0,  {state: PlayState});
 	}
 
 	// ----- Override Functions
@@ -107,11 +106,6 @@ class Middlescroll extends Module {
 	override function onCountdownStart(event)
 	{
 		super.onCountdownStart(event);
-		if (!Std.isOfType(currentState, ChartEditorState))
-        {
-			return;
-		}
-
 		init();
 
 
