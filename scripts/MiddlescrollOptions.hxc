@@ -9,6 +9,7 @@ import flixel.FlxG;
 import funkin.util.Constants;
 import Std;
 import flixel.FlxSprite;
+import funkin.ui.AtlasText;
 
 
 
@@ -244,7 +245,7 @@ class MiddlescrollOptions extends Module {
     }
 
     function createPrefSeparator(text:String) {
-        preferences.items.createItem(0, (120 * preferences.items.length) + 30, text, "BOLD", function(){}, true);
+        preferences.items.createItem(0, (120 * preferences.items.length) + 30, text, "bold", function(){}, true);
         // Taken from https://gamebanana.com/mods/597782
         preferences.preferenceItems.add(new FlxSprite().makeGraphic(0, 0, 0x00000000));
         preferences.preferenceDesc.push("");
