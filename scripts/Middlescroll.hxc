@@ -475,13 +475,11 @@ class Middlescroll extends Module {
 		if (FlxG.save.data.middlescroll != "Off") {
 				setPlayerStrumline();
 				trace("SONG: " + PlayState.instance.currentSong);
-				if (PlayState.instance.currentSong != "Song(blazin)")
+				if (Preferences.controlsScheme != "Arrows")
 				{
-					if (Preferences.controlsScheme != "Arrows")
-					{
-						moveOpponentStrumline();
-					}
-				}	
+					moveOpponentStrumline();
+				}
+					
 		}
 		// });
 
