@@ -9,8 +9,6 @@
 
 A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blazin'" to all of the songs and adds new options.
 
-**If you come across any bugs please create an issue [here](https://github.com/JugieNoob/V-Slice-Middlescroll/issues).**
-
 ***Thank you to [Mofoy](https://gamebanana.com/members/4648991) for helping with porting this mod to mobile!***
 
 ## Features
