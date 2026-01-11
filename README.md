@@ -19,7 +19,7 @@ A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blaz
 - Toggleable note splashes and hold covers.
 - Wide and extra wide note lanes.
 
-## How to Install:
+## How to Install
 
 1. Download the latest version from the [Releases](https://github.com/JugieNoob/V-Slice-Middlescroll/releases) tab.
 2. Place the .zip file into the Friday Night Funkin' mods folder.
