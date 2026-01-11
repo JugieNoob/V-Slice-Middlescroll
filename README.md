@@ -15,11 +15,11 @@ A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blaz
 
 ## Features
 
-- Toggleable Middlescroll Option.
-- An option that allows you to move the rating and combo number popups.
-- An option that allows you to make the opponent's notes translucent or completely hide them.
-- An option that allows you to toggle note splashes and hold covers.
-- An option that allows you to toggle wider note lanes.
+- Middlescroll.
+- Allows you to move the rating and combo number popups.
+- Translucent opponent notes and hidden opponent notes.
+- Toggleable note splashes and hold covers.
+- Wide and extra wide note lanes.
 
 ## How to Install:
 
@@ -68,9 +68,16 @@ A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blaz
   <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile5.jpg width=31%>
 </div>
 
+
 <br>
 
 <div>
 <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile6.png align=left width=47.5%>
 <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile7.png width=47.5%>
+</div>
+
+<br>
+
+<div align=center>
+<a href="https://gamebanana.com/mods/516762"><img src="https://gamebanana.com/mods/embeddables/516762?type=large"/></a>
 </div>
