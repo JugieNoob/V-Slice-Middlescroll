@@ -9,6 +9,8 @@ import flixel.FlxG;
 import funkin.util.Constants;
 import Std;
 import flixel.FlxSprite;
+import funkin.save.Save;
+
 
 
 class MiddlescrollOptions extends Module {
@@ -25,39 +27,39 @@ class MiddlescrollOptions extends Module {
     function new (){
         super("Middlescroll Options", 21);
 
-        if (FlxG.save.data.movepopups == null || FlxG.save.data.movepopups == true)
+        if (Save.instance.modOptions["MovePopups"] == null || Save.instance.modOptions["MovePopups"] == true)
         {
-            FlxG.save.data.movepopups = "Middlescroll Only";
+            Save.instance.modOptions["MovePopups"] = "Middlescroll Only";
         }
 
-        if (FlxG.save.data.movepopups == false)
+        if (Save.instance.modOptions["MovePopups"] == false)
         {
-            FlxG.save.data.movepopups = "Never";
+            Save.instance.modOptions["MovePopups"] = "Never";
         }
 
-        if (FlxG.save.data.oppnotes == null)
+        if (Save.instance.modOptions["OpponentNotes"] == null)
         {
-            FlxG.save.data.oppnotes = "Visible";
+            Save.instance.modOptions["OpponentNotes"] = "Visible";
         }
 
-        if (FlxG.save.data.noteEffects == null)
+        if (Save.instance.modOptions["NoteEffects"] == null)
         {
-            FlxG.save.data.noteEffects = "All";
+            Save.instance.modOptions["NoteEffects"] = "All";
         }
 
-        if (FlxG.save.data.middlescroll == true || FlxG.save.data.middlescroll == null)
+        if (Save.instance.modOptions["Middlescroll"] == true || Save.instance.modOptions["Middlescroll"] == null)
         {
-            FlxG.save.data.middlescroll = "On";
+            Save.instance.modOptions["Middlescroll"] = "On";
         }
 
-        if (FlxG.save.data.middlescroll == false)
+        if (Save.instance.modOptions["Middlescroll"] == false)
         {
-            FlxG.save.data.middlescroll = "Off";
+            Save.instance.modOptions["Middlescroll"] = "Off";
         }
         
-        if (FlxG.save.data.alwaysOppNotes == null)
+        if (Save.instance.modOptions["AlwaysOppNotes"] == null)
         {
-            FlxG.save.data.alwaysOppNotes = true;
+            Save.instance.modOptions["AlwaysOppNotes"] = true;
         }
 
 
@@ -87,10 +89,10 @@ class MiddlescrollOptions extends Module {
 
 
             preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline. (Preview's Y level may not represent what is seen during gameplay)", ["On" => "On", "Off" => "Off", "Narrow Lanes" => "Narrow Lanes", "Wide Lanes" => "Wide Lanes",], function(value:Bool):Void {
-                FlxG.save.data.middlescroll = value;
+                Save.instance.modOptions["Middlescroll"] = value;
                 FlxG.save.flush();
                 middleScrollCallback();
-            }, FlxG.save.data.middlescroll);     
+            }, Save.instance.modOptions["Middlescroll"]);     
                  
                        
             
@@ -100,21 +102,21 @@ class MiddlescrollOptions extends Module {
             // Never, Middlescroll Only, Always
 
             preferences.createPrefItemEnum('Move Popups', "Moves the rating and combo pop-ups.", ["Never" => "Never", "Middlescroll Only" => "Middlescroll Only", "Always" => "Always",], function(value:Bool):Void {
-                FlxG.save.data.movepopups = value;
+                Save.instance.modOptions["MovePopups"] = value;
                 FlxG.save.flush();
-            }, FlxG.save.data.movepopups);    
+            }, Save.instance.modOptions["MovePopups"]);    
             
 
             preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes.', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
-                FlxG.save.data.oppnotes = value;
+                Save.instance.modOptions["OpponentNotes"] = value;
                 FlxG.save.flush();
-            }, FlxG.save.data.oppnotes);      
+            }, Save.instance.modOptions["OpponentNotes"]);      
 
             //Always affect opponent notes
             preferences.createPrefItemCheckbox('Always Affect\nOpponent Notes', "When checked, the opponent's notes will always be affected by the above option when not using Middlescroll.", function(value:Bool):Void {
-                FlxG.save.data.alwaysOppNotes = value;
+                Save.instance.modOptions["AlwaysOppNotes"] = value;
                 FlxG.save.flush();
-            }, FlxG.save.data.alwaysOppNotes);    
+            }, Save.instance.modOptions["AlwaysOppNotes"]);    
 
             scrollText = items.members[items.length - 1].atlasText;
             scrollText.scale.set(0.8, 0.8);
@@ -122,10 +124,10 @@ class MiddlescrollOptions extends Module {
        
 
             preferences.createPrefItemEnum('Note Effects', "Toggles Note Splashes and Note Hold Covers for the player's strumline.", ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
-                    FlxG.save.data.noteEffects = value;
+                    Save.instance.modOptions["NoteEffects"] = value;
                     FlxG.save.flush();
     
-                }, FlxG.save.data.noteEffects);      
+                }, Save.instance.modOptions["NoteEffects"]);      
 
                 
             createPrefSeparator("# End of MiddleScroll");
@@ -207,7 +209,7 @@ class MiddlescrollOptions extends Module {
             }
         }
 
-        switch (FlxG.save.data.middlescroll)
+        switch (Save.instance.modOptions["Middlescroll"])
         {
             case "Off":
                 if (isMobile)

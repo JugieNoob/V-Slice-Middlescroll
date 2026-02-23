@@ -8,6 +8,8 @@ import StringTools;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
+import funkin.save.Save;
+
 
 /*
 	Middlescroll V-Slice created by JugieNoob
@@ -42,11 +44,11 @@ class Middlescroll extends Module {
 			return;
 		}
 
-		if (FlxG.save.data.middlescroll == "Off" && !FlxG.save.data.alwaysOppNotes)
+		if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
 			return;
 		}
-		if (FlxG.save.data.oppnotes == "Translucent")
+		if (Save.instance.modOptions["OpponentNotes"] == "Translucent")
 		{
 			for (cover in PlayState.instance.opponentStrumline.noteHoldCovers)
 			{
@@ -55,7 +57,7 @@ class Middlescroll extends Module {
 		}
 
 
-		if (FlxG.save.data.middlescroll == "Off")
+		if (Save.instance.modOptions["Middlescroll"] == "Off")
 		{
 			return;
 		}
@@ -96,12 +98,12 @@ class Middlescroll extends Module {
 
 		super.onNoteIncoming(event);
 
-		if (FlxG.save.data.middlescroll == "Off" && !FlxG.save.data.alwaysOppNotes)
+		if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
 			return;
 		}
 
-		if (Preferences.controlsScheme != "Arrows" && FlxG.save.data.oppnotes == "Translucent")
+		if (Preferences.controlsScheme != "Arrows" && Save.instance.modOptions["OpponentNotes"] == "Translucent")
 				{
 					if (!event.note.noteData.getMustHitNote())
 					{
@@ -117,7 +119,7 @@ class Middlescroll extends Module {
 
 
 
-		if (FlxG.save.data.middlescroll == "Off")
+		if (Save.instance.modOptions["Middlescroll"] == "Off")
 		{
 			return;
 		}
@@ -175,7 +177,7 @@ class Middlescroll extends Module {
 		super.onNoteHit(event);
 
 
-		if (FlxG.save.data.middlescroll != "Off")
+		if (Save.instance.modOptions["Middlescroll"] != "Off")
 		{
 			if (event.doesNotesplash)
 			{
@@ -248,7 +250,7 @@ class Middlescroll extends Module {
 		}
 
 
-		switch (FlxG.save.data.noteEffects)
+		switch (Save.instance.modOptions["NoteEffects"])
 		{
 			case "None":
 				playerStrumline.noteHoldCovers.visible = false;
@@ -386,7 +388,7 @@ class Middlescroll extends Module {
 		oldOppPositions = [];
 		oldOppCoverPositions = [0,0];
 
-		if (FlxG.save.data.middlescroll == "Wide Lanes" || FlxG.save.data.middlescroll == "Narrow Lanes")
+		if (Save.instance.modOptions["Middlescroll"] == "Wide Lanes" || Save.instance.modOptions["Middlescroll"] == "Narrow Lanes")
 		{
 			differentLanes = true;
 		}
@@ -395,7 +397,7 @@ class Middlescroll extends Module {
 			differentLanes = false;
 		}
 
-		switch (FlxG.save.data.middlescroll)
+		switch (Save.instance.modOptions["Middlescroll"])
 		{
 			case "Wide Lanes":
 				if (Preferences.controlsScheme == "Arrows")
@@ -434,13 +436,13 @@ class Middlescroll extends Module {
 
 
 
-		switch (FlxG.save.data.movepopups)
+		switch (Save.instance.modOptions["MovePopups"])
 		{
 			case "Always":
 				// Taken from Blazin'
 				PlayState.instance.comboPopUps.offsets = [480, -50];
 			case "Middlescroll Only":
-				if (FlxG.save.data.middlescroll != "Off")
+				if (Save.instance.modOptions["Middlescroll"] != "Off")
 				{
 					PlayState.instance.comboPopUps.offsets = [480, -50];
 				}
@@ -450,7 +452,7 @@ class Middlescroll extends Module {
 
 		// slight delay or else the player's strumline won't be set properly in Blazin'
 		// new FlxTimer().start(0.105, ()->{
-		if (FlxG.save.data.middlescroll != "Off") {
+		if (Save.instance.modOptions["Middlescroll"] != "Off") {
 				setPlayerStrumline();
 				trace("SONG: " + PlayState.instance.currentSong);
 				if (Preferences.controlsScheme != "Arrows")
@@ -461,12 +463,12 @@ class Middlescroll extends Module {
 		}
 		// });
 
-		if (FlxG.save.data.middlescroll == "Off" && !FlxG.save.data.alwaysOppNotes)
+		if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
 			return;
 		}
 
-		switch (FlxG.save.data.oppnotes)
+		switch (Save.instance.modOptions["OpponentNotes"])
 		{
 			case "Hidden":
 				// Taken from Blazin'
