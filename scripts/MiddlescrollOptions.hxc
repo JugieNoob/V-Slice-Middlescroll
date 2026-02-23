@@ -90,7 +90,7 @@ class MiddlescrollOptions extends Module {
 
             preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline. (Preview's Y level may not represent what is seen during gameplay)", ["On" => "On", "Off" => "Off", "Narrow Lanes" => "Narrow Lanes", "Wide Lanes" => "Wide Lanes",], function(value:Bool):Void {
                 Save.instance.modOptions["Middlescroll"] = value;
-                FlxG.save.flush();
+                Save.instance.flush();
                 middleScrollCallback();
             }, Save.instance.modOptions["Middlescroll"]);     
                  
@@ -103,19 +103,19 @@ class MiddlescrollOptions extends Module {
 
             preferences.createPrefItemEnum('Move Popups', "Moves the rating and combo pop-ups.", ["Never" => "Never", "Middlescroll Only" => "Middlescroll Only", "Always" => "Always",], function(value:Bool):Void {
                 Save.instance.modOptions["MovePopups"] = value;
-                FlxG.save.flush();
+                Save.instance.flush();
             }, Save.instance.modOptions["MovePopups"]);    
             
 
             preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes.', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
                 Save.instance.modOptions["OpponentNotes"] = value;
-                FlxG.save.flush();
+                Save.instance.flush();
             }, Save.instance.modOptions["OpponentNotes"]);      
 
             //Always affect opponent notes
             preferences.createPrefItemCheckbox('Always Affect\nOpponent Notes', "When checked, the opponent's notes will always be affected by the above option when not using Middlescroll.", function(value:Bool):Void {
                 Save.instance.modOptions["AlwaysOppNotes"] = value;
-                FlxG.save.flush();
+                Save.instance.flush();
             }, Save.instance.modOptions["AlwaysOppNotes"]);    
 
             scrollText = items.members[items.length - 1].atlasText;
@@ -125,7 +125,7 @@ class MiddlescrollOptions extends Module {
 
             preferences.createPrefItemEnum('Note Effects', "Toggles Note Splashes and Note Hold Covers for the player's strumline.", ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
                     Save.instance.modOptions["NoteEffects"] = value;
-                    FlxG.save.flush();
+                    Save.instance.flush();
     
                 }, Save.instance.modOptions["NoteEffects"]);      
 
