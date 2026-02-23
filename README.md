@@ -9,19 +9,17 @@
 
 A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blazin'" to all of the songs and adds new options.
 
-**If you come across any bugs please create an issue [here](https://github.com/JugieNoob/V-Slice-Middlescroll/issues).**
-
 ***Thank you to [Mofoy](https://gamebanana.com/members/4648991) for helping with porting this mod to mobile!***
 
 ## Features
 
-- Toggleable Middlescroll Option.
-- An option that allows you to move the rating and combo number popups.
-- An option that allows you to make the opponent's notes translucent or completely hide them.
-- An option that allows you to toggle note splashes and hold covers.
-- An option that allows you to toggle wider note lanes.
+- Middlescroll.
+- Allows you to move the rating and combo number popups.
+- Translucent opponent notes and hidden opponent notes.
+- Toggleable note splashes and hold covers.
+- Wide and extra wide note lanes.
 
-## How to Install:
+## How to Install
 
 1. Download the latest version from the [Releases](https://github.com/JugieNoob/V-Slice-Middlescroll/releases) tab.
 2. Place the .zip file into the Friday Night Funkin' mods folder.
@@ -68,9 +66,16 @@ A mod for the **FNF V-Slice Engine** that adds a middlescroll feature from "Blaz
   <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile5.jpg width=31%>
 </div>
 
+
 <br>
 
 <div>
 <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile6.png align=left width=47.5%>
 <img src=https://github.com/JugieNoob/V-Slice-Middlescroll/blob/main/.github/images/mobile7.png width=47.5%>
+</div>
+
+<br>
+
+<div align=center>
+<a href="https://gamebanana.com/mods/516762"><img src="https://gamebanana.com/mods/embeddables/516762?type=large"/></a>
 </div>
