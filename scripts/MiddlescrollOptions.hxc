@@ -11,7 +11,11 @@ import Std;
 import flixel.FlxSprite;
 import funkin.save.Save;
 
-
+/*
+	Middlescroll V-Slice created by JugieNoob
+	GitHub Link: https://github.com/JugieNoob/V-Slice-Middlescroll
+	GameBanana Link: https://gamebanana.com/mods/516762
+*/
 
 class MiddlescrollOptions extends Module {
     
@@ -25,7 +29,7 @@ class MiddlescrollOptions extends Module {
     var scrollText;
 
     function new (){
-        super("Middlescroll Options", 21);
+        super("Middlescroll Options", 21,  {state: OptionsState});
 
         if (Save.instance.modOptions["MovePopups"] == null || Save.instance.modOptions["MovePopups"] == true)
         {
@@ -78,71 +82,68 @@ class MiddlescrollOptions extends Module {
 		}
     
 
-        if (Std.isOfType(event.targetState, OptionsState))
-        {
-            preferences = event.targetState.optionsCodex.pages.get("preferences");
-            items = preferences.items;
 
-           
-            createPrefSeparator("# MiddleScroll");
+        preferences = event.targetState.optionsCodex.pages.get("preferences");
+        items = preferences.items;
 
+        
+        createPrefSeparator("# MiddleScroll");
 
 
-            preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline. (Preview's Y level may not represent what is seen during gameplay)", ["On" => "On", "Off" => "Off", "Narrow Lanes" => "Narrow Lanes", "Wide Lanes" => "Wide Lanes",], function(value:Bool):Void {
-                Save.instance.modOptions["Middlescroll"] = value;
-                Save.instance.flush();
-                middleScrollCallback();
-            }, Save.instance.modOptions["Middlescroll"]);     
-                 
-                       
-            
-            itemID = items.length - 1;
+
+        preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline. (Preview's Y level may not represent what is seen during gameplay)", ["On" => "On", "Off" => "Off", "Narrow Lanes" => "Narrow Lanes", "Wide Lanes" => "Wide Lanes",], function(value:Bool):Void {
+            Save.instance.modOptions["Middlescroll"] = value;
+            Save.instance.flush();
+            middleScrollCallback();
+        }, Save.instance.modOptions["Middlescroll"]);     
+             
+                   
+        
+        itemID = items.length - 1;
      
 
-            // Never, Middlescroll Only, Always
+        // Never, Middlescroll Only, Always
 
-            preferences.createPrefItemEnum('Move Popups', "Moves the rating and combo pop-ups.", ["Never" => "Never", "Middlescroll Only" => "Middlescroll Only", "Always" => "Always",], function(value:Bool):Void {
-                Save.instance.modOptions["MovePopups"] = value;
+        preferences.createPrefItemEnum('Move Popups', "Moves the rating and combo pop-ups.", ["Never" => "Never", "Middlescroll Only" => "Middlescroll Only", "Always" => "Always",], function(value:Bool):Void {
+            Save.instance.modOptions["MovePopups"] = value;
+            Save.instance.flush();
+        }, Save.instance.modOptions["MovePopups"]);    
+        
+
+        preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes.', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
+            Save.instance.modOptions["OpponentNotes"] = value;
+            Save.instance.flush();
+        }, Save.instance.modOptions["OpponentNotes"]);      
+
+        //Always affect opponent notes
+        preferences.createPrefItemCheckbox('Always Affect\nOpponent Notes', "When checked, the opponent's notes will always be affected by the above option when not using Middlescroll.", function(value:Bool):Void {
+            Save.instance.modOptions["AlwaysOppNotes"] = value;
+            Save.instance.flush();
+        }, Save.instance.modOptions["AlwaysOppNotes"]);    
+
+        scrollText = items.members[items.length - 1].atlasText;
+        scrollText.scale.set(0.8, 0.8);
+        scrollText.updateHitbox();
+       
+
+        preferences.createPrefItemEnum('Note Effects', "Toggles Note Splashes and Note Hold Covers for the player's strumline.", ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
+                Save.instance.modOptions["NoteEffects"] = value;
                 Save.instance.flush();
-            }, Save.instance.modOptions["MovePopups"]);    
+    
+            }, Save.instance.modOptions["NoteEffects"]);      
+
             
-
-            preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes.', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
-                Save.instance.modOptions["OpponentNotes"] = value;
-                Save.instance.flush();
-            }, Save.instance.modOptions["OpponentNotes"]);      
-
-            //Always affect opponent notes
-            preferences.createPrefItemCheckbox('Always Affect\nOpponent Notes', "When checked, the opponent's notes will always be affected by the above option when not using Middlescroll.", function(value:Bool):Void {
-                Save.instance.modOptions["AlwaysOppNotes"] = value;
-                Save.instance.flush();
-            }, Save.instance.modOptions["AlwaysOppNotes"]);    
-
-            scrollText = items.members[items.length - 1].atlasText;
-            scrollText.scale.set(0.8, 0.8);
-            scrollText.updateHitbox();
-       
-
-            preferences.createPrefItemEnum('Note Effects', "Toggles Note Splashes and Note Hold Covers for the player's strumline.", ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
-                    Save.instance.modOptions["NoteEffects"] = value;
-                    Save.instance.flush();
-    
-                }, Save.instance.modOptions["NoteEffects"]);      
-
-                
-            createPrefSeparator("# End of MiddleScroll");
-
-            // items.members[items.length - 1].alpha = 0.5;
+        createPrefSeparator("# End of MiddleScroll");
 
 
        
-            middleScrollCallback();
+        middleScrollCallback();
 
 
 
     
-        }
     }
+    
 
     override function onUpdate(event)
     {

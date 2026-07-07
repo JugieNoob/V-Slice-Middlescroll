@@ -31,8 +31,8 @@ class Middlescroll extends Module {
 	var coverPositions = [];
 	var oldOppPositions = [];
 	var oldOppCoverPositions = [0,0];
-
 	var didInit = false;
+
 
 	function new() {
 		super("Middlescroll", 0,  {state: PlayState});
@@ -100,6 +100,11 @@ class Middlescroll extends Module {
 		}
 
 	}
+
+	public function onStateChangeBegin(event:StateChangeScriptEvent)
+  	{
+		didInit = false;
+  	}
 
 
 	override function onNoteIncoming(event) {
@@ -390,7 +395,14 @@ class Middlescroll extends Module {
 
 	function init()
 	{
-		trace("INIT TEST!!!!!!");
+		
+		// Avoid the game reinitialising the stuff.
+		if (didInit)
+		{
+			return;
+		}
+		
+		didInit = true;
 		mobilePos = 0;
 		oldCoverPositions = [0,0,0,0];
 		coverPositions = [];
