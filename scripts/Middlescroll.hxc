@@ -32,6 +32,8 @@ class Middlescroll extends Module {
 	var oldOppPositions = [];
 	var oldOppCoverPositions = [0,0];
 
+	var didInit = false;
+
 	function new() {
 		super("Middlescroll", 0,  {state: PlayState});
 	}
@@ -86,11 +88,17 @@ class Middlescroll extends Module {
 				setPlayerStrumline();
 			}
 		}
+
 	}
 
-	override function onStateChangeEnd(event) {
-		super.onStateChangeEnd(event);
-		init();
+
+	override function onCountdownStart(event) {
+		super.onCountdownStart(event);
+		if (!PlayState.instance.isInCutscene)
+		{
+			init();
+		}
+
 	}
 
 
@@ -382,6 +390,7 @@ class Middlescroll extends Module {
 
 	function init()
 	{
+		trace("INIT TEST!!!!!!");
 		mobilePos = 0;
 		oldCoverPositions = [0,0,0,0];
 		coverPositions = [];
@@ -488,6 +497,7 @@ class Middlescroll extends Module {
 			default:
 				opponentStrumline.visible = true;
 		}
+
 	}
 
 
