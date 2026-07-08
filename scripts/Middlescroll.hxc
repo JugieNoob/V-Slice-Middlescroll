@@ -103,9 +103,20 @@ class Middlescroll extends Module {
 
 	public function onStateChangeBegin(event:StateChangeScriptEvent)
   	{
+		super.onStateChangeBegin(event);
 		didInit = false;
   	}
 
+	// Used to reset didInit when exiting the Charting PlayState substate.
+  	public function onSubStateCloseEnd(event:SubStateScriptEvent)
+  	{
+		super.onSubStateCloseEnd(event);
+
+		if (didInit && Std.isOfType(event.targetState, PlayState))
+		{
+			didInit = false;
+		}
+  	}
 
 	override function onNoteIncoming(event) {
 
@@ -116,18 +127,19 @@ class Middlescroll extends Module {
 			return;
 		}
 
+		// Update note alpha if translucent is on.
 		if (Preferences.controlsScheme != "Arrows" && Save.instance.modOptions["OpponentNotes"] == "Translucent")
-				{
-					if (!event.note.noteData.getMustHitNote())
-					{
-						event.note.alpha = 0.5;
+		{
+			if (!event.note.noteData.getMustHitNote())
+			{
+				event.note.alpha = 0.5;
 
-						if (event.note.holdNoteSprite != null)
-						{
-							event.note.holdNoteSprite.alpha = 0.5;
-						}
-					}
+				if (event.note.holdNoteSprite != null)
+				{
+					event.note.holdNoteSprite.alpha = 0.5;
 				}
+			}
+		}
 
 
 
@@ -301,7 +313,6 @@ class Middlescroll extends Module {
 	{
 			if (strumline != null && strumline.noteHoldCovers != null)
 			{
-
 				for (cover in strumline.noteHoldCovers)
 				{
 					var direction = 0;
@@ -332,7 +343,7 @@ class Middlescroll extends Module {
 								oldCoverPositions[direction] -= mobilePos * 3;
 							}
 						}
-						cover.x = (oldCoverPositions[direction] + coverPositions[direction]); //
+						cover.x = (oldCoverPositions[direction] + coverPositions[direction]);
 					}
 					else
 					{
@@ -386,7 +397,7 @@ class Middlescroll extends Module {
 			}
 		}
 
-		strumline.x = (FlxG.width - (4 * (Strumline.STRUMLINE_SIZE + (thisNoteSpacing / 1.3)))) / 2;//
+		strumline.x = (FlxG.width - (4 * (Strumline.STRUMLINE_SIZE + (thisNoteSpacing / 1.3)))) / 2;
 		if (Preferences.controlsScheme == "Arrows")
 		{
 			strumline.x += mobilePos * 2.1;
@@ -395,9 +406,8 @@ class Middlescroll extends Module {
 
 	function init()
 	{
-		
-		// Avoid the game reinitialising the stuff.
-		if (didInit)
+		// Avoid the game reinitialising the middlescroll stuff (happens due to cutscenes).
+		if (didInit && !PlayState.instance.isChartingMode)
 		{
 			return;
 		}
@@ -449,7 +459,7 @@ class Middlescroll extends Module {
 
 		for (i in 0...Strumline.KEY_COUNT)
 		{
-			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + noteSpacing))); //- (mobilePos * 3)
+			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + noteSpacing)));
 		}
 
 		playerStrumline = PlayState.instance.playerStrumline;
@@ -471,18 +481,15 @@ class Middlescroll extends Module {
 
 
 
-		// slight delay or else the player's strumline won't be set properly in Blazin'
-		// new FlxTimer().start(0.105, ()->{
+		// Slight delay or else the player's strumline won't be set properly in Blazin'
 		if (Save.instance.modOptions["Middlescroll"] != "Off") {
 				setPlayerStrumline();
-				trace("SONG: " + PlayState.instance.currentSong);
 				if (Preferences.controlsScheme != "Arrows")
 				{
 					moveOpponentStrumline();
 				}
 					
 		}
-		// });
 
 		if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
