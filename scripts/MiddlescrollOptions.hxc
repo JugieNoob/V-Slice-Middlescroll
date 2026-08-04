@@ -87,7 +87,6 @@ class MiddlescrollOptions extends Module {
         items = preferences.items;
 
         
-        createPrefSeparator("# MiddleScroll");
 
 
 
@@ -133,8 +132,6 @@ class MiddlescrollOptions extends Module {
             }, Save.instance.modOptions["NoteEffects"]);      
 
             
-        createPrefSeparator("# End of MiddleScroll");
-
 
        
         middleScrollCallback();
@@ -243,13 +240,6 @@ class MiddlescrollOptions extends Module {
             case "Narrow Lanes":
                 Middlescroll.positionStrumline(strumline, 30);
         }
-    }
-
-    function createPrefSeparator(text:String) {
-        preferences.items.createItem(0, (120 * preferences.items.length) + 30, text, "bold", function(){}, true);
-        // Taken from https://gamebanana.com/mods/597782
-        preferences.preferenceItems.add(new FlxSprite().makeGraphic(0, 0, 0x00000000));
-        preferences.preferenceDesc.push("");
     }
 
 }
