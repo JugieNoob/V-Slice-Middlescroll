@@ -221,7 +221,7 @@ class MiddlescrollOptions extends Module {
             case "On":
                 if (isMobile)
                 {
-                    Middlescroll.positionStrumline(strumline, 45);
+                    // Middlescroll.positionStrumline(strumline, 45);
                 }
                 else
                 {
@@ -230,15 +230,15 @@ class MiddlescrollOptions extends Module {
             case "Wide Lanes":
                 if (isMobile)
                 {
-                    Middlescroll.positionStrumline(strumline, 80);
+                    // Middlescroll.positionStrumline(strumline, 80);
                 }
                 else
                 {
-                    Middlescroll.positionStrumline(strumline, 60);
+                    // Middlescroll.positionStrumline(strumline, 60);
                 }
                 
-            case "Narrow Lanes":
-                Middlescroll.positionStrumline(strumline, 30);
+            // case "Narrow Lanes":
+                // Middlescroll.positionStrumline(strumline, 30);
         }
     }
 
