@@ -10,8 +10,7 @@ import funkin.util.Constants;
 import Std;
 import flixel.FlxSprite;
 import funkin.save.Save;
-import funkin.mobile.input.ControlsHandler;
-import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
+
 
 /*
 	Middlescroll V-Slice created by JugieNoob

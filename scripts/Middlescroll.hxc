@@ -49,6 +49,8 @@ class Middlescroll extends Module {
 		{
 			return;
 		}
+		trace("IN CUTSCENE: " + PlayState.instance.isInCutscene);
+
 
 		if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
@@ -72,16 +74,19 @@ class Middlescroll extends Module {
 		{
 				if (inArrowControlSchemeMode)
 				{
-					updateNoteCovers(playerStrumline, true);
+
+					updateNoteCovers(PlayState.instance.playerStrumline, true);
+					
+					setPlayerStrumline();
 				}
 				else if (differentLanes)
 				{
-					updateNoteCovers(playerStrumline, true);
-					updateNoteCovers(opponentStrumline);
+					updateNoteCovers(PlayState.instance.playerStrumline, true);
+					updateNoteCovers(PlayState.instance.opponentStrumline);
 				}
 				else
 				{
-					updateNoteCovers(opponentStrumline);
+					updateNoteCovers(PlayState.instance.opponentStrumline);
 				}
 
 		}
@@ -93,7 +98,6 @@ class Middlescroll extends Module {
 			}
 		}
 
-		setPlayerStrumline();
 
 	}
 
@@ -326,56 +330,55 @@ class Middlescroll extends Module {
 
 	function updateNoteCovers(strumline:Strumline, isPlayer:Bool = false)
 	{
-			if (strumline != null && strumline.noteHoldCovers != null)
+			
+			for (cover in strumline.noteHoldCovers)
 			{
-				for (cover in strumline.noteHoldCovers)
+				var direction = 0;
+
+				if (StringTools.contains(cover.glow.animation.name, "Blue"))
 				{
-					var direction = 0;
-
-					if (StringTools.contains(cover.glow.animation.name, "Blue"))
-					{
-						direction = 1;
-					}
-					else if (StringTools.contains(cover.glow.animation.name, "Green"))
-					{
-						direction = 2;
-					}
-					else if (StringTools.contains(cover.glow.animation.name, "Red"))
-					{
-						direction = 3;
-					}
+					direction = 1;
+				}
+				else if (StringTools.contains(cover.glow.animation.name, "Green"))
+				{
+					direction = 2;
+				}
+				else if (StringTools.contains(cover.glow.animation.name, "Red"))
+				{
+					direction = 3;
+				}
 
 
 
-					if (isPlayer)
-					{
+				if (isPlayer)
+				{
 
-						if (oldCoverPositions[direction] == 0)
-						{
-							oldCoverPositions[direction] = cover.x;
-							if (direction > 1)
-							{
-								oldCoverPositions[direction] -= mobilePos * 3;
-							}
-						}
-						cover.x = (oldCoverPositions[direction] + coverPositions[direction]);
-					}
-					else
+					if (oldCoverPositions[direction] == 0)
 					{
+						oldCoverPositions[direction] = cover.x;
 						if (direction > 1)
 						{
-
-							if (oldOppCoverPositions[direction - 2] == 0)
-							{
-								oldOppCoverPositions[direction -2] = cover.x;
-							}
-							
-							cover.x = oldOppCoverPositions[direction-2] + (strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2]);
-
+							oldCoverPositions[direction] -= mobilePos * 3;
 						}
 					}
+					cover.x = (oldCoverPositions[direction] + coverPositions[direction]);
+				}
+				else
+				{
+					if (direction > 1)
+					{
 
-			}
+						if (oldOppCoverPositions[direction - 2] == 0)
+						{
+							oldOppCoverPositions[direction -2] = cover.x;
+						}
+						
+						cover.x = oldOppCoverPositions[direction-2] + (strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2]);
+
+					}
+				}
+
+			
 		}
 
 
