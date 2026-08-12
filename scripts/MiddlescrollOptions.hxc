@@ -131,8 +131,6 @@ class MiddlescrollOptions extends Module {
     
             }, Save.instance.modOptions["NoteEffects"]);      
 
-            
-
        
         middleScrollCallback();
 
@@ -234,11 +232,15 @@ class MiddlescrollOptions extends Module {
                 }
                 else
                 {
-                    // Middlescroll.positionStrumline(strumline, 60);
+                    strumline.setNoteSpacing(1.5);
+                    strumline.x = ((FlxG.width - strumline.width) / 2) + 16;
                 }
                 
-            // case "Narrow Lanes":
-                // Middlescroll.positionStrumline(strumline, 30);
+            case "Narrow Lanes":
+                strumline.setNoteSpacing(1.2);
+                strumline.x = ((FlxG.width - strumline.width) / 2);
+
+
         }
     }
 

@@ -447,10 +447,12 @@ class Middlescroll extends Module {
 		// Slight delay or else the player's strumline won't be set properly in Blazin'
 		if (Save.instance.modOptions["Middlescroll"] != "Off") {
 				setPlayerStrumline();
-				if (Preferences.controlsScheme != "Arrows")
-				{
-					moveOpponentStrumline();
-				}
+				// if (Preferences.controlsScheme != "Arrows")
+				// {
+				// 	moveOpponentStrumline();
+				// }
+				moveOpponentStrumline();
+
 					
 		}
 
@@ -481,6 +483,7 @@ class Middlescroll extends Module {
 		}
 
 	}
+
 
 
 }
