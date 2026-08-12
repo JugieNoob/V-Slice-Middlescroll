@@ -10,6 +10,8 @@ import funkin.util.Constants;
 import Std;
 import flixel.FlxSprite;
 import funkin.save.Save;
+import funkin.mobile.input.ControlsHandler;
+import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 
 /*
 	Middlescroll V-Slice created by JugieNoob
@@ -76,9 +78,9 @@ class MiddlescrollOptions extends Module {
         super.onStateChangeEnd(event);
         currentState = event.targetState;
 
-        if (Preferences.controlsScheme == "Arrows")
+        if (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows && !ControlsHandler.hasExternalInputDevice && FlxG.onMobile)
 		{
-			isMobile = true;	
+			isMobile = true;
 		}
     
 
@@ -224,7 +226,7 @@ class MiddlescrollOptions extends Module {
             case "On":
                 if (isMobile)
                 {
-                    Middlescroll.positionStrumline(strumline, 45);
+                    Middlescroll.positionStrumline(strumline, 45, isMobile);
                 }
                 else
                 {
@@ -233,15 +235,15 @@ class MiddlescrollOptions extends Module {
             case "Wide Lanes":
                 if (isMobile)
                 {
-                    Middlescroll.positionStrumline(strumline, 80);
+                    Middlescroll.positionStrumline(strumline, 80, isMobile);
                 }
                 else
                 {
-                    Middlescroll.positionStrumline(strumline, 60);
+                    Middlescroll.positionStrumline(strumline, 60, isMobile);
                 }
                 
             case "Narrow Lanes":
-                Middlescroll.positionStrumline(strumline, 30);
+                Middlescroll.positionStrumline(strumline, 30, isMobile);
         }
     }
 
