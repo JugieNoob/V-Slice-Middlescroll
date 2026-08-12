@@ -35,7 +35,7 @@ class Middlescroll extends Module {
 	var oldOppCoverPositions = [0,0];
 	var didInit = false;
 
-	var inArrowControlSchemeMode:Bool = false;
+	public static var inArrowControlSchemeMode:Bool = false;
 
 
 	function new() {
@@ -93,6 +93,8 @@ class Middlescroll extends Module {
 			}
 		}
 
+		setPlayerStrumline();
+
 	}
 
 
@@ -104,7 +106,12 @@ class Middlescroll extends Module {
 		}
 
 	}
-
+	
+	override function onCountdownEnd(event)
+	{
+		super.onCountdownEnd(event);
+		setPlayerStrumline();
+	}
 	public function onStateChangeBegin(event:StateChangeScriptEvent)
   	{
 		super.onStateChangeBegin(event);
