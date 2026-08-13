@@ -104,10 +104,18 @@ class Middlescroll extends Module {
 
 	override function onCountdownStart(event) {
 		super.onCountdownStart(event);
+
+		if (PlayState.instance.currentConversation != null)
+		{
+			event.cancel();
+			return;
+		}
+
 		if (!PlayState.instance.isInCutscene)
 		{
 			init();
 		}
+
 
 	}
 	
