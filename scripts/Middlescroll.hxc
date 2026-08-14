@@ -28,21 +28,28 @@ class Middlescroll extends Module {
 	var oldCoverPositions = [0,0,0,0];
 	var coverPositions = [];
 
-	
+	// Used to check how far the new opponent note positions are from their old ones.
 	var opponentNoteOffsets = [];
+
+	// Used when setting the up and right opponent covers.
+	var newOpponentCoverPositions = [0,0];
+
+
+	var didSetupMiddlescroll = false;
 
 
 	function new() {
-		super("Middlescroll", 0,  {state: PlayState});
+		super("Middlescroll", 0); //,  {state: PlayState}
 	}
 
 	// ----- Override Functions
-	// override function onUpdate() {
-	// 	super.onUpdate();
-	// 	if (PlayState.instance == null)
-	// 	{
-	// 		return;
-	// 	}
+	
+	override function onUpdate() {
+		super.onUpdate();
+		if (PlayState.instance == null)
+		{
+			return;
+		}
 
 	// 	if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
 	// 	{
@@ -62,23 +69,25 @@ class Middlescroll extends Module {
 	// 		return;
 	// 	}
 
-	// 	if (!PlayState.instance.isInCutscene)
-	// 	{
-	// 			// if (Preferences.controlsScheme == "Arrows")
-	// 			// {
-	// 			// 	updateNoteCovers(PlayState.instance.playerStrumline, true);
-	// 			// }
-	// 			// else if (differentLanes)
-	// 			// {
-	// 			// 	updateNoteCovers(PlayState.instance.playerStrumline, true);
-	// 			// 	updateNoteCovers(opponentStrumline);
-	// 			// }
-	// 			// else
-	// 			// {
-	// 			// 	updateNoteCovers(opponentStrumline);
-	// 			// }
+		if (!PlayState.instance.isInCutscene)
+		{
+				// if (Preferences.controlsScheme == "Arrows")
+				// {
+				// 	updateNoteCovers(PlayState.instance.playerStrumline, true);
+				// }
+				// else if (differentLanes)
+				// {
+				// 	updateNoteCovers(PlayState.instance.playerStrumline, true);
+				// 	updateNoteCovers(PlayState.instance.opponentStrumline);
+				// }
+				// else
+				// {
+				// 	updateNoteCovers(PlayState.instance.opponentStrumline);
+				// }
 
-	// 	}
+				updateNoteCovers(PlayState.instance.opponentStrumline);
+
+		}
 	// 	if (PlayState.instance.currentSong == "Song(blazin)")
 	// 	{
 	// 		if (PlayState.instance.playerStrumline != null)
@@ -87,17 +96,48 @@ class Middlescroll extends Module {
 	// 		}
 	// 	}
 
+	}
+
+	override function onStateChangeBegin(event:StateChangeScriptEvent)
+	{
+		super.onStateChangeBegin(event);
+		didSetupMiddlescroll = false;
+		trace("Reset Middlescroll");
+		trace(event.targetState);
+		trace(event);
+	}
+
+	// override function onStateChangeEnd(event:StateChangeScriptEvent)
+	// {
+	// 	super.onStateChangeEnd(event);
+	// 	didSetupMiddlescroll = false;
+	// 	trace("Reset Middlescroll 2");
 	// }
+
+	// public function onPause(event:SubStateScriptEvent)
+  	// {
+	// 	super.onPause(event);
+	// 	didSetupMiddlescroll = false;
+
+  	// }
+
+	// override public function onStateCreate(event:ScriptEvent)
+  	// {
+	// 	trace(event);
+	// 	trace("TESTTTTTTTTTTT");
+  	// }
+
 
 
 	override function onCountdownStart(event) {
 		super.onCountdownStart(event);
-		if (!PlayState.instance.isInCutscene)
+		if (!didSetupMiddlescroll)
 		{
-			init();
+			setupMiddlescroll();
 		}
-
 	}
+
+
 
 
 
@@ -322,33 +362,36 @@ class Middlescroll extends Module {
 					}
 
 
+					
+					// if (isPlayer)
+					// {
 
-					if (isPlayer)
-					{
-
-						if (oldCoverPositions[direction] == 0)
-						{
-							oldCoverPositions[direction] = cover.x;
-							if (direction > 1)
-							{
-								oldCoverPositions[direction] -= mobilePos * 3;
-							}
-						}
-						cover.x = (oldCoverPositions[direction] + coverPositions[direction]);
-					}
+					// 	if (oldCoverPositions[direction] == 0)
+					// 	{
+					// 		oldCoverPositions[direction] = cover.x;
+					// 		if (direction > 1)
+					// 		{
+					// 			oldCoverPositions[direction] -= mobilePos * 3;
+					// 		}
+					// 	}
+					// 	cover.x = (oldCoverPositions[direction] + coverPositions[direction]);
+					// }
 					// else
 					// {
-					// 	if (direction > 1)
-					// 	{
 
-					// 		if (oldOppCoverPositions[direction - 2] == 0)
-					// 		{
-					// 			oldOppCoverPositions[direction -2] = cover.x;
-					// 		}
+					cover.alpha = 0.5;
+						if (direction > 1)
+						{
 							
-					// 		cover.x = oldOppCoverPositions[direction-2] + (strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2]);
+							if (newOpponentCoverPositions[direction - 2] == 0)
+							{
+								newOpponentCoverPositions[direction - 2] = cover.x + opponentNoteOffsets[direction - 2];
+							}
 
-					// 	}
+							// trace(opponentNoteOffsets[direction-2]);
+							cover.x = newOpponentCoverPositions[direction-2];
+
+						}
 					// }
 
 			}
@@ -362,13 +405,16 @@ class Middlescroll extends Module {
 
 
 
-	function init()
+	function setupMiddlescroll()
 	{
 		mobilePos = 0;
 		oldCoverPositions = [0,0,0,0];
 		coverPositions = [];
-		// oldOppPositions = [];
-		// oldOppCoverPositions = [0,0];
+		opponentNoteOffsets = [];
+		newOpponentCoverPositions = [0,0];
+
+		didSetupMiddlescroll = true;
+
 
 		if (Save.instance.modOptions["Middlescroll"] == "Wide Lanes" || Save.instance.modOptions["Middlescroll"] == "Narrow Lanes")
 		{
