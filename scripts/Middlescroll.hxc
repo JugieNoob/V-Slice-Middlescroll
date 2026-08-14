@@ -9,6 +9,8 @@ import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxTimer;
 import funkin.save.Save;
+import funkin.mobile.input.ControlsHandler;
+import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 
 
 /*
@@ -38,6 +40,9 @@ class Middlescroll extends Module {
 	var didSetupMiddlescroll = false;
 
 
+	public static var inArrowControlSchemeMode:Bool = false;
+
+
 	function new() {
 		super("Middlescroll", 0); //,  {state: PlayState}
 	}
@@ -64,10 +69,7 @@ class Middlescroll extends Module {
 	// 	}
 
 
-	// 	if (Save.instance.modOptions["Middlescroll"] == "Off")
-	// 	{
-	// 		return;
-	// 	}
+
 
 		if (!PlayState.instance.isInCutscene)
 		{
@@ -102,31 +104,12 @@ class Middlescroll extends Module {
 	{
 		super.onStateChangeBegin(event);
 		didSetupMiddlescroll = false;
-		trace("Reset Middlescroll");
-		trace(event.targetState);
-		trace(event);
+
+		if (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows && !ControlsHandler.hasExternalInputDevice && FlxG.onMobile)
+		{
+			inArrowControlSchemeMode = true;
+		}
 	}
-
-	// override function onStateChangeEnd(event:StateChangeScriptEvent)
-	// {
-	// 	super.onStateChangeEnd(event);
-	// 	didSetupMiddlescroll = false;
-	// 	trace("Reset Middlescroll 2");
-	// }
-
-	// public function onPause(event:SubStateScriptEvent)
-  	// {
-	// 	super.onPause(event);
-	// 	didSetupMiddlescroll = false;
-
-  	// }
-
-	// override public function onStateCreate(event:ScriptEvent)
-  	// {
-	// 	trace(event);
-	// 	trace("TESTTTTTTTTTTT");
-  	// }
-
 
 
 	override function onCountdownStart(event) {
@@ -151,7 +134,7 @@ class Middlescroll extends Module {
 		}
 
 		// Update note alpha if translucent is on.
-		if (Preferences.controlsScheme != "Arrows" && Save.instance.modOptions["OpponentNotes"] == "Translucent")
+		if (!inArrowControlSchemeMode && Save.instance.modOptions["OpponentNotes"] == "Translucent")
 		{
 			if (!event.note.noteData.getMustHitNote())
 			{
@@ -279,8 +262,6 @@ class Middlescroll extends Module {
 
 		if (Preferences.controlsScheme == "Arrows" || differentLanes)
 		{
-			// Narrow Lanes = 1.2
-			// Wide Lanes = 1.
 			PlayState.instance.playerStrumline.setNoteSpacing(noteSpacing);
 
 
@@ -378,20 +359,38 @@ class Middlescroll extends Module {
 					// }
 					// else
 					// {
-
-					cover.alpha = 0.5;
-						if (direction > 1)
+					
+					if (Save.instance.modOptions["OpponentNotes"] == "Translucent")
+					{
+						if (Save.instance.modOptions["Middlescroll"] == "Off")
 						{
-							
-							if (newOpponentCoverPositions[direction - 2] == 0)
+							if (Save.instance.modOptions["AlwaysOppNotes"])
 							{
-								newOpponentCoverPositions[direction - 2] = cover.x + opponentNoteOffsets[direction - 2];
+								cover.alpha = 0.5;
 							}
-
-							// trace(opponentNoteOffsets[direction-2]);
-							cover.x = newOpponentCoverPositions[direction-2];
-
 						}
+						else
+						{
+							cover.alpha = 0.5;
+						}
+					}
+
+					if (Save.instance.modOptions["Middlescroll"] == "Off")
+					{
+						return;
+					}
+					if (direction > 1)
+					{
+						
+						if (newOpponentCoverPositions[direction - 2] == 0)
+						{
+							newOpponentCoverPositions[direction - 2] = cover.x + opponentNoteOffsets[direction - 2];
+						}
+
+						// trace(opponentNoteOffsets[direction-2]);
+						cover.x = newOpponentCoverPositions[direction-2];
+
+					}
 					// }
 
 			}
@@ -431,8 +430,8 @@ class Middlescroll extends Module {
 				noteSpacing = 1.5;
 			case "Narrow Lanes":
 				noteSpacing = 1.2;
-			// default:
-				// noteSpacing = 1;
+			default:
+				noteSpacing = 1;
 		}
 
 		if (Preferences.controlsScheme == "Arrows")
@@ -444,10 +443,6 @@ class Middlescroll extends Module {
 		{
 			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + noteSpacing)));
 		}
-
-		// opponentStrumline = PlayState.instance.opponentStrumline;
-
-
 
 		switch (Save.instance.modOptions["MovePopups"])
 		{
