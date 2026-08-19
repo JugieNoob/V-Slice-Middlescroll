@@ -11,6 +11,7 @@ import flixel.util.FlxTimer;
 import funkin.save.Save;
 import funkin.mobile.input.ControlsHandler;
 import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
+import flixel.math.FlxPoint;
 
 
 /*
@@ -37,6 +38,12 @@ class Middlescroll extends Module {
 	var newOpponentCoverPositions = [0,0];
 
 
+	var mobileNoteOffset = 0;
+
+	var newMobileCoverPositions = [0,0];
+
+
+
 	var didSetupMiddlescroll = false;
 
 
@@ -51,6 +58,7 @@ class Middlescroll extends Module {
 	
 	override function onUpdate() {
 		super.onUpdate();
+
 		if (PlayState.instance == null)
 		{
 			return;
@@ -86,6 +94,7 @@ class Middlescroll extends Module {
 				// {
 				// 	updateNoteCovers(PlayState.instance.opponentStrumline);
 				// }
+				updateNoteCovers(PlayState.instance.playerStrumline, true);
 
 				updateNoteCovers(PlayState.instance.opponentStrumline);
 
@@ -178,8 +187,8 @@ class Middlescroll extends Module {
 		// 	}
 		// }
 
-
-		if (Preferences.controlsScheme != "Arrows")
+		// Offset Opponent Notes
+		if (!inArrowControlSchemeMode)
 		{
 			if (!event.note.noteData.getMustHitNote())
 			{
@@ -193,65 +202,78 @@ class Middlescroll extends Module {
 					}
 				}
 			}
+	
+		}
+		// Offset Mobile Notes
+		else
+		{
+			if (event.note.noteData.getMustHitNote())
+			{
+				if (event.note.direction > 1)
+				{
+					event.note.x -= mobileNoteOffset;
+
+					if (event.note.holdNoteSprite != null)
+					{
+						event.note.holdNoteSprite.x -= mobileNoteOffset;
+					}
+				}
+			}
 		}
 
 	}
 
-	// override function onNoteHit(event)
-	// {
-	// 	super.onNoteHit(event);
+	override function onNoteHit(event)
+	{
+		super.onNoteHit(event);
 
 
-	// 	if (Save.instance.modOptions["Middlescroll"] != "Off")
-	// 	{
-	// 		if (event.doesNotesplash)
-	// 		{
-	// 			if (Preferences.controlsScheme == "Arrows" || differentLanes)
-	// 			{
-	// 				event.doesNotesplash = false;
-	// 				PlayState.instance.playerStrumline.playNoteSplash(event.note.direction);
+		if (Save.instance.modOptions["Middlescroll"] != "Off")
+		{
+			if (event.doesNotesplash)
+			{
+				if (inArrowControlSchemeMode)
+				{
+					event.doesNotesplash = false;
+					PlayState.instance.playerStrumline.playNoteSplash(event.note.direction);
 				
-	// 				for (splash in PlayState.instance.playerStrumline.noteSplashes)
-	// 				{
-	// 					var direction = 0;
+					for (splash in PlayState.instance.playerStrumline.noteSplashes)
+					{
+						var direction = 0;
 
-	// 					if (StringTools.contains(splash.animation.name, "LEFT"))
-	// 					{
-	// 						direction = 0;
-	// 					}
-	// 					else if (StringTools.contains(splash.animation.name, "DOWN"))
-	// 					{
-	// 						direction = 1;
-	// 					}
-	// 					else if (StringTools.contains(splash.animation.name, "UP"))
-	// 					{
-	// 						direction = 2;
-	// 					}
-	// 					else if (StringTools.contains(splash.animation.name, "RIGHT"))
-	// 					{
-	// 						direction = 3;
-	// 					}
-	// 					if (event.note.direction == direction)
-	// 					{
-	// 						// Adapted from FNF Source Code
-	// 						splash.x = PlayState.instance.playerStrumline.x;
-    //   						splash.x += PlayState.instance.playerStrumline.getXPos(direction);
-    //   						splash.x += Strumline.INITIAL_OFFSET;
-    //   						splash.x += PlayState.instance.playerStrumline.noteStyle.getSplashOffsets()[0] * splash.scale.x;
-	// 						splash.x += coverPositions[direction];
-	// 						if (direction > 1)
-	// 						{
-	// 							splash.x -= mobilePos * 3;
-	// 						}
-	// 					}
+						if (StringTools.contains(splash.animation.name, "LEFT"))
+						{
+							direction = 0;
+						}
+						else if (StringTools.contains(splash.animation.name, "DOWN"))
+						{
+							direction = 1;
+						}
+						else if (StringTools.contains(splash.animation.name, "UP"))
+						{
+							direction = 2;
+						}
+						else if (StringTools.contains(splash.animation.name, "RIGHT"))
+						{
+							direction = 3;
+						}
+						if (event.note.direction == direction)
+						{
+							if (direction > 1)
+							{
+								splash.x -= mobileNoteOffset;
+							}
+						}
 
-	// 				}
-	// 			}
 
-	// 		}
-	// 	}
+					}
 
-	// }
+				}
+
+			}
+		}
+
+	}
 
 	// ----- Custom Functions
 
@@ -263,6 +285,21 @@ class Middlescroll extends Module {
 		if (Preferences.controlsScheme == "Arrows" || differentLanes)
 		{
 			PlayState.instance.playerStrumline.setNoteSpacing(noteSpacing);
+
+
+			var pixelSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[1].x - PlayState.instance.playerStrumline.strumlineNotes.members[0].x;
+			trace("SPACING " + pixelSpacing);
+
+
+			var middleSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[2].x - PlayState.instance.playerStrumline.strumlineNotes.members[1].x;
+
+			trace("SPACING 2 " + pixelSpacing);
+
+			mobileNoteOffset = middleSpacing - pixelSpacing;
+
+
+			PlayState.instance.playerStrumline.strumlineNotes.members[2].x -= mobileNoteOffset;
+			PlayState.instance.playerStrumline.strumlineNotes.members[3].x -= mobileNoteOffset;
 
 
 			switch (Save.instance.modOptions["Middlescroll"])
@@ -279,7 +316,6 @@ class Middlescroll extends Module {
 			PlayState.instance.playerStrumline.background.x = PlayState.instance.playerStrumline.x - 16;
 		}
 	
-		trace(PlayState.instance.playerStrumline.width);
 		PlayState.instance.playerStrumline.x = (FlxG.width / 2) - ((PlayState.instance.playerStrumline.background.width - 32) / 2);
 
 
@@ -298,6 +334,7 @@ class Middlescroll extends Module {
 				PlayState.instance.playerStrumline.noteHoldCovers.visible = true;
 				PlayState.instance.playerStrumline.noteSplashes.visible = true;
 		}
+
 
 
 	}
@@ -342,25 +379,8 @@ class Middlescroll extends Module {
 						direction = 3;
 					}
 
-
 					
-					// if (isPlayer)
-					// {
-
-					// 	if (oldCoverPositions[direction] == 0)
-					// 	{
-					// 		oldCoverPositions[direction] = cover.x;
-					// 		if (direction > 1)
-					// 		{
-					// 			oldCoverPositions[direction] -= mobilePos * 3;
-					// 		}
-					// 	}
-					// 	cover.x = (oldCoverPositions[direction] + coverPositions[direction]);
-					// }
-					// else
-					// {
-					
-					if (Save.instance.modOptions["OpponentNotes"] == "Translucent")
+					if (Save.instance.modOptions["OpponentNotes"] == "Translucent" && !isPlayer)
 					{
 						if (Save.instance.modOptions["Middlescroll"] == "Off")
 						{
@@ -379,19 +399,37 @@ class Middlescroll extends Module {
 					{
 						return;
 					}
-					if (direction > 1)
+
+					if (!isPlayer)
 					{
-						
-						if (newOpponentCoverPositions[direction - 2] == 0)
+						if (direction > 1)
 						{
-							newOpponentCoverPositions[direction - 2] = cover.x + opponentNoteOffsets[direction - 2];
+
+							if (newOpponentCoverPositions[direction - 2] == 0)
+							{
+								newOpponentCoverPositions[direction - 2] = cover.x + opponentNoteOffsets[direction - 2];
+							}
+
+							// trace(opponentNoteOffsets[direction-2]);
+							cover.x = newOpponentCoverPositions[direction-2];
+
 						}
-
-						// trace(opponentNoteOffsets[direction-2]);
-						cover.x = newOpponentCoverPositions[direction-2];
-
 					}
-					// }
+					else
+					{
+						if (direction > 1)
+						{
+
+							if (newMobileCoverPositions[direction - 2] == 0)
+							{
+								newMobileCoverPositions[direction - 2] = cover.x - mobileNoteOffset;
+							}
+
+							cover.x = newMobileCoverPositions[direction-2];
+
+						}
+					}
+		
 
 			}
 		}
@@ -412,7 +450,12 @@ class Middlescroll extends Module {
 		opponentNoteOffsets = [];
 		newOpponentCoverPositions = [0,0];
 
+		mobileNoteOffset = 0;
+		newMobileCoverPositions = [0,0];
+
 		didSetupMiddlescroll = true;
+
+
 
 
 		if (Save.instance.modOptions["Middlescroll"] == "Wide Lanes" || Save.instance.modOptions["Middlescroll"] == "Narrow Lanes")
@@ -462,7 +505,6 @@ class Middlescroll extends Module {
 		if (Save.instance.modOptions["Middlescroll"] != "Off") {
 			setPlayerStrumline();
 			setOpponentStrumline();
-
 		}
 
 
