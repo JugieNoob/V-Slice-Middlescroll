@@ -23,8 +23,6 @@ import flixel.math.FlxPoint;
 class Middlescroll extends Module {
 
 
-	var differentLanes = false;
-	var noteSpacing = 0;
 	var mobilePos = 0;
 
 
@@ -141,7 +139,7 @@ class Middlescroll extends Module {
 
 		super.onNoteIncoming(event);
 
-		if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
+		if (!Save.instance.modOptions["Middlescroll"] && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
 			return;
 		}
@@ -163,7 +161,7 @@ class Middlescroll extends Module {
 
 
 
-		if (Save.instance.modOptions["Middlescroll"] == "Off")
+		if (!Save.instance.modOptions["Middlescroll"])
 		{
 			return;
 		}
@@ -232,7 +230,7 @@ class Middlescroll extends Module {
 		super.onNoteHit(event);
 
 
-		if (Save.instance.modOptions["Middlescroll"] != "Off")
+		if (Save.instance.modOptions["Middlescroll"])
 		{
 			if (event.doesNotesplash)
 			{
@@ -286,45 +284,44 @@ class Middlescroll extends Module {
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
 		var strumlineWidth = 0;
-		if (inArrowControlSchemeMode || differentLanes)
+
+		PlayState.instance.playerStrumline.setNoteSpacing(Save.instance.modOptions["NoteSpacing"]);
+
+
+		// The spacing between the first and second note
+		var pixelSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[1].x - PlayState.instance.playerStrumline.strumlineNotes.members[0].x;
+
+		// The spacing between the second and third note
+		var middleSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[2].x - PlayState.instance.playerStrumline.strumlineNotes.members[1].x;
+
+		// Finding how far the third and fourth note need to move
+		mobileNoteOffset = middleSpacing - pixelSpacing;
+
+		// Move the notes
+		PlayState.instance.playerStrumline.strumlineNotes.members[2].x -= mobileNoteOffset;
+		PlayState.instance.playerStrumline.strumlineNotes.members[3].x -= mobileNoteOffset;
+
+
+		var backgroundWidth:Float = 4 * Strumline.NOTE_SPACING + 16 * 2;
+
+
+		var noteSpacingScale = PlayState.instance.playerStrumline.noteSpacingScale;
+		var strumlineScale = PlayState.instance.playerStrumline.strumlineScale;
+
+		strumlineWidth = ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;
+
+
+		var extraPadding = 30;
+		if (inArrowControlSchemeMode)
 		{
-			PlayState.instance.playerStrumline.setNoteSpacing(noteSpacing);
-
-
-			// The spacing between the first and second note
-			var pixelSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[1].x - PlayState.instance.playerStrumline.strumlineNotes.members[0].x;
-
-			// The spacing between the second and third note
-			var middleSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[2].x - PlayState.instance.playerStrumline.strumlineNotes.members[1].x;
-
-			// Finding how far the third and fourth note need to move
-			mobileNoteOffset = middleSpacing - pixelSpacing;
-
-			// Move the notes
-			PlayState.instance.playerStrumline.strumlineNotes.members[2].x -= mobileNoteOffset;
-			PlayState.instance.playerStrumline.strumlineNotes.members[3].x -= mobileNoteOffset;
-
-
-			var backgroundWidth:Float = 4 * Strumline.NOTE_SPACING + 16 * 2;
-
-
-			var noteSpacingScale = PlayState.instance.playerStrumline.noteSpacingScale;
-			var strumlineScale = PlayState.instance.playerStrumline.strumlineScale;
-
-			strumlineWidth = ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;
-
-
-			var extraPadding = 30;
-			if (inArrowControlSchemeMode)
-			{
-				extraPadding += 24;
-			}
-
-			PlayState.instance.playerStrumline.background.setGraphicSize(((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING + extraPadding, FlxG.height + 4);
-
-			PlayState.instance.playerStrumline.background.updateHitbox();
-
+			extraPadding += 24;
 		}
+
+		PlayState.instance.playerStrumline.background.setGraphicSize(((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING + extraPadding, FlxG.height + 4);
+
+		PlayState.instance.playerStrumline.background.updateHitbox();
+
+		
 	
 		PlayState.instance.playerStrumline.x = (FlxG.width - strumlineWidth) / 2;
 		if (inArrowControlSchemeMode)
@@ -395,7 +392,7 @@ class Middlescroll extends Module {
 					
 					if (Save.instance.modOptions["OpponentNotes"] == "Translucent" && !isPlayer)
 					{
-						if (Save.instance.modOptions["Middlescroll"] == "Off")
+						if (!Save.instance.modOptions["Middlescroll"])
 						{
 							if (Save.instance.modOptions["AlwaysOppNotes"])
 							{
@@ -408,7 +405,7 @@ class Middlescroll extends Module {
 						}
 					}
 
-					if (Save.instance.modOptions["Middlescroll"] == "Off")
+					if (!Save.instance.modOptions["Middlescroll"])
 					{
 						return;
 					}
@@ -470,26 +467,6 @@ class Middlescroll extends Module {
 
 
 
-
-		if (Save.instance.modOptions["Middlescroll"] == "Wide Lanes" || Save.instance.modOptions["Middlescroll"] == "Narrow Lanes")
-		{
-			differentLanes = true;
-		}
-		else
-		{
-			differentLanes = false;
-		}
-
-		switch (Save.instance.modOptions["Middlescroll"])
-		{
-			case "Wide Lanes":
-				noteSpacing = 1.5;
-			case "Narrow Lanes":
-				noteSpacing = 1.2;
-			default:
-				noteSpacing = 1;
-		}
-
 		if (Preferences.controlsScheme == "Arrows")
 		{
 			mobilePos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
@@ -497,7 +474,7 @@ class Middlescroll extends Module {
 
 		for (i in 0...Strumline.KEY_COUNT)
 		{
-			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + noteSpacing)));
+			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + Save.instance.modOptions["NoteSpacing"])));
 		}
 
 		switch (Save.instance.modOptions["MovePopups"])
@@ -506,7 +483,7 @@ class Middlescroll extends Module {
 				// Taken from Blazin'
 				PlayState.instance.comboPopUps.offsets = [480, -50];
 			case "Middlescroll Only":
-				if (Save.instance.modOptions["Middlescroll"] != "Off")
+				if (Save.instance.modOptions["Middlescroll"])
 				{
 					PlayState.instance.comboPopUps.offsets = [480, -50];
 				}
@@ -515,13 +492,13 @@ class Middlescroll extends Module {
 
 
 		// Slight delay or else the player's strumline won't be set properly in Blazin'
-		if (Save.instance.modOptions["Middlescroll"] != "Off") {
+		if (Save.instance.modOptions["Middlescroll"]) {
 			setPlayerStrumline();
 			setOpponentStrumline();
 		}
 
 
-		if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
+		if (!Save.instance.modOptions["Middlescroll"] && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
 			return;
 		}
