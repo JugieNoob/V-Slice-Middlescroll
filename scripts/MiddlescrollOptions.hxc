@@ -21,8 +21,10 @@ import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 
 class MiddlescrollOptions extends Module {
     
-    var strumline = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), false);
+    var playerStrumlineExample = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), false);
+    var opponentStrumlineExample = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), false);
     var itemID = 0;
+    var itemID2 = 0;
     var items;
     var preferences;
     var currentState;
@@ -147,8 +149,6 @@ class MiddlescrollOptions extends Module {
         itemID = items.length - 1;
      
 
-        // Never, Middlescroll Only, Always
-
         preferences.createPrefItemEnum('Move Popups', "Moves the rating and combo pop-ups.", ["Never" => "Never", "Middlescroll Only" => "Middlescroll Only", "Always" => "Always",], function(value:Bool):Void {
             Save.instance.modOptions["MovePopups"] = value;
             Save.instance.flush();
@@ -158,10 +158,13 @@ class MiddlescrollOptions extends Module {
         preferences.createPrefItemPercentage("Opponent Notes Opacity", "Change the opacity of the opponent's notes.", function(value:Bool):Void {
             Save.instance.modOptions["OpponentNotes"] = value;
             Save.instance.flush();
+            opponentExampleCallback(value / 100);
         }, Save.instance.modOptions["OpponentNotes"], 0, 100);
 
+        itemID2 = items.length - 1;
 
-        //Always affect opponent notes
+
+        // Always affect opponent notes.
         preferences.createPrefItemCheckbox('Always Affect\nOpponent Notes', "When checked, the opponent's notes will always be affected by the above option when not using Middlescroll.", function(value:Bool):Void {
             Save.instance.modOptions["AlwaysOppNotes"] = value;
             Save.instance.flush();
@@ -173,14 +176,14 @@ class MiddlescrollOptions extends Module {
        
 
         preferences.createPrefItemEnum('Note Effects', "Toggles Note Splashes and Note Hold Covers for the player's strumline.", ["None" => "None", "Splashes Only" => "Splashes Only", "Hold Covers Only" => "Hold Covers Only", "All" => "All"], function(value:Bool):Void {
-                Save.instance.modOptions["NoteEffects"] = value;
-                Save.instance.flush();
-    
-            }, Save.instance.modOptions["NoteEffects"]);      
+            Save.instance.modOptions["NoteEffects"] = value;
+            Save.instance.flush();
+
+        }, Save.instance.modOptions["NoteEffects"]);      
 
        
         middleScrollCallback(Save.instance.modOptions["NoteSpacing"]);
-
+        opponentExampleCallback(Save.instance.modOptions["OpponentNotes"] / 100);
 
 
     
@@ -198,17 +201,26 @@ class MiddlescrollOptions extends Module {
                 {
                     if (items.selectedIndex == itemID)
                     {
-                        strumline.visible = true;
-
+                        playerStrumlineExample.visible = true;
                     }
                     else
                     {
-                        strumline.visible = false;
+                        playerStrumlineExample.visible = false;
+                    }
+
+                    if (items.selectedIndex == itemID2)
+                    {
+                        opponentStrumlineExample.visible = true;
+                    }
+                    else
+                    {
+                        opponentStrumlineExample.visible = false;
                     }
                 }
                 else
                 {
-                    strumline.visible = false;
+                    playerStrumlineExample.visible = false;
+                    opponentStrumlineExample.visible = false;
                 }
     
              
@@ -225,47 +237,94 @@ class MiddlescrollOptions extends Module {
 
     function middleScrollCallback(noteSpacing)
     {
-        if (strumline != null)
+        if (playerStrumlineExample != null)
         {
-            OptionsState.instance.remove(strumline);
+            OptionsState.instance.remove(playerStrumlineExample);
         }
-        strumline = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), true);
-        strumline.background.alpha = 0;
-        strumline.camera = preferences.hudCamera;
-        strumline.zIndex = 1000;
-        OptionsState.instance.add(strumline);
+        playerStrumlineExample = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), true);
+        playerStrumlineExample.background.alpha = 0;
+        playerStrumlineExample.camera = preferences.hudCamera;
+        playerStrumlineExample.zIndex = 1000;
+        OptionsState.instance.add(playerStrumlineExample);
 
     
         var strumlineWidth = 0;
 
-		strumline.setNoteSpacing(noteSpacing);
+		playerStrumlineExample.setNoteSpacing(noteSpacing);
 
 
 		// The spacing between the first and second note
-		var pixelSpacing = strumline.strumlineNotes.members[1].x - strumline.strumlineNotes.members[0].x;
+		var pixelSpacing = playerStrumlineExample.strumlineNotes.members[1].x - playerStrumlineExample.strumlineNotes.members[0].x;
 
 		// The spacing between the second and third note
-		var middleSpacing = strumline.strumlineNotes.members[2].x - strumline.strumlineNotes.members[1].x;
+		var middleSpacing = playerStrumlineExample.strumlineNotes.members[2].x - playerStrumlineExample.strumlineNotes.members[1].x;
 
 		// Finding how far the third and fourth note need to move
 		mobileNoteOffset = middleSpacing - pixelSpacing;
 
 		// Move the notes
-		strumline.strumlineNotes.members[2].x -= mobileNoteOffset;
-		strumline.strumlineNotes.members[3].x -= mobileNoteOffset;
+		playerStrumlineExample.strumlineNotes.members[2].x -= mobileNoteOffset;
+		playerStrumlineExample.strumlineNotes.members[3].x -= mobileNoteOffset;
 
 
 
-		var noteSpacingScale = strumline.noteSpacingScale;
-		var strumlineScale = strumline.strumlineScale;
+		var noteSpacingScale = playerStrumlineExample.noteSpacingScale;
+		var strumlineScale = playerStrumlineExample.strumlineScale;
 
 		strumlineWidth = ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;
 	
 	
-		strumline.x = (FlxG.width - strumlineWidth) / 2;
+		playerStrumlineExample.x = (FlxG.width - strumlineWidth) / 2;
 		if (inArrowControlSchemeMode)
 		{
-			strumline.x += 90;
+			playerStrumlineExample.x += 90;
+		}
+    }
+
+
+    function opponentExampleCallback(alpha)
+    {
+        if (opponentStrumlineExample != null)
+        {
+            OptionsState.instance.remove(opponentStrumlineExample);
+        }
+        opponentStrumlineExample = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), true);
+        opponentStrumlineExample.background.alpha = 0;
+        opponentStrumlineExample.strumlineNotes.alpha = alpha;
+        opponentStrumlineExample.camera = preferences.hudCamera;
+        opponentStrumlineExample.zIndex = 1000;
+        OptionsState.instance.add(opponentStrumlineExample);
+
+    
+        var strumlineWidth = 0;
+
+
+
+		// The spacing between the first and second note
+		var pixelSpacing = opponentStrumlineExample.strumlineNotes.members[1].x - opponentStrumlineExample.strumlineNotes.members[0].x;
+
+		// The spacing between the second and third note
+		var middleSpacing = opponentStrumlineExample.strumlineNotes.members[2].x - opponentStrumlineExample.strumlineNotes.members[1].x;
+
+		// Finding how far the third and fourth note need to move
+		mobileNoteOffset = middleSpacing - pixelSpacing;
+
+		// Move the notes
+		opponentStrumlineExample.strumlineNotes.members[2].x -= mobileNoteOffset;
+		opponentStrumlineExample.strumlineNotes.members[3].x -= mobileNoteOffset;
+
+
+
+		var noteSpacingScale = opponentStrumlineExample.noteSpacingScale;
+		var strumlineScale = opponentStrumlineExample.strumlineScale;
+
+		strumlineWidth = ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;
+	
+	
+		opponentStrumlineExample.x = (FlxG.width - strumlineWidth) / 2;
+		if (inArrowControlSchemeMode)
+		{
+			opponentStrumlineExample.x += 90;
 		}
     }
 
