@@ -12,7 +12,6 @@ import funkin.save.Save;
 import funkin.mobile.input.ControlsHandler;
 import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 import flixel.math.FlxPoint;
-import flixel.FlxSprite;
 
 
 /*
@@ -48,7 +47,7 @@ class Middlescroll extends Module {
 	var didSetupMiddlescroll = false;
 
 
-	public static var inArrowControlSchemeMode:Bool = false;
+	var inArrowControlSchemeMode:Bool = false;
 
 
 	function new() {
@@ -118,6 +117,10 @@ class Middlescroll extends Module {
 		if (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows && !ControlsHandler.hasExternalInputDevice && FlxG.onMobile)
 		{
 			inArrowControlSchemeMode = true;
+		}
+		else
+		{
+			inArrowControlSchemeMode = false;
 		}
 	}
 
@@ -304,40 +307,13 @@ class Middlescroll extends Module {
 
 			var backgroundWidth:Float = 4 * Strumline.NOTE_SPACING + 16 * 2;
 
-			// switch (Save.instance.modOptions["Middlescroll"])
-			// {
-			// 	case "Wide Lanes":
-			// 		PlayState.instance.playerStrumline.background.setGraphicSize(backgroundWidth * 1.35, FlxG.height);
-			// 	case "Narrow Lanes":
-			// 		// I dont think its exactly the right size but its good enough
-			// 		PlayState.instance.playerStrumline.background.setGraphicSize(backgroundWidth * 1.12, FlxG.height);
-
-			// }
-
-
-			var testSprite = new FlxSprite();
-			testSprite.makeGraphic(5, FlxG.height);
-
-			testSprite.cameras = [PlayState.instance.camHUD];
-
-			testSprite.scrollFactor.set();
-			
-
 
 			var noteSpacingScale = PlayState.instance.playerStrumline.noteSpacingScale;
 			var strumlineScale = PlayState.instance.playerStrumline.strumlineScale;
 
-			// var pos = PlayState.instance.playerStrumline.getXPos(1) - ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x));
-
-			//PlayState.instance.playerStrumline.x + ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;// + 24;
-			// testSprite.x = (FlxG.width - 1) / 2;
-			// PlayState.instance.add(testSprite);
-
-
 			strumlineWidth = ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;
 
 
-			testSprite.x = strumlineWidth;
 			var extraPadding = 30;
 			if (inArrowControlSchemeMode)
 			{
@@ -347,18 +323,9 @@ class Middlescroll extends Module {
 			PlayState.instance.playerStrumline.background.setGraphicSize(((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING + extraPadding, FlxG.height + 4);
 
 			PlayState.instance.playerStrumline.background.updateHitbox();
-			// PlayState.instance.playerStrumline.background.x = PlayState.instance.playerStrumline.strumlineNotes.x - 16;
-
-			// if (inArrowControlSchemeMode)
-			// {
-			// 	PlayState.instance.playerStrumline.background.x -= 100;
-			// }
-
 
 		}
 	
-		// PlayState.instance.playerStrumline.x = (FlxG.width / 2) - (PlayState.instance.playerStrumline.width / 2);
-		// PlayState.instance.playerStrumline.x = (FlxG.width / 2) - ((PlayState.instance.playerStrumline.background.width - 32) / 2);
 		PlayState.instance.playerStrumline.x = (FlxG.width - strumlineWidth) / 2;
 		if (inArrowControlSchemeMode)
 		{

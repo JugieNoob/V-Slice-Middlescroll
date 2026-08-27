@@ -10,6 +10,8 @@ import funkin.util.Constants;
 import Std;
 import flixel.FlxSprite;
 import funkin.save.Save;
+import funkin.mobile.input.ControlsHandler;
+import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 
 /*
 	Middlescroll V-Slice created by JugieNoob
@@ -19,7 +21,6 @@ import funkin.save.Save;
 
 class MiddlescrollOptions extends Module {
     
-    public static var isMobile = false;
     var strumline = new Strumline(NoteStyleRegistry.instance.fetchEntry("funkin"), false);
     var itemID = 0;
     var items;
@@ -27,6 +28,12 @@ class MiddlescrollOptions extends Module {
     var currentState;
 
     var scrollText;
+
+
+    var inArrowControlSchemeMode:Bool = false;
+
+
+
 
     function new (){
         super("Middlescroll Options", 21,  {state: OptionsState});
@@ -51,21 +58,41 @@ class MiddlescrollOptions extends Module {
             Save.instance.modOptions["NoteEffects"] = "All";
         }
 
-        if (Save.instance.modOptions["Middlescroll"] == true || Save.instance.modOptions["Middlescroll"] == null)
+        if (Save.instance.modOptions["NoteSpacing"] == null)
         {
-            Save.instance.modOptions["Middlescroll"] = "On";
+            Save.instance.modOptions["NoteSpacing"] = 1;
         }
 
-        if (Save.instance.modOptions["Middlescroll"] == false)
+
+        // Migrate old save data to new save data.
+
+        if (Save.instance.modOptions["Middlescroll"] == "Wide Lanes")
         {
-            Save.instance.modOptions["Middlescroll"] = "Off";
+            Save.instance.modOptions["NoteSpacing"] = 1.5;
         }
+        else if (Save.instance.modOptions["Middlescroll"] == "Narrow Lanes")
+        {
+            Save.instance.modOptions["NoteSpacing"] = 1.2;
+        }
+
+
+        if (Save.instance.modOptions["Middlescroll"] == "On" || Save.instance.modOptions["Middlescroll"] == "Wide Lanes" || Save.instance.modOptions["Middlescroll"] == "Narrow Lanes")
+        {
+            Save.instance.modOptions["Middlescroll"] = true;
+        }
+
+
+        if (Save.instance.modOptions["Middlescroll"] == "Off" || Save.instance.modOptions["Middlescroll"] == null)
+        {
+            Save.instance.modOptions["Middlescroll"] = false;
+        }
+
+        
         
         if (Save.instance.modOptions["AlwaysOppNotes"] == null)
         {
             Save.instance.modOptions["AlwaysOppNotes"] = true;
         }
-
 
      
 
@@ -76,11 +103,14 @@ class MiddlescrollOptions extends Module {
         super.onStateChangeEnd(event);
         currentState = event.targetState;
 
-        if (Preferences.controlsScheme == "Arrows")
+		if (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows && !ControlsHandler.hasExternalInputDevice && FlxG.onMobile)
 		{
-			isMobile = true;	
+			inArrowControlSchemeMode = true;
 		}
-    
+		else
+		{
+			inArrowControlSchemeMode = false;
+		}
 
 
         preferences = event.targetState.optionsCodex.pages.get("preferences");
@@ -88,15 +118,18 @@ class MiddlescrollOptions extends Module {
 
         
 
-
-
-        preferences.createPrefItemEnum('Middlescroll', "Center the player's strumline. (Preview's Y level may not represent what is seen during gameplay)", ["On" => "On", "Off" => "Off", "Narrow Lanes" => "Narrow Lanes", "Wide Lanes" => "Wide Lanes",], function(value:Bool):Void {
+        preferences.createPrefItemCheckbox('Middlescroll', "Center the player's strumline.", function(value:Bool):Void {
             Save.instance.modOptions["Middlescroll"] = value;
             Save.instance.flush();
-            middleScrollCallback();
         }, Save.instance.modOptions["Middlescroll"]);     
-             
-                   
+   
+            
+        preferences.createPrefItemNumber('Note Spacing', "Change the distance between each note when using middlescroll.", function(value:Float)
+        {
+            Save.instance.modOptions["NoteSpacing"] = value;
+            Save.instance.flush();
+            middleScrollCallback(value);
+        }, null, Save.instance.modOptions["NoteSpacing"], 1, 2, 0.1, 1);
         
         itemID = items.length - 1;
      
@@ -132,7 +165,7 @@ class MiddlescrollOptions extends Module {
             }, Save.instance.modOptions["NoteEffects"]);      
 
        
-        middleScrollCallback();
+        middleScrollCallback(Save.instance.modOptions["NoteSpacing"]);
 
 
 
@@ -176,7 +209,7 @@ class MiddlescrollOptions extends Module {
         }
     }
 
-    function middleScrollCallback()
+    function middleScrollCallback(noteSpacing)
     {
         if (strumline != null)
         {
@@ -189,59 +222,37 @@ class MiddlescrollOptions extends Module {
         OptionsState.instance.add(strumline);
 
     
+        var strumlineWidth = 0;
 
-        if (isMobile)
-        {
-
-            // Adapted from PlayState
-            final amplification:Float = (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
-            final playerStrumlineScale:Float = ((FlxG.height / FlxG.width) * 1.95) * amplification;
-            final playerNoteSpacing:Float = ((FlxG.height / FlxG.width) * 2.8) * amplification;
-            strumline.strumlineScale.set(playerStrumlineScale, playerStrumlineScale);
-            strumline.setNoteSpacing(playerNoteSpacing);
-            for (strum in strumline)
-            {
-              strum.width *= 2;
-            }
-        }
-
-        switch (Save.instance.modOptions["Middlescroll"])
-        {
-            case "Off":
-                if (isMobile)
-                {
-                    strumline.x = (FlxG.width - strumline.width) / 2 + Constants.STRUMLINE_X_OFFSET;
-                }
-                else
-                {
-                    strumline.x = (FlxG.width / 2 + Constants.STRUMLINE_X_OFFSET) + ((FullScreenScaleMode.gameCutoutSize.x / 2.5) / 2.0);
-                }
-            case "On":
-                if (isMobile)
-                {
-                    // Middlescroll.positionStrumline(strumline, 45);
-                }
-                else
-                {
-                    strumline.x = (FlxG.width - strumline.width) / 2;
-                }
-            case "Wide Lanes":
-                if (isMobile)
-                {
-                    // Middlescroll.positionStrumline(strumline, 80);
-                }
-                else
-                {
-                    strumline.setNoteSpacing(1.5);
-                    strumline.x = ((FlxG.width - strumline.width) / 2) + 16;
-                }
-                
-            case "Narrow Lanes":
-                strumline.setNoteSpacing(1.2);
-                strumline.x = ((FlxG.width - strumline.width) / 2);
+		strumline.setNoteSpacing(noteSpacing);
 
 
-        }
+		// The spacing between the first and second note
+		var pixelSpacing = strumline.strumlineNotes.members[1].x - strumline.strumlineNotes.members[0].x;
+
+		// The spacing between the second and third note
+		var middleSpacing = strumline.strumlineNotes.members[2].x - strumline.strumlineNotes.members[1].x;
+
+		// Finding how far the third and fourth note need to move
+		mobileNoteOffset = middleSpacing - pixelSpacing;
+
+		// Move the notes
+		strumline.strumlineNotes.members[2].x -= mobileNoteOffset;
+		strumline.strumlineNotes.members[3].x -= mobileNoteOffset;
+
+
+
+		var noteSpacingScale = strumline.noteSpacingScale;
+		var strumlineScale = strumline.strumlineScale;
+
+		strumlineWidth = ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;
+	
+	
+		strumline.x = (FlxG.width - strumlineWidth) / 2;
+		if (inArrowControlSchemeMode)
+		{
+			strumline.x += 90;
+		}
     }
 
 }
