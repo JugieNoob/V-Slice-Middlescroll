@@ -353,11 +353,13 @@ class Middlescroll extends Module {
 		PlayState.instance.opponentStrumline.background.visible = false;
 
 		if (PlayState.instance.opponentStrumline != null) {
+
+			PlayState.instance.opponentStrumline.x = 32;
 			for (i in 2...Strumline.KEY_COUNT) {
 				var opponentNote = PlayState.instance.opponentStrumline.strumlineNotes.members[i];
 
 				var offset = FlxG.width - opponentNote.x;
-				offset += (Strumline.NOTE_SPACING) * (i-2); 
+				offset += (Strumline.NOTE_SPACING) * (i-2) + 16;
 				offset -= (((Strumline.STRUMLINE_SIZE / 2) + (Constants.STRUMLINE_X_OFFSET * 2)) * 2) - PlayState.instance.opponentStrumline.noteStyle.getStrumlineOffsets()[0];
 
 				opponentNote.x += offset;
@@ -494,7 +496,10 @@ class Middlescroll extends Module {
 		// Slight delay or else the player's strumline won't be set properly in Blazin'
 		if (Save.instance.modOptions["Middlescroll"]) {
 			setPlayerStrumline();
-			setOpponentStrumline();
+			if (!inArrowControlSchemeMode)
+			{
+				setOpponentStrumline();
+			}
 		}
 
 
