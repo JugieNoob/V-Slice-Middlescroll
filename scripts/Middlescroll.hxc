@@ -23,37 +23,30 @@ import funkin.ui.debug.charting.ChartEditorState;
 
 class Middlescroll extends Module {
 
-
-	var mobilePos = 0;
-
+	// The width of the player's strumline
 	var strumlineWidth = 0;
-
-
-
-	var oldCoverPositions = [0,0,0,0];
-	var coverPositions = [];
 
 	// Used to check how far the new opponent note positions are from their old ones.
 	var opponentNoteOffsets = [];
 
-	// Used when setting the up and right opponent covers.
-	var newOpponentCoverPositions = [0,0];
-
-
+	// The offset needed to position the mobile notes like the ones on desktop.
 	var mobileNoteOffset = 0;
 
+	// The new positions of the opponent's note hold covers.
+	var newOpponentCoverPositions = [0,0];
+
+	// The new positions of the mobile note hold covers.
 	var newMobileCoverPositions = [0,0];
 
-
-
+	// A boolean that stores whether or not the middlescroll has already been setup.
 	var didSetupMiddlescroll = false;
 
-
-	var inArrowControlSchemeMode:Bool = false;
+	// A boolean that stores whether or not the player is using touch controls.
+	var inArrowControlSchemeMode = false;
 
 
 	function new() {
-		super("Middlescroll", 0); //,  {state: PlayState}
+		super("Middlescroll", 0);
 	}
 
 	// ----- Override Functions
@@ -61,32 +54,27 @@ class Middlescroll extends Module {
 	override function onUpdate() {
 		super.onUpdate();
 
+		// Stop the function if the player isn't in the PlayState or doesn't have middlescroll on.
 		if (PlayState.instance == null || !Save.instance.modOptions["Middlescroll"])
 		{
 			return;
 		}
 		
 		
+		// Update any active note covers if the player isn't in a cutscene.
 		if (!PlayState.instance.isInCutscene)
 		{
-				// if (Preferences.controlsScheme == "Arrows")
-				// {
-				// 	updateNoteCovers(PlayState.instance.playerStrumline, true);
-				// }
-				// else if (differentLanes)
-				// {
-				// 	updateNoteCovers(PlayState.instance.playerStrumline, true);
-				// 	updateNoteCovers(PlayState.instance.opponentStrumline);
-				// }
-				// else
-				// {
-				// 	updateNoteCovers(PlayState.instance.opponentStrumline);
-				// }
+			if (inArrowControlSchemeMode)
+			{
 				updateNoteCovers(PlayState.instance.playerStrumline, true);
-
+			}
+			else
+			{
 				updateNoteCovers(PlayState.instance.opponentStrumline);
-
+			}
 		}
+
+		// Make sure the player strumline is always centered.
 		if (PlayState.instance.currentSong == "PolymodScriptClass<BlazinSong>")
 		{
 			if (PlayState.instance.playerStrumline != null)
@@ -100,8 +88,10 @@ class Middlescroll extends Module {
 	override function onStateChangeBegin(event:StateChangeScriptEvent)
 	{
 		super.onStateChangeBegin(event);
+		// Reset the middlescroll setup boolean.
 		didSetupMiddlescroll = false;
 
+		// Check if the player is using touch controls.
 		if (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows && !ControlsHandler.hasExternalInputDevice && FlxG.onMobile)
 		{
 			inArrowControlSchemeMode = true;
@@ -110,13 +100,12 @@ class Middlescroll extends Module {
 		{
 			inArrowControlSchemeMode = false;
 		}
-		
-		trace("CHANGING STATES");
 	}
 
 
 	override function onCountdownStart(event) {
 		super.onCountdownStart(event);
+		// Setup middlescroll if it hasn't already been setup.
 		if (!didSetupMiddlescroll)
 		{
 			setupMiddlescroll();
@@ -128,6 +117,7 @@ class Middlescroll extends Module {
   	{
 		super.onSubStateOpenBegin(event);
 
+		// Reset the middlescroll setup boolean if the player is entering a PlayState substate (usually used in the chart editor).
 		if (Std.isOfType(event.targetState, PlayState))
 		{
 			didSetupMiddlescroll = false;
@@ -140,6 +130,7 @@ class Middlescroll extends Module {
 
 		super.onNoteIncoming(event);
 
+		// Stop the function if middlescroll is off and if opponent notes shouldn't always be affected by transparency.
 		if (!Save.instance.modOptions["Middlescroll"] && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
 			return;
@@ -161,34 +152,11 @@ class Middlescroll extends Module {
 
 
 
-
+		// Stop the function if middlescroll is off
 		if (!Save.instance.modOptions["Middlescroll"])
 		{
 			return;
 		}
-
-		// if (Preferences.controlsScheme == "Arrows" || differentLanes)
-		// {
-		// 	if (event.note.noteData.getMustHitNote())
-		// 	{
-		// 		// Previous method done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-
-		// 		event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing));
-
-		// 		if (Preferences.controlsScheme == "Arrows" && event.note.direction > 1)
-		// 		{
-		// 			event.note.x -= mobilePos * 3;
-		// 		}
-
-
-
-		// 		if (event.note.holdNoteSprite != null)
-		// 		{
-		// 			var hold = event.note.holdNoteSprite;
-		// 			hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2) + Strumline.NUDGE;
-		// 		}
-		// 	}
-		// }
 
 		// Offset Opponent Notes
 		if (!inArrowControlSchemeMode)
@@ -230,51 +198,55 @@ class Middlescroll extends Module {
 	{
 		super.onNoteHit(event);
 
-
+		// Stop the function if middlescroll is off.
 		if (Save.instance.modOptions["Middlescroll"])
 		{
-			if (event.doesNotesplash)
+			return;
+		}
+
+		// Check if the player has triggered a note splash
+		if (event.doesNotesplash)
+		{
+			// If the player is on mobile, offset the note splashes.
+			if (inArrowControlSchemeMode)
 			{
-				if (inArrowControlSchemeMode)
+				event.doesNotesplash = false;
+				PlayState.instance.playerStrumline.playNoteSplash(event.note.direction);
+			
+				for (splash in PlayState.instance.playerStrumline.noteSplashes)
 				{
-					event.doesNotesplash = false;
-					PlayState.instance.playerStrumline.playNoteSplash(event.note.direction);
-				
-					for (splash in PlayState.instance.playerStrumline.noteSplashes)
+					var direction = 0;
+
+					if (StringTools.contains(splash.animation.name, "LEFT"))
 					{
-						var direction = 0;
-
-						if (StringTools.contains(splash.animation.name, "LEFT"))
+						direction = 0;
+					}
+					else if (StringTools.contains(splash.animation.name, "DOWN"))
+					{
+						direction = 1;
+					}
+					else if (StringTools.contains(splash.animation.name, "UP"))
+					{
+						direction = 2;
+					}
+					else if (StringTools.contains(splash.animation.name, "RIGHT"))
+					{
+						direction = 3;
+					}
+					if (event.note.direction == direction)
+					{
+						if (direction > 1)
 						{
-							direction = 0;
+							splash.x -= mobileNoteOffset;
 						}
-						else if (StringTools.contains(splash.animation.name, "DOWN"))
-						{
-							direction = 1;
-						}
-						else if (StringTools.contains(splash.animation.name, "UP"))
-						{
-							direction = 2;
-						}
-						else if (StringTools.contains(splash.animation.name, "RIGHT"))
-						{
-							direction = 3;
-						}
-						if (event.note.direction == direction)
-						{
-							if (direction > 1)
-							{
-								splash.x -= mobileNoteOffset;
-							}
-						}
-
-
 					}
 
 				}
 
 			}
+
 		}
+		
 
 	}
 
@@ -285,50 +257,56 @@ class Middlescroll extends Module {
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
 
+		// Set the distance between notes.
 		PlayState.instance.playerStrumline.setNoteSpacing(Save.instance.modOptions["NoteSpacing"]);
 
 
-		// The spacing between the first and second note
+		// The spacing between the first and second note.
 		var pixelSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[1].x - PlayState.instance.playerStrumline.strumlineNotes.members[0].x;
 
-		// The spacing between the second and third note
+		// The spacing between the second and third note.
 		var middleSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[2].x - PlayState.instance.playerStrumline.strumlineNotes.members[1].x;
 
-		// Finding how far the third and fourth note need to move
+		// Finding how far the third and fourth note need to move.
 		mobileNoteOffset = middleSpacing - pixelSpacing;
 
-		// Move the notes
+		// Move the notes.
 		PlayState.instance.playerStrumline.strumlineNotes.members[2].x -= mobileNoteOffset;
 		PlayState.instance.playerStrumline.strumlineNotes.members[3].x -= mobileNoteOffset;
 
 
-		var backgroundWidth:Float = 4 * Strumline.NOTE_SPACING + 16 * 2;
 
 
 		var noteSpacingScale = PlayState.instance.playerStrumline.noteSpacingScale;
 		var strumlineScale = PlayState.instance.playerStrumline.strumlineScale;
 
+		// Get the width of the player's strumline.
 		strumlineWidth = ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;
 
 
+		// Extra padding for the player strumline's background.
 		var extraPadding = 30;
 		if (inArrowControlSchemeMode)
 		{
 			extraPadding += 24;
 		}
 
-		PlayState.instance.playerStrumline.background.setGraphicSize(((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING + extraPadding, FlxG.height + 4);
 
+		// Change the player strumline background's size.
+		PlayState.instance.playerStrumline.background.setGraphicSize(((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING + extraPadding, FlxG.height + 4);
 		PlayState.instance.playerStrumline.background.updateHitbox();
 
 		
-	
+		// Set the player strumline position.
 		PlayState.instance.playerStrumline.x = (FlxG.width - strumlineWidth) / 2;
+
+		// If the player is using touch controls, move the player strumline a bit to the right.
 		if (inArrowControlSchemeMode)
 		{
 			PlayState.instance.playerStrumline.x += 90;
 		}
 
+		// Note effects options.
 		switch (Save.instance.modOptions["NoteEffects"])
 		{
 			case "None":
@@ -350,11 +328,15 @@ class Middlescroll extends Module {
 	}
 
 	function setOpponentStrumline() {
+		// Turn off the opponent strumline's background.
 		PlayState.instance.opponentStrumline.background.visible = false;
 
 		if (PlayState.instance.opponentStrumline != null) {
 
+			// Set the position of the first 2 notes.
 			PlayState.instance.opponentStrumline.x = 32;
+
+			// Put the last 2 notes on the right side of the screen.
 			for (i in 2...Strumline.KEY_COUNT) {
 				var opponentNote = PlayState.instance.opponentStrumline.strumlineNotes.members[i];
 
@@ -372,83 +354,80 @@ class Middlescroll extends Module {
 
 	function updateNoteCovers(strumline:Strumline, isPlayer:Bool = false)
 	{
-			if (strumline != null && strumline.noteHoldCovers != null)
+		if (strumline != null && strumline.noteHoldCovers != null)
+		{
+			// Go through every note hold cover.
+			for (cover in strumline.noteHoldCovers)
 			{
-				for (cover in strumline.noteHoldCovers)
+				// Get the note hold cover direction.
+				var direction = 0;
+
+				if (StringTools.contains(cover.glow.animation.name, "Blue"))
 				{
-					var direction = 0;
+					direction = 1;
+				}
+				else if (StringTools.contains(cover.glow.animation.name, "Green"))
+				{
+					direction = 2;
+				}
+				else if (StringTools.contains(cover.glow.animation.name, "Red"))
+				{
+					direction = 3;
+				}
 
-					if (StringTools.contains(cover.glow.animation.name, "Blue"))
+				// Set the opponent notes transparency.
+				if (Save.instance.modOptions["OpponentNotes"] == "Translucent" && !isPlayer)
+				{
+					if (!Save.instance.modOptions["Middlescroll"])
 					{
-						direction = 1;
-					}
-					else if (StringTools.contains(cover.glow.animation.name, "Green"))
-					{
-						direction = 2;
-					}
-					else if (StringTools.contains(cover.glow.animation.name, "Red"))
-					{
-						direction = 3;
-					}
-
-					
-					if (Save.instance.modOptions["OpponentNotes"] == "Translucent" && !isPlayer)
-					{
-						if (!Save.instance.modOptions["Middlescroll"])
-						{
-							if (Save.instance.modOptions["AlwaysOppNotes"])
-							{
-								cover.alpha = 0.5;
-							}
-						}
-						else
+						if (Save.instance.modOptions["AlwaysOppNotes"])
 						{
 							cover.alpha = 0.5;
 						}
 					}
-
-					if (!Save.instance.modOptions["Middlescroll"])
-					{
-						return;
-					}
-
-					if (!isPlayer)
-					{
-						if (direction > 1)
-						{
-
-							if (newOpponentCoverPositions[direction - 2] == 0)
-							{
-								newOpponentCoverPositions[direction - 2] = cover.x + opponentNoteOffsets[direction - 2];
-							}
-
-							// trace(opponentNoteOffsets[direction-2]);
-							cover.x = newOpponentCoverPositions[direction-2];
-
-						}
-					}
 					else
 					{
-						if (direction > 1)
-						{
-
-							if (newMobileCoverPositions[direction - 2] == 0)
-							{
-								newMobileCoverPositions[direction - 2] = cover.x - mobileNoteOffset;
-							}
-
-							cover.x = newMobileCoverPositions[direction-2];
-
-						}
+						cover.alpha = 0.5;
 					}
-		
+				}
 
+				// Stop the function if the player isn't using middlescroll.
+				if (!Save.instance.modOptions["Middlescroll"])
+				{
+					return;
+				}
+
+				// Check if the player's note hold covers should be affected
+				if (isPlayer)
+				{
+					// Move the player's note hold covers if the direction of the cover is UP or DOWN 
+					if (direction > 1)
+					{
+						if (newMobileCoverPositions[direction - 2] == 0)
+						{
+							newMobileCoverPositions[direction - 2] = cover.x - mobileNoteOffset;
+						}
+
+						cover.x = newMobileCoverPositions[direction - 2];
+					}
+					
+				}
+				else
+				{	
+					// Move the opponent's note hold covers if the direction of the cover is UP or DOWN 
+					if (direction > 1)
+					{
+						if (newOpponentCoverPositions[direction - 2] == 0)
+						{
+							newOpponentCoverPositions[direction - 2] = cover.x + opponentNoteOffsets[direction - 2];
+						}
+
+						cover.x = newOpponentCoverPositions[direction - 2];
+					}
+				}
+	
 			}
 		}
-
-
-
-
 	}
 
 
@@ -456,9 +435,7 @@ class Middlescroll extends Module {
 
 	function setupMiddlescroll()
 	{
-		mobilePos = 0;
-		oldCoverPositions = [0,0,0,0];
-		coverPositions = [];
+		// Reset variables
 		opponentNoteOffsets = [];
 		newOpponentCoverPositions = [0,0];
 
@@ -469,15 +446,7 @@ class Middlescroll extends Module {
 
 
 
-		if (Preferences.controlsScheme == "Arrows")
-		{
-			mobilePos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
-		}
-
-		for (i in 0...Strumline.KEY_COUNT)
-		{
-			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + Save.instance.modOptions["NoteSpacing"])));
-		}
+		
 
 		switch (Save.instance.modOptions["MovePopups"])
 		{
@@ -502,7 +471,7 @@ class Middlescroll extends Module {
 			}
 		}
 
-
+		// If middlescroll is off and opponent notes shouldn't always be affected, stop the function.
 		if (!Save.instance.modOptions["Middlescroll"] && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
 			return;
