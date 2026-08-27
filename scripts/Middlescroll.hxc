@@ -12,6 +12,7 @@ import funkin.save.Save;
 import funkin.mobile.input.ControlsHandler;
 import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 import flixel.math.FlxPoint;
+import funkin.ui.debug.charting.ChartEditorState;
 
 
 /*
@@ -120,6 +121,8 @@ class Middlescroll extends Module {
 		{
 			inArrowControlSchemeMode = false;
 		}
+		
+		trace("CHANGING STATES");
 	}
 
 
@@ -132,6 +135,15 @@ class Middlescroll extends Module {
 	}
 
 
+	override function onSubStateOpenBegin(event:SubStateScriptEvent)
+  	{
+		super.onSubStateOpenBegin(event);
+
+		if (Std.isOfType(event.targetState, PlayState))
+		{
+			didSetupMiddlescroll = false;
+		}
+  	}
 
 
 
