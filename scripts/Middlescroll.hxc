@@ -12,7 +12,6 @@ import funkin.save.Save;
 import funkin.mobile.input.ControlsHandler;
 import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 import flixel.math.FlxPoint;
-import funkin.ui.debug.charting.ChartEditorState;
 
 
 /*
@@ -199,7 +198,7 @@ class Middlescroll extends Module {
 		super.onNoteHit(event);
 
 		// Stop the function if middlescroll is off.
-		if (Save.instance.modOptions["Middlescroll"])
+		if (!Save.instance.modOptions["Middlescroll"])
 		{
 			return;
 		}
