@@ -50,7 +50,7 @@ class MiddlescrollOptions extends Module {
 
         if (Save.instance.modOptions["OpponentNotes"] == null)
         {
-            Save.instance.modOptions["OpponentNotes"] = "Visible";
+            Save.instance.modOptions["OpponentNotes"] = 100;
         }
 
         if (Save.instance.modOptions["NoteEffects"] == null)
@@ -58,10 +58,17 @@ class MiddlescrollOptions extends Module {
             Save.instance.modOptions["NoteEffects"] = "All";
         }
 
+        if (Save.instance.modOptions["AlwaysOppNotes"] == null)
+        {
+            Save.instance.modOptions["AlwaysOppNotes"] = true;
+        }
+
         if (Save.instance.modOptions["NoteSpacing"] == null)
         {
             Save.instance.modOptions["NoteSpacing"] = 1;
         }
+
+   
 
 
         // Migrate old save data to new save data.
@@ -88,14 +95,20 @@ class MiddlescrollOptions extends Module {
         }
 
         
-        
-        if (Save.instance.modOptions["AlwaysOppNotes"] == null)
+        if (Save.instance.modOptions["OpponentNotes"] == "Visible")
         {
-            Save.instance.modOptions["AlwaysOppNotes"] = true;
+            Save.instance.modOptions["OpponentNotes"] = 100;
+        }
+        else if (Save.instance.modOptions["OpponentNotes"] == "Translucent")
+        {
+            Save.instance.modOptions["OpponentNotes"] = 50;
+        }
+        else if (Save.instance.modOptions["OpponentNotes"] == "Hidden")
+        {
+            Save.instance.modOptions["OpponentNotes"] = 0;
         }
 
-     
-
+    
     }
 
     override function onStateChangeEnd(event)
@@ -142,10 +155,11 @@ class MiddlescrollOptions extends Module {
         }, Save.instance.modOptions["MovePopups"]);    
         
 
-        preferences.createPrefItemEnum('Opponent Notes', 'Set what should happen to the opponent notes.', ["Visible" => "Visible", "Translucent" => "Translucent", "Hidden" => "Hidden"], function(value:Bool):Void {
+        preferences.createPrefItemPercentage("Opponent Notes Opacity", "Change the opacity of the opponent's notes.", function(value:Bool):Void {
             Save.instance.modOptions["OpponentNotes"] = value;
             Save.instance.flush();
-        }, Save.instance.modOptions["OpponentNotes"]);      
+        }, Save.instance.modOptions["OpponentNotes"], 0, 100);
+
 
         //Always affect opponent notes
         preferences.createPrefItemCheckbox('Always Affect\nOpponent Notes', "When checked, the opponent's notes will always be affected by the above option when not using Middlescroll.", function(value:Bool):Void {

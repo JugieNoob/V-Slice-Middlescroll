@@ -136,16 +136,16 @@ class Middlescroll extends Module {
 			return;
 		}
 
-		// Update note alpha if translucent is on.
-		if (!inArrowControlSchemeMode && Save.instance.modOptions["OpponentNotes"] == "Translucent")
+		// Update note opacity.
+		if (!inArrowControlSchemeMode && Save.instance.modOptions["OpponentNotes"] != 100)
 		{
 			if (!event.note.noteData.getMustHitNote())
 			{
-				event.note.alpha = 0.5;
+				event.note.alpha = Save.instance.modOptions["OpponentNotes"] / 100;
 
 				if (event.note.holdNoteSprite != null)
 				{
-					event.note.holdNoteSprite.alpha = 0.5;
+					event.note.holdNoteSprite.alpha = Save.instance.modOptions["OpponentNotes"] / 100;
 				}
 			}
 		}
@@ -376,18 +376,18 @@ class Middlescroll extends Module {
 				}
 
 				// Set the opponent notes transparency.
-				if (Save.instance.modOptions["OpponentNotes"] == "Translucent" && !isPlayer)
+				if (Save.instance.modOptions["OpponentNotes"] != 100 && !isPlayer)
 				{
 					if (!Save.instance.modOptions["Middlescroll"])
 					{
 						if (Save.instance.modOptions["AlwaysOppNotes"])
 						{
-							cover.alpha = 0.5;
+							cover.alpha = Save.instance.modOptions["OpponentNotes"] / 100;
 						}
 					}
 					else
 					{
-						cover.alpha = 0.5;
+						cover.alpha = Save.instance.modOptions["OpponentNotes"] / 100;
 					}
 				}
 
@@ -477,26 +477,26 @@ class Middlescroll extends Module {
 			return;
 		}
 
-		switch (Save.instance.modOptions["OpponentNotes"])
+
+		
+		if (PlayState.instance.opponentStrumline != null)
 		{
-			case "Hidden":
-				// Taken from Blazin'
-				if (PlayState.instance.opponentStrumline != null) {
-					PlayState.instance.opponentStrumline.visible = false;
-				}
-			case "Translucent":
+			if (Save.instance.modOptions["OpponentNotes"] != 100)
+			{
 				PlayState.instance.opponentStrumline.visible = true;
-				PlayState.instance.opponentStrumline.strumlineNotes.alpha = 0.5;
+				PlayState.instance.opponentStrumline.strumlineNotes.alpha = Save.instance.modOptions["OpponentNotes"] / 100;
 				// Use custom animation when spawning in strumline notes.
 				for (arrow in PlayState.instance.opponentStrumline.strumlineNotes)
 				{
 					FlxTween.cancelTweensOf(arrow);
 					arrow.alpha = 0.0;
-					FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.5}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
+					FlxTween.tween(arrow, {y: arrow.y + 10, alpha: Save.instance.modOptions["OpponentNotes"] / 100}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
 				}
-			default:
-				PlayState.instance.opponentStrumline.visible = true;
+			}
 		}
+
+
+		
 
 	}
 
