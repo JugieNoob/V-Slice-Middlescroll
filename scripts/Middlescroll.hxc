@@ -12,6 +12,7 @@ import funkin.save.Save;
 import funkin.mobile.input.ControlsHandler;
 import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 import flixel.math.FlxPoint;
+import flixel.FlxSprite;
 
 
 /*
@@ -281,43 +282,88 @@ class Middlescroll extends Module {
 	{
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
-
-		if (Preferences.controlsScheme == "Arrows" || differentLanes)
+		var strumlineWidth = 0;
+		if (inArrowControlSchemeMode || differentLanes)
 		{
 			PlayState.instance.playerStrumline.setNoteSpacing(noteSpacing);
 
 
+			// The spacing between the first and second note
 			var pixelSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[1].x - PlayState.instance.playerStrumline.strumlineNotes.members[0].x;
-			trace("SPACING " + pixelSpacing);
 
-
+			// The spacing between the second and third note
 			var middleSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[2].x - PlayState.instance.playerStrumline.strumlineNotes.members[1].x;
 
-			trace("SPACING 2 " + pixelSpacing);
-
+			// Finding how far the third and fourth note need to move
 			mobileNoteOffset = middleSpacing - pixelSpacing;
 
-
+			// Move the notes
 			PlayState.instance.playerStrumline.strumlineNotes.members[2].x -= mobileNoteOffset;
 			PlayState.instance.playerStrumline.strumlineNotes.members[3].x -= mobileNoteOffset;
 
 
-			switch (Save.instance.modOptions["Middlescroll"])
-			{
-				case "Wide Lanes":
-					PlayState.instance.playerStrumline.background.setGraphicSize((4 * Strumline.NOTE_SPACING + 16 * 2) * 1.35, FlxG.height);
-				case "Narrow Lanes":
-					// I dont think its exactly the right size but its good enough
-					PlayState.instance.playerStrumline.background.setGraphicSize((4 * Strumline.NOTE_SPACING + 16 * 2) * 1.12, FlxG.height);
+			var backgroundWidth:Float = 4 * Strumline.NOTE_SPACING + 16 * 2;
 
+			// switch (Save.instance.modOptions["Middlescroll"])
+			// {
+			// 	case "Wide Lanes":
+			// 		PlayState.instance.playerStrumline.background.setGraphicSize(backgroundWidth * 1.35, FlxG.height);
+			// 	case "Narrow Lanes":
+			// 		// I dont think its exactly the right size but its good enough
+			// 		PlayState.instance.playerStrumline.background.setGraphicSize(backgroundWidth * 1.12, FlxG.height);
+
+			// }
+
+
+			var testSprite = new FlxSprite();
+			testSprite.makeGraphic(5, FlxG.height);
+
+			testSprite.cameras = [PlayState.instance.camHUD];
+
+			testSprite.scrollFactor.set();
+			
+
+
+			var noteSpacingScale = PlayState.instance.playerStrumline.noteSpacingScale;
+			var strumlineScale = PlayState.instance.playerStrumline.strumlineScale;
+
+			// var pos = PlayState.instance.playerStrumline.getXPos(1) - ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x));
+
+			//PlayState.instance.playerStrumline.x + ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;// + 24;
+			// testSprite.x = (FlxG.width - 1) / 2;
+			// PlayState.instance.add(testSprite);
+
+
+			strumlineWidth = ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;
+
+
+			testSprite.x = strumlineWidth;
+			var extraPadding = 30;
+			if (inArrowControlSchemeMode)
+			{
+				extraPadding += 24;
 			}
 
+			PlayState.instance.playerStrumline.background.setGraphicSize(((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING + extraPadding, FlxG.height + 4);
+
 			PlayState.instance.playerStrumline.background.updateHitbox();
-			PlayState.instance.playerStrumline.background.x = PlayState.instance.playerStrumline.x - 16;
+			// PlayState.instance.playerStrumline.background.x = PlayState.instance.playerStrumline.strumlineNotes.x - 16;
+
+			// if (inArrowControlSchemeMode)
+			// {
+			// 	PlayState.instance.playerStrumline.background.x -= 100;
+			// }
+
+
 		}
 	
-		PlayState.instance.playerStrumline.x = (FlxG.width / 2) - ((PlayState.instance.playerStrumline.background.width - 32) / 2);
-
+		// PlayState.instance.playerStrumline.x = (FlxG.width / 2) - (PlayState.instance.playerStrumline.width / 2);
+		// PlayState.instance.playerStrumline.x = (FlxG.width / 2) - ((PlayState.instance.playerStrumline.background.width - 32) / 2);
+		PlayState.instance.playerStrumline.x = (FlxG.width - strumlineWidth) / 2;
+		if (inArrowControlSchemeMode)
+		{
+			PlayState.instance.playerStrumline.x += 90;
+		}
 
 		switch (Save.instance.modOptions["NoteEffects"])
 		{
