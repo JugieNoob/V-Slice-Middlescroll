@@ -26,6 +26,9 @@ class Middlescroll extends Module {
 
 	var mobilePos = 0;
 
+	var strumlineWidth = 0;
+
+
 
 	var oldCoverPositions = [0,0,0,0];
 	var coverPositions = [];
@@ -58,26 +61,12 @@ class Middlescroll extends Module {
 	override function onUpdate() {
 		super.onUpdate();
 
-		if (PlayState.instance == null)
+		if (PlayState.instance == null || !Save.instance.modOptions["Middlescroll"])
 		{
 			return;
 		}
-
-	// 	if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
-	// 	{
-	// 		return;
-	// 	}
-	// 	if (Save.instance.modOptions["OpponentNotes"] == "Translucent")
-	// 	{
-	// 		for (cover in PlayState.instance.opponentStrumline.noteHoldCovers)
-	// 		{
-	// 			cover.alpha = 0.5;
-	// 		}
-	// 	}
-
-
-
-
+		
+		
 		if (!PlayState.instance.isInCutscene)
 		{
 				// if (Preferences.controlsScheme == "Arrows")
@@ -98,13 +87,13 @@ class Middlescroll extends Module {
 				updateNoteCovers(PlayState.instance.opponentStrumline);
 
 		}
-	// 	if (PlayState.instance.currentSong == "Song(blazin)")
-	// 	{
-	// 		if (PlayState.instance.playerStrumline != null)
-	// 		{	
-	// 			setPlayerStrumline();
-	// 		}
-	// 	}
+		if (PlayState.instance.currentSong == "PolymodScriptClass<BlazinSong>")
+		{
+			if (PlayState.instance.playerStrumline != null)
+			{	
+				PlayState.instance.playerStrumline.x = (FlxG.width - strumlineWidth) / 2;
+			}
+		}
 
 	}
 
@@ -295,7 +284,6 @@ class Middlescroll extends Module {
 	{
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
-		var strumlineWidth = 0;
 
 		PlayState.instance.playerStrumline.setNoteSpacing(Save.instance.modOptions["NoteSpacing"]);
 
