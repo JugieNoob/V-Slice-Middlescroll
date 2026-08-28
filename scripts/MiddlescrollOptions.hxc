@@ -38,8 +38,9 @@ class MiddlescrollOptions extends Module {
 
 
     function new (){
-        super("Middlescroll Options", 21,  {state: OptionsState});
+        super("MiddlescrollOptions", 21,  {state: OptionsState});
 
+        // Default options.
         if (Save.instance.modOptions["MovePopups"] == null || Save.instance.modOptions["MovePopups"] == true)
         {
             Save.instance.modOptions["MovePopups"] = "Middlescroll Only";
@@ -74,7 +75,6 @@ class MiddlescrollOptions extends Module {
 
 
         // Migrate old save data to new save data.
-
         if (Save.instance.modOptions["Middlescroll"] == "Wide Lanes")
         {
             Save.instance.modOptions["NoteSpacing"] = 1.5;
@@ -118,6 +118,7 @@ class MiddlescrollOptions extends Module {
         super.onStateChangeEnd(event);
         currentState = event.targetState;
 
+        // Check if the user is on mobile and using the arrows control scheme.
 		if (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows && !ControlsHandler.hasExternalInputDevice && FlxG.onMobile)
 		{
 			inArrowControlSchemeMode = true;
@@ -132,7 +133,7 @@ class MiddlescrollOptions extends Module {
         items = preferences.items;
 
         
-
+        // Create options.
         preferences.createPrefItemCheckbox('Middlescroll', "Center the player's strumline.", function(value:Bool):Void {
             Save.instance.modOptions["Middlescroll"] = value;
             Save.instance.flush();
@@ -149,12 +150,6 @@ class MiddlescrollOptions extends Module {
         itemID = items.length - 1;
      
 
-        preferences.createPrefItemEnum('Move Popups', "Moves the rating and combo pop-ups.", ["Never" => "Never", "Middlescroll Only" => "Middlescroll Only", "Always" => "Always",], function(value:Bool):Void {
-            Save.instance.modOptions["MovePopups"] = value;
-            Save.instance.flush();
-        }, Save.instance.modOptions["MovePopups"]);    
-        
-
         preferences.createPrefItemPercentage("Opponent Notes Opacity", "Change the opacity of the opponent's notes.", function(value:Bool):Void {
             Save.instance.modOptions["OpponentNotes"] = value;
             Save.instance.flush();
@@ -163,8 +158,6 @@ class MiddlescrollOptions extends Module {
 
         itemID2 = items.length - 1;
 
-
-        // Always affect opponent notes.
         preferences.createPrefItemCheckbox('Always Affect\nOpponent Notes', "When checked, the opponent's notes will always be affected by the above option when not using Middlescroll.", function(value:Bool):Void {
             Save.instance.modOptions["AlwaysOppNotes"] = value;
             Save.instance.flush();
@@ -179,7 +172,15 @@ class MiddlescrollOptions extends Module {
             Save.instance.modOptions["NoteEffects"] = value;
             Save.instance.flush();
 
-        }, Save.instance.modOptions["NoteEffects"]);      
+        }, Save.instance.modOptions["NoteEffects"]);    
+        
+        
+        preferences.createPrefItemEnum('Move Popups', "Moves the rating and combo pop-ups.", ["Never" => "Never", "Middlescroll Only" => "Middlescroll Only", "Always" => "Always",], function(value:Bool):Void {
+            Save.instance.modOptions["MovePopups"] = value;
+            Save.instance.flush();
+        }, Save.instance.modOptions["MovePopups"]);    
+        
+
 
        
         middleScrollCallback(Save.instance.modOptions["NoteSpacing"]);
@@ -193,12 +194,14 @@ class MiddlescrollOptions extends Module {
     override function onUpdate(event)
     {
         super.onUpdate(event);
+        // Check if the player is in the OptionsState.
         if (Std.isOfType(currentState, OptionsState))
         {
             if (items != null)
             {
                 if (Std.isOfType(currentState.optionsCodex.currentPage, PreferencesMenu))
                 {
+                    // Show the player strumline if the correct option is selected.
                     if (items.selectedIndex == itemID)
                     {
                         playerStrumlineExample.visible = true;
@@ -208,6 +211,7 @@ class MiddlescrollOptions extends Module {
                         playerStrumlineExample.visible = false;
                     }
 
+                    // Show the opponent strumline if the correct option is selected.
                     if (items.selectedIndex == itemID2)
                     {
                         opponentStrumlineExample.visible = true;
@@ -219,6 +223,7 @@ class MiddlescrollOptions extends Module {
                 }
                 else
                 {
+                    // Hide if the player isn't in the preferences menu.
                     playerStrumlineExample.visible = false;
                     opponentStrumlineExample.visible = false;
                 }

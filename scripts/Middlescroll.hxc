@@ -7,11 +7,9 @@ import funkin.Preferences;
 import StringTools;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import flixel.util.FlxTimer;
 import funkin.save.Save;
 import funkin.mobile.input.ControlsHandler;
 import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
-import flixel.math.FlxPoint;
 
 
 /*
@@ -434,9 +432,6 @@ class Middlescroll extends Module {
 		}
 	}
 
-
-
-
 	function setupMiddlescroll()
 	{
 		// Reset variables
@@ -448,10 +443,7 @@ class Middlescroll extends Module {
 
 		didSetupMiddlescroll = true;
 
-
-
-		
-
+		// Set the popups positions.
 		switch (Save.instance.modOptions["MovePopups"])
 		{
 			case "Always":
@@ -466,7 +458,7 @@ class Middlescroll extends Module {
 
 
 
-		// Slight delay or else the player's strumline won't be set properly in Blazin'
+		// Slight delay or else the player's strumline won't be set properly in Blazin'.
 		if (Save.instance.modOptions["Middlescroll"]) {
 			setPlayerStrumline();
 			if (!inArrowControlSchemeMode)
@@ -482,7 +474,7 @@ class Middlescroll extends Module {
 		}
 
 
-		
+		// Opponent strumline intro.
 		if (PlayState.instance.opponentStrumline != null)
 		{
 			if (Save.instance.modOptions["OpponentNotes"] != 100)
@@ -498,13 +490,5 @@ class Middlescroll extends Module {
 				}
 			}
 		}
-
-
-		
-
 	}
-
-
-
 }
-
