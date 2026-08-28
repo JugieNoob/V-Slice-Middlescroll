@@ -69,7 +69,14 @@ class MiddlescrollOptions extends Module {
 
         if (Save.instance.modOptions["NoteSpacing"] == null)
         {
-            Save.instance.modOptions["NoteSpacing"] = 1;
+            if (!FlxG.onMobile)
+            {
+                Save.instance.modOptions["NoteSpacing"] = 1;
+            }
+            else
+            {
+                Save.instance.modOptions["NoteSpacing"] = 1.2;
+            }
         }
 
         if (Save.instance.modOptions["Middlescroll"] == null)
