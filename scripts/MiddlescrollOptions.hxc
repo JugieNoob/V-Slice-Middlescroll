@@ -72,7 +72,11 @@ class MiddlescrollOptions extends Module {
             Save.instance.modOptions["NoteSpacing"] = 1;
         }
 
-   
+        if (Save.instance.modOptions["Middlescroll"] == null)
+        {
+            Save.instance.modOptions["Middlescroll"] = true;
+        }
+
 
 
         // Migrate old save data to new save data.
@@ -92,7 +96,7 @@ class MiddlescrollOptions extends Module {
         }
 
 
-        if (Save.instance.modOptions["Middlescroll"] == "Off" || Save.instance.modOptions["Middlescroll"] == null)
+        if (Save.instance.modOptions["Middlescroll"] == "Off")
         {
             Save.instance.modOptions["Middlescroll"] = false;
         }
