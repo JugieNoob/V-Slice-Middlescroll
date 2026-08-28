@@ -7,7 +7,6 @@ import funkin.Preferences;
 import StringTools;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import flixel.util.FlxTimer;
 import funkin.save.Save;
 import funkin.mobile.input.ControlsHandler;
 import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
@@ -21,202 +20,178 @@ import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 
 class Middlescroll extends Module {
 
-	var playerStrumline:FlxSprite;
-	private var opponentStrumline:FlxSprite;
+	// The width of the player's strumline
+	var strumlineWidth = 0;
 
-	var differentLanes = false;
-	var noteSpacing = 0;
-	var mobilePos = 0;
+	// Used to check how far the new opponent note positions are from their old ones.
+	var opponentNoteOffsets = [];
 
+	// The offset needed to position the mobile notes like the ones on desktop.
+	var mobileNoteOffset = 0;
 
-	var oldCoverPositions = [0,0,0,0];
-	var coverPositions = [];
-	var oldOppPositions = [];
-	var oldOppCoverPositions = [0,0];
-	var didInit = false;
+	// The new positions of the opponent's note hold covers.
+	var newOpponentCoverPositions = [0,0];
+
+	// The new positions of the mobile note hold covers.
+	var newMobileCoverPositions = [0,0];
+
+	// A boolean that stores whether or not the middlescroll has already been setup.
+	var didSetupMiddlescroll = false;
+
+	// A boolean that stores whether or not the player is using touch controls.
+	var inArrowControlSchemeMode = false;
 
 	public static var inArrowControlSchemeMode:Bool = false;
 
 
 	function new() {
-		super("Middlescroll", 0,  {state: PlayState});
+		super("Middlescroll", 0);
 	}
 
 	// ----- Override Functions
+	
 	override function onUpdate() {
 		super.onUpdate();
-		if (PlayState.instance == null)
+
+		// Stop the function if the player isn't in the PlayState or doesn't have middlescroll on.
+		if (PlayState.instance == null || !Save.instance.modOptions["Middlescroll"])
 		{
 			return;
 		}
-		trace("IN CUTSCENE: " + PlayState.instance.isInCutscene);
-
-
-		if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
-		{
-			return;
-		}
-		if (Save.instance.modOptions["OpponentNotes"] == "Translucent")
-		{
-			for (cover in PlayState.instance.opponentStrumline.noteHoldCovers)
-			{
-				cover.alpha = 0.5;
-			}
-		}
-
-
-		if (Save.instance.modOptions["Middlescroll"] == "Off")
-		{
-			return;
-		}
-
+		
+		
+		// Update any active note covers if the player isn't in a cutscene.
 		if (!PlayState.instance.isInCutscene)
 		{
-				if (inArrowControlSchemeMode)
-				{
-
-					updateNoteCovers(PlayState.instance.playerStrumline, true);
-					
-					setPlayerStrumline();
-				}
-				else if (differentLanes)
-				{
-					updateNoteCovers(PlayState.instance.playerStrumline, true);
-					updateNoteCovers(PlayState.instance.opponentStrumline);
-				}
-				else
-				{
-					updateNoteCovers(PlayState.instance.opponentStrumline);
-				}
-
-		}
-		if (PlayState.instance.currentSong == "Song(blazin)")
-		{
-			if (playerStrumline != null)
-			{	
-				setPlayerStrumline();
+			if (inArrowControlSchemeMode)
+			{
+				updateNoteCovers(PlayState.instance.playerStrumline, true);
+			}
+			else
+			{
+				updateNoteCovers(PlayState.instance.opponentStrumline);
 			}
 		}
 
+		// Make sure the player strumline is always centered.
+		if (PlayState.instance.currentSong == "PolymodScriptClass<BlazinSong>")
+		{
+			if (PlayState.instance.playerStrumline != null)
+			{	
+				PlayState.instance.playerStrumline.x = (FlxG.width - strumlineWidth) / 2;
 
+				// If the player is using touch controls, move the player strumline a bit to the right.
+				if (inArrowControlSchemeMode)
+				{
+					PlayState.instance.playerStrumline.x += 90;
+				}
+			}
+		}
+
+	}
+
+	override function onStateChangeBegin(event:StateChangeScriptEvent)
+	{
+		super.onStateChangeBegin(event);
+		// Reset the middlescroll setup boolean.
+		didSetupMiddlescroll = false;
+
+		// Check if the player is using touch controls.
+		if (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows && !ControlsHandler.hasExternalInputDevice && FlxG.onMobile)
+		{
+			inArrowControlSchemeMode = true;
+		}
+		else
+		{
+			inArrowControlSchemeMode = false;
+		}
 	}
 
 
 	override function onCountdownStart(event) {
 		super.onCountdownStart(event);
-
-		if (PlayState.instance.currentConversation != null)
+		// Setup middlescroll if it hasn't already been setup.
+		if (!didSetupMiddlescroll)
 		{
-			event.cancel();
-			return;
+			setupMiddlescroll();
 		}
-
-		if (!PlayState.instance.isInCutscene)
-		{
-			init();
-		}
-
-
 	}
-	
-	override function onCountdownEnd(event)
-	{
-		super.onCountdownEnd(event);
-		setPlayerStrumline();
-	}
-	public function onStateChangeBegin(event:StateChangeScriptEvent)
+
+
+	override function onSubStateOpenBegin(event:SubStateScriptEvent)
   	{
-		super.onStateChangeBegin(event);
-		if (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows && !ControlsHandler.hasExternalInputDevice && FlxG.onMobile)
+		super.onSubStateOpenBegin(event);
+
+		// Reset the middlescroll setup boolean if the player is entering a PlayState substate (usually used in the chart editor).
+		if (Std.isOfType(event.targetState, PlayState))
 		{
-			inArrowControlSchemeMode = true;
+			didSetupMiddlescroll = false;
 		}
-		didInit = false;
   	}
 
-	// Used to reset didInit when exiting the Charting PlayState substate.
-  	public function onSubStateCloseEnd(event:SubStateScriptEvent)
-  	{
-		super.onSubStateCloseEnd(event);
 
-		if (didInit && Std.isOfType(event.targetState, PlayState))
-		{
-			didInit = false;
-		}
-  	}
 
 	override function onNoteIncoming(event) {
 
 		super.onNoteIncoming(event);
 
-		if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
+		// Stop the function if middlescroll is off and if opponent notes shouldn't always be affected by transparency.
+		if (!Save.instance.modOptions["Middlescroll"] && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
 			return;
 		}
 
-		// Update note alpha if translucent is on.
-		if (inArrowControlSchemeMode && Save.instance.modOptions["OpponentNotes"] == "Translucent")
+		// Update note opacity.
+		if (!inArrowControlSchemeMode && Save.instance.modOptions["OpponentNotes"] != 100)
 		{
 			if (!event.note.noteData.getMustHitNote())
 			{
-				event.note.alpha = 0.5;
+				event.note.alpha = Save.instance.modOptions["OpponentNotes"] / 100;
 
 				if (event.note.holdNoteSprite != null)
 				{
-					event.note.holdNoteSprite.alpha = 0.5;
+					event.note.holdNoteSprite.alpha = Save.instance.modOptions["OpponentNotes"] / 100;
 				}
 			}
 		}
 
 
 
-
-		if (Save.instance.modOptions["Middlescroll"] == "Off")
+		// Stop the function if middlescroll is off
+		if (!Save.instance.modOptions["Middlescroll"])
 		{
 			return;
 		}
 
-		if (inArrowControlSchemeMode || differentLanes)
-		{
-			if (event.note.noteData.getMustHitNote())
-			{
-				// Previous method done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
-
-				event.note.x += (event.note.direction * (Strumline.STRUMLINE_SIZE + noteSpacing));
-
-				if (inArrowControlSchemeMode && event.note.direction > 1)
-				{
-					event.note.x -= mobilePos * 3;
-				}
-
-
-
-				if (event.note.holdNoteSprite != null)
-				{
-					var hold = event.note.holdNoteSprite;
-					hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2) + Strumline.NUDGE;
-				}
-			}
-		}
-
-
+		// Offset Opponent Notes
 		if (!inArrowControlSchemeMode)
 		{
 			if (!event.note.noteData.getMustHitNote())
 			{
 				if (event.note.direction > 1)
 				{
-					var dist = opponentStrumline.strumlineNotes.members[2].x - opponentStrumline.strumlineNotes.members[1].x;
-
-					event.note.x += dist;
-					event.note.x -= Strumline.STRUMLINE_SIZE;
-					event.note.x -= Strumline.NUDGE * 3;
+					event.note.x += opponentNoteOffsets[event.note.direction - 2];
 
 					if (event.note.holdNoteSprite != null)
 					{
-						var hold = event.note.holdNoteSprite;
+						event.note.holdNoteSprite.x += opponentNoteOffsets[event.note.direction - 2];
+					}
+				}
+			}
+	
+		}
+		// Offset Mobile Notes
+		else
+		{
+			if (event.note.noteData.getMustHitNote())
+			{
+				if (event.note.direction > 1)
+				{
+					event.note.x -= mobileNoteOffset;
 
-						hold.x = (event.note.x + (event.note.width / 2)) - (hold.width / 2);
+					if (event.note.holdNoteSprite != null)
+					{
+						event.note.holdNoteSprite.x -= mobileNoteOffset;
 					}
 				}
 			}
@@ -228,55 +203,55 @@ class Middlescroll extends Module {
 	{
 		super.onNoteHit(event);
 
-
-		if (Save.instance.modOptions["Middlescroll"] != "Off")
+		// Stop the function if middlescroll is off.
+		if (!Save.instance.modOptions["Middlescroll"])
 		{
-			if (event.doesNotesplash)
+			return;
+		}
+
+		// Check if the player has triggered a note splash
+		if (event.doesNotesplash)
+		{
+			// If the player is on mobile, offset the note splashes.
+			if (inArrowControlSchemeMode)
 			{
-				if (inArrowControlSchemeMode || differentLanes)
+				event.doesNotesplash = false;
+				PlayState.instance.playerStrumline.playNoteSplash(event.note.direction);
+			
+				for (splash in PlayState.instance.playerStrumline.noteSplashes)
 				{
-					event.doesNotesplash = false;
-					playerStrumline.playNoteSplash(event.note.direction);
-				
-					for (splash in playerStrumline.noteSplashes)
+					var direction = 0;
+
+					if (StringTools.contains(splash.animation.name, "LEFT"))
 					{
-						var direction = 0;
-
-						if (StringTools.contains(splash.animation.name, "LEFT"))
-						{
-							direction = 0;
-						}
-						else if (StringTools.contains(splash.animation.name, "DOWN"))
-						{
-							direction = 1;
-						}
-						else if (StringTools.contains(splash.animation.name, "UP"))
-						{
-							direction = 2;
-						}
-						else if (StringTools.contains(splash.animation.name, "RIGHT"))
-						{
-							direction = 3;
-						}
-						if (event.note.direction == direction)
-						{
-							// Adapted from FNF Source Code
-							splash.x = playerStrumline.x;
-      						splash.x += playerStrumline.getXPos(direction);
-      						splash.x += Strumline.INITIAL_OFFSET;
-      						splash.x += playerStrumline.noteStyle.getSplashOffsets()[0] * splash.scale.x;
-							splash.x += coverPositions[direction];
-							if (direction > 1)
-							{
-								splash.x -= mobilePos * 3;
-							}
-						}
-
+						direction = 0;
 					}
+					else if (StringTools.contains(splash.animation.name, "DOWN"))
+					{
+						direction = 1;
+					}
+					else if (StringTools.contains(splash.animation.name, "UP"))
+					{
+						direction = 2;
+					}
+					else if (StringTools.contains(splash.animation.name, "RIGHT"))
+					{
+						direction = 3;
+					}
+					if (event.note.direction == direction)
+					{
+						if (direction > 1)
+						{
+							splash.x -= mobileNoteOffset;
+						}
+					}
+
 				}
 
 			}
+
 		}
+		
 
 	}
 
@@ -287,60 +262,114 @@ class Middlescroll extends Module {
 		// Previous version done with help from Mofoy on GameBanana (https://gamebanana.com/members/4648991)
 
 
-		if (inArrowControlSchemeMode || differentLanes)
+		// Set the distance between notes.
+		PlayState.instance.playerStrumline.setNoteSpacing(Save.instance.modOptions["NoteSpacing"]);
+
+
+		// The spacing between the first and second note.
+		var pixelSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[1].x - PlayState.instance.playerStrumline.strumlineNotes.members[0].x;
+
+		// The spacing between the second and third note.
+		var middleSpacing = PlayState.instance.playerStrumline.strumlineNotes.members[2].x - PlayState.instance.playerStrumline.strumlineNotes.members[1].x;
+
+		// Finding how far the third and fourth note need to move.
+		mobileNoteOffset = middleSpacing - pixelSpacing;
+
+		// Move the notes.
+		PlayState.instance.playerStrumline.strumlineNotes.members[2].x -= mobileNoteOffset;
+		PlayState.instance.playerStrumline.strumlineNotes.members[3].x -= mobileNoteOffset;
+
+
+
+
+		var noteSpacingScale = PlayState.instance.playerStrumline.noteSpacingScale;
+		var strumlineScale = PlayState.instance.playerStrumline.strumlineScale;
+
+		// Get the width of the player's strumline.
+		strumlineWidth = ((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING;
+
+
+		// Extra padding for the player strumline's background.
+		var extraPadding = 30;
+		if (inArrowControlSchemeMode)
 		{
-
-			positionStrumline(playerStrumline, noteSpacing, inArrowControlSchemeMode);
-
-
-			playerStrumline.background.setGraphicSize(4 * (Strumline.STRUMLINE_SIZE + (noteSpacing / 1.3)) + (Strumline.BACKGROUND_PAD * 2) + (mobilePos / 1.6), FlxG.height + 50);
-			playerStrumline.background.updateHitbox();
+			extraPadding += 24;
 		}
-		else
+
+
+		// Change the player strumline background's size.
+		PlayState.instance.playerStrumline.background.setGraphicSize(((3 * Strumline.NOTE_SPACING) * (noteSpacingScale * strumlineScale.x)) + Strumline.NOTE_SPACING + extraPadding, FlxG.height + 4);
+		PlayState.instance.playerStrumline.background.updateHitbox();
+
+		
+		// Set the player strumline position.
+		PlayState.instance.playerStrumline.x = (FlxG.width - strumlineWidth) / 2;
+
+		// If the player is using touch controls, move the player strumline a bit to the right.
+		if (inArrowControlSchemeMode)
 		{
-			playerStrumline.x = (FlxG.width - playerStrumline.width) / 2;
+			PlayState.instance.playerStrumline.x += 90;
 		}
 
-
+		// Note effects options.
 		switch (Save.instance.modOptions["NoteEffects"])
 		{
 			case "None":
-				playerStrumline.noteHoldCovers.visible = false;
-				playerStrumline.noteSplashes.visible = false;
+				PlayState.instance.playerStrumline.noteHoldCovers.visible = false;
+				PlayState.instance.playerStrumline.noteSplashes.visible = false;
 			case "Splashes Only":
-				playerStrumline.noteHoldCovers.visible = false;
-				playerStrumline.noteSplashes.visible = true;
+				PlayState.instance.playerStrumline.noteHoldCovers.visible = false;
+				PlayState.instance.playerStrumline.noteSplashes.visible = true;
 			case "Hold Covers Only":
-				playerStrumline.noteHoldCovers.visible = true;
-				playerStrumline.noteSplashes.visible = false;
+				PlayState.instance.playerStrumline.noteHoldCovers.visible = true;
+				PlayState.instance.playerStrumline.noteSplashes.visible = false;
 			case "All":
-				playerStrumline.noteHoldCovers.visible = true;
-				playerStrumline.noteSplashes.visible = true;
+				PlayState.instance.playerStrumline.noteHoldCovers.visible = true;
+				PlayState.instance.playerStrumline.noteSplashes.visible = true;
 		}
+
 
 
 	}
 
-	function moveOpponentStrumline() {
-		opponentStrumline.background.visible = false;
+	function setOpponentStrumline() {
+		// Turn off the opponent strumline's background.
+		PlayState.instance.opponentStrumline.background.visible = false;
 
-		if (opponentStrumline != null) {
-			for (i in 2...opponentStrumline.strumlineNotes.length) {
-				var opponentNote = opponentStrumline.strumlineNotes.members[i];
-				oldOppPositions.push(opponentNote.x);
+		if (PlayState.instance.opponentStrumline != null) {
 
-				opponentNote.x = FlxG.width;
-				opponentNote.x += (Strumline.NOTE_SPACING) * (i-2);
-				opponentNote.x -= (((Strumline.STRUMLINE_SIZE / 2) + (Constants.STRUMLINE_X_OFFSET * 2)) * 2) - opponentStrumline.noteStyle.getStrumlineOffsets()[0];
+			// Set the position of the first 2 notes.
+			PlayState.instance.opponentStrumline.x = 32;
+
+			// Put the last 2 notes on the right side of the screen.
+			for (i in 2...Strumline.KEY_COUNT) {
+				var opponentNote = PlayState.instance.opponentStrumline.strumlineNotes.members[i];
+
+				var offset = FlxG.width - opponentNote.x;
+				offset += (Strumline.NOTE_SPACING) * (i-2) + 16;
+				offset -= (((Strumline.STRUMLINE_SIZE / 2) + (Constants.STRUMLINE_X_OFFSET * 2)) * 2) - PlayState.instance.opponentStrumline.noteStyle.getStrumlineOffsets()[0];
+
+				opponentNote.x += offset;
+
+
+				opponentNoteOffsets.push(offset);
 			}
 		}
 	}
 
 	function updateNoteCovers(strumline:Strumline, isPlayer:Bool = false)
 	{
-			
+		if (strumline != null && strumline.noteHoldCovers != null)
+		{
+			// Go through every note hold cover.
 			for (cover in strumline.noteHoldCovers)
 			{
+				// Don't try updating the cover if it's not active.
+				if (!cover.alive)
+				{
+					return;
+				}
+				// Get the note hold cover direction.
 				var direction = 0;
 
 				if (StringTools.contains(cover.glow.animation.name, "Blue"))
@@ -356,150 +385,80 @@ class Middlescroll extends Module {
 					direction = 3;
 				}
 
+				// Set the opponent notes transparency.
+				if (Save.instance.modOptions["OpponentNotes"] != 100 && !isPlayer)
+				{
+					if (!Save.instance.modOptions["Middlescroll"])
+					{
+						if (Save.instance.modOptions["AlwaysOppNotes"])
+						{
+							cover.alpha = Save.instance.modOptions["OpponentNotes"] / 100;
+						}
+					}
+					else
+					{
+						cover.alpha = Save.instance.modOptions["OpponentNotes"] / 100;
+					}
+				}
 
+				// Stop the function if the player isn't using middlescroll.
+				if (!Save.instance.modOptions["Middlescroll"])
+				{
+					return;
+				}
 
+				// Check if the player's note hold covers should be affected
 				if (isPlayer)
 				{
-
-					if (oldCoverPositions[direction] == 0)
-					{
-						oldCoverPositions[direction] = cover.x;
-						if (direction > 1)
-						{
-							oldCoverPositions[direction] -= mobilePos * 3;
-						}
-					}
-					cover.x = (oldCoverPositions[direction] + coverPositions[direction]);
-				}
-				else
-				{
+					// Move the player's note hold covers if the direction of the cover is UP or DOWN 
 					if (direction > 1)
 					{
-
-						if (oldOppCoverPositions[direction - 2] == 0)
+						if (newMobileCoverPositions[direction - 2] == 0)
 						{
-							oldOppCoverPositions[direction -2] = cover.x;
+							newMobileCoverPositions[direction - 2] = cover.x - mobileNoteOffset;
 						}
-						
-						cover.x = oldOppCoverPositions[direction-2] + (strumline.strumlineNotes.members[direction].x - oldOppPositions[direction - 2]);
 
+						cover.x = newMobileCoverPositions[direction - 2];
+					}
+					
+				}
+				else
+				{	
+					// Move the opponent's note hold covers if the direction of the cover is UP or DOWN 
+					if (direction > 1)
+					{
+						if (newOpponentCoverPositions[direction - 2] == 0)
+						{
+							newOpponentCoverPositions[direction - 2] = cover.x + opponentNoteOffsets[direction - 2];
+						}
+
+						cover.x = newOpponentCoverPositions[direction - 2];
 					}
 				}
-
-			
-		}
-
-
-
-
-	}
-
-
-	public static function positionStrumline(strumline, thisNoteSpacing, isMobile)
-	{
-		strumline.setNoteSpacing(0);
-
-		for (strum in strumline)
-    	{
-    		strum.width /= 2;
-    	}
-
-		if (isMobile)
-		{
-			mobilePos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
-		}
-
-		for (i in 0...strumline.strumlineNotes.length) {
-
-			var note = strumline.strumlineNotes.members[i];
-			note.x += (i * (Strumline.STRUMLINE_SIZE + thisNoteSpacing));
-
-			if (isMobile)
-			{
-				if (note.direction > 1)
-				{
-					note.x -= (mobilePos * 3);
-				}
+	
 			}
 		}
-
-		strumline.x = (FlxG.width - (4 * (Strumline.STRUMLINE_SIZE + (thisNoteSpacing / 1.3)))) / 2;
-		if (isMobile)
-		{
-			strumline.x += mobilePos * 2.1;
-		}
 	}
 
-	function init()
+	function setupMiddlescroll()
 	{
-		// Avoid the game reinitialising the middlescroll stuff (happens due to cutscenes).
-		if (didInit && !PlayState.instance.isChartingMode)
-		{
-			return;
-		}
-		
-		didInit = true;
-		mobilePos = 0;
-		oldCoverPositions = [0,0,0,0];
-		coverPositions = [];
-		oldOppPositions = [];
-		oldOppCoverPositions = [0,0];
+		// Reset variables
+		opponentNoteOffsets = [];
+		newOpponentCoverPositions = [0,0];
 
-		if (Save.instance.modOptions["Middlescroll"] == "Wide Lanes" || Save.instance.modOptions["Middlescroll"] == "Narrow Lanes")
-		{
-			differentLanes = true;
-		}
-		else
-		{
-			differentLanes = false;
-		}
+		mobileNoteOffset = 0;
+		newMobileCoverPositions = [0,0];
 
-		switch (Save.instance.modOptions["Middlescroll"])
-		{
-			case "Wide Lanes":
-				if (inArrowControlSchemeMode)
-				{
-					noteSpacing = 80;
-				}
-				else
-				{
-					noteSpacing = 60;
-				}
-			case "Narrow Lanes":
-				noteSpacing = 30;
-			default:
-				if (inArrowControlSchemeMode)
-				{
-					noteSpacing = 45;
-				}
-				else
-				{
-					noteSpacing = 0;
-				}
-		}
+		didSetupMiddlescroll = true;
 
-		if (inArrowControlSchemeMode)
-		{
-			mobilePos = 35 * (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
-		}
-
-		for (i in 0...Strumline.KEY_COUNT)
-		{
-			coverPositions.push((i * (Strumline.STRUMLINE_SIZE + noteSpacing)));
-		}
-
-		playerStrumline = PlayState.instance.playerStrumline;
-		opponentStrumline = PlayState.instance.opponentStrumline;
-
-
-
+		// Set the popups positions.
 		switch (Save.instance.modOptions["MovePopups"])
 		{
 			case "Always":
 				// Taken from Blazin'
 				PlayState.instance.comboPopUps.offsets = [480, -50];
 			case "Middlescroll Only":
-				if (Save.instance.modOptions["Middlescroll"] != "Off")
+				if (Save.instance.modOptions["Middlescroll"])
 				{
 					PlayState.instance.comboPopUps.offsets = [480, -50];
 				}
@@ -507,44 +466,37 @@ class Middlescroll extends Module {
 
 
 
-		// Slight delay or else the player's strumline won't be set properly in Blazin'
-		if (Save.instance.modOptions["Middlescroll"] != "Off") {
-				setPlayerStrumline();
-				if (!inArrowControlSchemeMode)
-				{
-					moveOpponentStrumline();
-				}
-					
+		// Slight delay or else the player's strumline won't be set properly in Blazin'.
+		if (Save.instance.modOptions["Middlescroll"]) {
+			setPlayerStrumline();
+			if (!inArrowControlSchemeMode)
+			{
+				setOpponentStrumline();
+			}
 		}
 
-		if (Save.instance.modOptions["Middlescroll"] == "Off" && !Save.instance.modOptions["AlwaysOppNotes"])
+		// If middlescroll is off and opponent notes shouldn't always be affected, stop the function.
+		if (!Save.instance.modOptions["Middlescroll"] && !Save.instance.modOptions["AlwaysOppNotes"])
 		{
 			return;
 		}
 
-		switch (Save.instance.modOptions["OpponentNotes"])
+
+		// Opponent strumline intro.
+		if (PlayState.instance.opponentStrumline != null)
 		{
-			case "Hidden":
-				// Taken from Blazin'
-				if (opponentStrumline != null) {
-					opponentStrumline.visible = false;
-				}
-			case "Translucent":
-				opponentStrumline.visible = true;
-				opponentStrumline.strumlineNotes.alpha = 0.5;
+			if (Save.instance.modOptions["OpponentNotes"] != 100)
+			{
+				PlayState.instance.opponentStrumline.visible = true;
+				PlayState.instance.opponentStrumline.strumlineNotes.alpha = Save.instance.modOptions["OpponentNotes"] / 100;
 				// Use custom animation when spawning in strumline notes.
-				for (arrow in opponentStrumline.strumlineNotes)
+				for (arrow in PlayState.instance.opponentStrumline.strumlineNotes)
 				{
 					FlxTween.cancelTweensOf(arrow);
 					arrow.alpha = 0.0;
-					FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.5}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
+					FlxTween.tween(arrow, {y: arrow.y + 10, alpha: Save.instance.modOptions["OpponentNotes"] / 100}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * arrow.direction)});
 				}
-			default:
-				opponentStrumline.visible = true;
+			}
 		}
-
 	}
-
-
 }
-
