@@ -77,6 +77,12 @@ class Middlescroll extends Module {
 			if (PlayState.instance.playerStrumline != null)
 			{	
 				PlayState.instance.playerStrumline.x = (FlxG.width - strumlineWidth) / 2;
+
+				// If the player is using touch controls, move the player strumline a bit to the right.
+				if (inArrowControlSchemeMode)
+				{
+					PlayState.instance.playerStrumline.x += 90;
+				}
 			}
 		}
 
