@@ -41,6 +41,8 @@ class Middlescroll extends Module {
 	// A boolean that stores whether or not the player is using touch controls.
 	var inArrowControlSchemeMode = false;
 
+	public static var inArrowControlSchemeMode:Bool = false;
+
 
 	function new() {
 		super("Middlescroll", 0);

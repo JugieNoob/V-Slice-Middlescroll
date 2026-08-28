@@ -13,6 +13,7 @@ import funkin.save.Save;
 import funkin.mobile.input.ControlsHandler;
 import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 
+
 /*
 	Middlescroll V-Slice created by JugieNoob
 	GitHub Link: https://github.com/JugieNoob/V-Slice-Middlescroll
@@ -119,14 +120,14 @@ class MiddlescrollOptions extends Module {
         currentState = event.targetState;
 
         // Check if the user is on mobile and using the arrows control scheme.
-		if (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows && !ControlsHandler.hasExternalInputDevice && FlxG.onMobile)
-		{
-			inArrowControlSchemeMode = true;
-		}
-		else
-		{
-			inArrowControlSchemeMode = false;
-		}
+		    if (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows && !ControlsHandler.hasExternalInputDevice && FlxG.onMobile)
+		    {
+			    inArrowControlSchemeMode = true;
+		    }
+		    else
+		    {
+			    inArrowControlSchemeMode = false;
+		    }
 
 
         preferences = event.targetState.optionsCodex.pages.get("preferences");
